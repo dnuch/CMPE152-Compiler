@@ -1,7 +1,7 @@
 /**
- * <h1>PascalNumberToken</h1>
+ * <h1>JavaNumberToken</h1>
  *
- * <p>Pascal number tokens (integer and real).</p>
+ * <p>Java number tokens (integer and real).</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
