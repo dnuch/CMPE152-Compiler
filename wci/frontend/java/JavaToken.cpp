@@ -1,7 +1,7 @@
 /**
- * <h1>PascalToken</h1>
+ * <h1>JavaToken</h1>
  *
- * <p>Base class for Pascal token classes.</p>
+ * <p>Base class for Java token classes.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
@@ -9,19 +9,19 @@
 #include <string>
 #include <vector>
 #include <map>
-#include "PascalToken.h"
+#include "JavaToken.h"
 
-namespace wci { namespace frontend { namespace pascal {
+namespace wci { namespace frontend { namespace java {
 
 using namespace std;
 
-map<string, PascalTokenType> PascalToken::RESERVED_WORDS;
-map<string, PascalTokenType> PascalToken::SPECIAL_SYMBOLS;
-map<PascalTokenType, string> PascalToken::SPECIAL_SYMBOL_NAMES;
+map<string, JavaTokenType> JavaToken::RESERVED_WORDS;
+map<string, JavaTokenType> JavaToken::SPECIAL_SYMBOLS;
+map<JavaTokenType, string> JavaToken::SPECIAL_SYMBOL_NAMES;
 
-bool PascalToken::INITIALIZED = false;
+bool JavaToken::INITIALIZED = false;
 
-void PascalToken::initialize()
+void JavaToken::initialize()
 {
     if (INITIALIZED) return;
 
@@ -34,47 +34,47 @@ void PascalToken::initialize()
         "UNTIL", "VAR", "WHILE", "WITH"
     };
 
-    vector<PascalTokenType> rw_keys =
+    vector<JavaTokenType> rw_keys =
     {
-        PascalTokenType::AND,
-        PascalTokenType::ARRAY,
-        PascalTokenType::BEGIN,
-        PascalTokenType::CASE,
-        PascalTokenType::CONST,
-        PascalTokenType::DIV,
-        PascalTokenType::DO,
-        PascalTokenType::DOWNTO,
+        JavaTokenType::AND,
+        JavaTokenType::ARRAY,
+        JavaTokenType::BEGIN,
+        JavaTokenType::CASE,
+        JavaTokenType::CONST,
+        JavaTokenType::DIV,
+        JavaTokenType::DO,
+        JavaTokenType::DOWNTO,
 
-        PascalTokenType::ELSE,
-        PascalTokenType::END,
-        PascalTokenType::FILE,
-        PascalTokenType::FOR,
-        PascalTokenType::FUNCTION,
-        PascalTokenType::GOTO,
-        PascalTokenType::IF,
-        PascalTokenType::IN,
+        JavaTokenType::ELSE,
+        JavaTokenType::END,
+        JavaTokenType::FILE,
+        JavaTokenType::FOR,
+        JavaTokenType::FUNCTION,
+        JavaTokenType::GOTO,
+        JavaTokenType::IF,
+        JavaTokenType::IN,
 
-        PascalTokenType::LABEL,
-        PascalTokenType::MOD,
-        PascalTokenType::NIL,
-        PascalTokenType::NOT,
-        PascalTokenType::OF,
-        PascalTokenType::OR,
-        PascalTokenType::PACKED,
-        PascalTokenType::PROCEDURE,
+        JavaTokenType::LABEL,
+        JavaTokenType::MOD,
+        JavaTokenType::NIL,
+        JavaTokenType::NOT,
+        JavaTokenType::OF,
+        JavaTokenType::OR,
+        JavaTokenType::PACKED,
+        JavaTokenType::PROCEDURE,
 
-        PascalTokenType::PROGRAM,
-        PascalTokenType::RECORD,
-        PascalTokenType::REPEAT,
-        PascalTokenType::SET,
-        PascalTokenType::THEN,
-        PascalTokenType::TO,
-        PascalTokenType::TYPE,
+        JavaTokenType::PROGRAM,
+        JavaTokenType::RECORD,
+        JavaTokenType::REPEAT,
+        JavaTokenType::SET,
+        JavaTokenType::THEN,
+        JavaTokenType::TO,
+        JavaTokenType::TYPE,
 
-        PascalTokenType::UNTIL,
-        PascalTokenType::VAR,
-        PascalTokenType::WHILE,
-        PascalTokenType::WITH
+        JavaTokenType::UNTIL,
+        JavaTokenType::VAR,
+        JavaTokenType::WHILE,
+        JavaTokenType::WITH
     };
 
     for (int i = 0; i < rw_strings.size(); i++)
@@ -88,33 +88,33 @@ void PascalToken::initialize()
         "<", "<=", ">=", ">", "(", ")", "[", "]", "{", "}",  "^", ".."
     };
 
-    vector<PascalTokenType> ss_keys =
+    vector<JavaTokenType> ss_keys =
     {
-        PascalTokenType::PLUS,
-        PascalTokenType::MINUS,
-        PascalTokenType::STAR,
-        PascalTokenType::SLASH,
-        PascalTokenType::COLON_EQUALS,
-        PascalTokenType::DOT,
-        PascalTokenType::COMMA,
-        PascalTokenType::SEMICOLON,
-        PascalTokenType::COLON,
-        PascalTokenType::QUOTE,
-        PascalTokenType::EQUALS,
-        PascalTokenType::NOT_EQUALS,
+        JavaTokenType::PLUS,
+        JavaTokenType::MINUS,
+        JavaTokenType::STAR,
+        JavaTokenType::SLASH,
+        JavaTokenType::COLON_EQUALS,
+        JavaTokenType::DOT,
+        JavaTokenType::COMMA,
+        JavaTokenType::SEMICOLON,
+        JavaTokenType::COLON,
+        JavaTokenType::QUOTE,
+        JavaTokenType::EQUALS,
+        JavaTokenType::NOT_EQUALS,
 
-        PascalTokenType::LESS_THAN,
-        PascalTokenType::LESS_EQUALS,
-        PascalTokenType::GREATER_EQUALS,
-        PascalTokenType::GREATER_THAN,
-        PascalTokenType::LEFT_PAREN,
-        PascalTokenType::RIGHT_PAREN,
-        PascalTokenType::LEFT_BRACKET,
-        PascalTokenType::RIGHT_BRACKET,
-        PascalTokenType::LEFT_BRACE,
-        PascalTokenType::RIGHT_BRACE,
-        PascalTokenType::UP_ARROW,
-        PascalTokenType::DOT_DOT
+        JavaTokenType::LESS_THAN,
+        JavaTokenType::LESS_EQUALS,
+        JavaTokenType::GREATER_EQUALS,
+        JavaTokenType::GREATER_THAN,
+        JavaTokenType::LEFT_PAREN,
+        JavaTokenType::RIGHT_PAREN,
+        JavaTokenType::LEFT_BRACKET,
+        JavaTokenType::RIGHT_BRACKET,
+        JavaTokenType::LEFT_BRACE,
+        JavaTokenType::RIGHT_BRACE,
+        JavaTokenType::UP_ARROW,
+        JavaTokenType::DOT_DOT
     };
 
     for (int i = 0; i < ss_strings.size(); i++)
@@ -140,10 +140,10 @@ void PascalToken::initialize()
     INITIALIZED = true;
 }
 
-PascalToken::PascalToken(Source *source) throw (string)
+JavaToken::JavaToken(Source *source) throw (string)
     : Token(source)
 {
     initialize();
 }
 
-}}}  // namespace wci::frontend::pascal
+}}}  // namespace wci::frontend::Java

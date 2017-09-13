@@ -6,26 +6,26 @@
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
-#include "PascalErrorToken.h"
+#include "JavaErrorToken.h"
 #include "../../Token.h"
-#include "../PascalToken.h"
+#include "../JavaToken.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::java;
 
-PascalErrorToken::PascalErrorToken(Source *source, PascalErrorCode error_code,
+JavaErrorToken::JavaErrorToken(Source *source, JavaErrorCode error_code,
                                    string token_text)
     throw (string)
-    : PascalToken(source)
+    : JavaToken(source)
 {
     type = (TokenType) PT_ERROR;
     text = token_text;
     value = new DataValue((int) error_code);
 }
 
-void PascalErrorToken::extract() throw (string)
+void JavaErrorToken::extract() throw (string)
 {
     // do nothing
 }

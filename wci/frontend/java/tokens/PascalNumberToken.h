@@ -1,23 +1,23 @@
 /**
- * <h1>PascalNumberToken</h1>
+ * <h1>JavaNumberToken</h1>
  *
- * <p>Pascal number tokens (integer and real).</p>
+ * <p>Java number tokens (integer and real).</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
-#ifndef WCI_FRONTEND_PASCAL_TOKENS_PASCALNUMBERTOKEN_H_
-#define WCI_FRONTEND_PASCAL_TOKENS_PASCALNUMBERTOKEN_H_
+#ifndef WCI_FRONTEND_JAVA_TOKENS_JAVANUMBERTOKEN_H_
+#define WCI_FRONTEND_JAVA_TOKENS_JAVANUMBERTOKEN_H_
 
 #include <string>
-#include "../PascalToken.h"
+#include "../JavaToken.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::java;
 
-class PascalNumberToken : public PascalToken
+class JavaNumberToken : public JavaToken
 {
 public:
     /**
@@ -25,18 +25,18 @@ public:
      * @param source the source from where to fetch the token's characters.
      * @throw a string message if an error occurred.
      */
-    PascalNumberToken(Source *source) throw (string);
+    JavaNumberToken(Source *source) throw (string);
 
 protected:
     /**
-     * Extract a Pascal number token from the source.
+     * Extract a Java number token from the source.
      * Override of wci::frontend::Token.
      * @throw a string message if an error occurred.
      */
     void extract() throw (string);
 
     /**
-     * Extract a Pascal number token from the source.
+     * Extract a Java number token from the source.
      * @param textBuffer the buffer to append the token's characters.
      * @throw a string message if an error occurred.
      */
@@ -73,6 +73,6 @@ private:
                               string exponentDigits, char exponent_sign);
 };
 
-}}}}  // namespace wci::frontend::pascal::tokens
+}}}}  // namespace wci::frontend::java::tokens
 
-#endif /* WCI_FRONTEND_PASCAL_TOKENS_PASCALNUMBERTOKEN_H_ */
+#endif /* WCI_FRONTEND_JAVA_TOKENS_JAVANUMBERTOKEN_H_ */
