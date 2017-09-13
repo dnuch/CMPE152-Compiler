@@ -1,7 +1,8 @@
 # CMPE152-Compiler
 
-Push to Git: 
-
-git add .
-git commit -m "message"
-git push (-f if all fails...) 
+Push to Git: <br>
+<br>
+git status <br>
+git add . <br>
+git commit -m "commit message" <br>
+git push <br>
