@@ -21,126 +21,71 @@ using namespace std;
  */
 enum class JavaErrorCode
 {
-    ALREADY_FORWARDED,
-    CASE_CONSTANT_REUSED,
-    IDENTIFIER_REDEFINED,
-    IDENTIFIER_UNDEFINED,
-    INCOMPATIBLE_ASSIGNMENT,
-    INCOMPATIBLE_TYPES,
-    INVALID_ASSIGNMENT,
-    INVALID_CHARACTER,
-    INVALID_CONSTANT,
-    INVALID_EXPONENT,
-    INVALID_EXPRESSION,
-    INVALID_FIELD,
-    INVALID_FRACTION,
-    INVALID_IDENTIFIER_USAGE,
-    INVALID_INDEX_TYPE,
-    INVALID_NUMBER,
-    INVALID_STATEMENT,
-    INVALID_SUBRANGE_TYPE,
-    INVALID_TARGET,
-    INVALID_TYPE,
-    INVALID_VAR_PARM,
-    MIN_GT_MAX,
-    MISSING_BEGIN,
-    MISSING_COLON,
-    MISSING_COLON_EQUALS,
-    MISSING_COMMA,
-    MISSING_CONSTANT,
-    MISSING_DO,
-    MISSING_DOT_DOT,
-    MISSING_END,
-    MISSING_EQUALS,
-    MISSING_FOR_CONTROL,
-    MISSING_IDENTIFIER,
-    MISSING_LEFT_BRACKET,
-    MISSING_OF,
-    MISSING_PERIOD,
-    MISSING_PROGRAM,
-    MISSING_RIGHT_BRACKET,
-    MISSING_RIGHT_PAREN,
-    MISSING_SEMICOLON,
-    MISSING_THEN,
-    MISSING_TO_DOWNTO,
-    MISSING_UNTIL,
-    MISSING_VARIABLE,
-    NOT_CONSTANT_IDENTIFIER,
-    NOT_RECORD_VARIABLE,
-    NOT_TYPE_IDENTIFIER,
-    RANGE_INTEGER,
-    RANGE_REAL,
-    STACK_OVERFLOW,
-    TOO_MANY_LEVELS,
-    TOO_MANY_SUBSCRIPTS,
-    UNEXPECTED_EOF,
-    UNEXPECTED_TOKEN,
-    UNIMPLEMENTED,
-    UNRECOGNIZABLE,
-    WRONG_NUMBER_OF_PARMS,
+    CANT_BREAK_OUTSIDE_LOOP,
+    CANT_CONT_OUTSIDE_LOOP,
+    COND_COMP_OFF,
+    DEF_ONLY_ONCE_IN_SWITCH,
+    EXPECTED_LEFT_PAR,
+    EXPECTED_RIGHT_PAR,
+    EXPECTED_FORW_SLASH,
+    EXPECTED_COLON,
+    EXPECTED_SEMICOLON,
+    EXPECTED_AT,
+    EXPECTED_AT_END,
+    EXPECTED_RIGHT_BRACKET,
+    EXPECTED_LEFT_BRACE,
+    EXPECTED_RIGHT_BRACE,
+    EXPECTED_EQUALS,
+    EXPECTED_CATCH,
+    EXPECTED_CONST,
+    EXPECTED_HEX_DIGIT,
+    EXPECTED_ID,
+    EXPECTED_ID_STRING_OR_NUM,
+    EXPECTED_WHILE,
+    INVALID_CHAR,
+    LABEL_NOT_FOUND,
+    LABEL_REDEFINED,
+    RET_OUTSIDE_FUNC,
+    SYNTAX_ERROR,
+    THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE,
+    UNTERMINATED_COMMENT,
+    UNTERMINATED_STRING_CONST,
 
     // Fatal errors.
     IO_ERROR,
     TOO_MANY_ERRORS
 };
 
-constexpr JavaErrorCode ALREADY_FORWARDED = JavaErrorCode::ALREADY_FORWARDED;
-constexpr JavaErrorCode CASE_CONSTANT_REUSED = JavaErrorCode::CASE_CONSTANT_REUSED;
-constexpr JavaErrorCode IDENTIFIER_REDEFINED = JavaErrorCode::IDENTIFIER_REDEFINED;
-constexpr JavaErrorCode IDENTIFIER_UNDEFINED = JavaErrorCode::IDENTIFIER_UNDEFINED;
-constexpr JavaErrorCode INCOMPATIBLE_ASSIGNMENT = JavaErrorCode::INCOMPATIBLE_ASSIGNMENT;
-constexpr JavaErrorCode INCOMPATIBLE_TYPES = JavaErrorCode::INCOMPATIBLE_TYPES;
-constexpr JavaErrorCode INVALID_ASSIGNMENT = JavaErrorCode::INVALID_ASSIGNMENT;
-constexpr JavaErrorCode INVALID_CHARACTER = JavaErrorCode::INVALID_CHARACTER;
-constexpr JavaErrorCode INVALID_CONSTANT = JavaErrorCode::INVALID_CONSTANT;
-constexpr JavaErrorCode INVALID_EXPONENT = JavaErrorCode::INVALID_EXPONENT;
-constexpr JavaErrorCode INVALID_EXPRESSION = JavaErrorCode::INVALID_EXPRESSION;
-constexpr JavaErrorCode INVALID_FIELD = JavaErrorCode::INVALID_FIELD;
-constexpr JavaErrorCode INVALID_FRACTION = JavaErrorCode::INVALID_FRACTION;
-constexpr JavaErrorCode INVALID_IDENTIFIER_USAGE = JavaErrorCode::INVALID_IDENTIFIER_USAGE;
-constexpr JavaErrorCode INVALID_INDEX_TYPE = JavaErrorCode::INVALID_INDEX_TYPE;
-constexpr JavaErrorCode INVALID_NUMBER = JavaErrorCode::INVALID_NUMBER;
-constexpr JavaErrorCode INVALID_STATEMENT = JavaErrorCode::INVALID_STATEMENT;
-constexpr JavaErrorCode INVALID_SUBRANGE_TYPE = JavaErrorCode::INVALID_SUBRANGE_TYPE;
-constexpr JavaErrorCode INVALID_TARGET = JavaErrorCode::INVALID_TARGET;
-constexpr JavaErrorCode INVALID_TYPE = JavaErrorCode::INVALID_TYPE;
-constexpr JavaErrorCode INVALID_VAR_PARM = JavaErrorCode::INVALID_VAR_PARM;
-constexpr JavaErrorCode MIN_GT_MAX = JavaErrorCode::MIN_GT_MAX;
-constexpr JavaErrorCode MISSING_BEGIN = JavaErrorCode::MISSING_BEGIN;
-constexpr JavaErrorCode MISSING_COLON = JavaErrorCode::ALREADY_FORWARDED;
-constexpr JavaErrorCode MISSING_COMMA = JavaErrorCode::MISSING_COMMA;
-constexpr JavaErrorCode MISSING_CONSTANT = JavaErrorCode::MISSING_CONSTANT;
-constexpr JavaErrorCode MISSING_DO = JavaErrorCode::MISSING_DO;
-constexpr JavaErrorCode MISSING_DOT_DOT = JavaErrorCode::MISSING_DOT_DOT;
-constexpr JavaErrorCode MISSING_END = JavaErrorCode::MISSING_END;
-constexpr JavaErrorCode MISSING_EQUALS = JavaErrorCode::MISSING_EQUALS;
-constexpr JavaErrorCode MISSING_COLON_EQUALS = JavaErrorCode::MISSING_COLON_EQUALS;
-constexpr JavaErrorCode MISSING_FOR_CONTROL = JavaErrorCode::MISSING_FOR_CONTROL;
-constexpr JavaErrorCode MISSING_IDENTIFIER = JavaErrorCode::MISSING_IDENTIFIER;
-constexpr JavaErrorCode MISSING_LEFT_BRACKET = JavaErrorCode::MISSING_LEFT_BRACKET;
-constexpr JavaErrorCode MISSING_OF = JavaErrorCode::MISSING_OF;
-constexpr JavaErrorCode MISSING_PERIOD = JavaErrorCode::MISSING_PERIOD;
-constexpr JavaErrorCode MISSING_PROGRAM = JavaErrorCode::MISSING_PROGRAM;
-constexpr JavaErrorCode MISSING_RIGHT_BRACKET = JavaErrorCode::MISSING_RIGHT_BRACKET;
-constexpr JavaErrorCode MISSING_RIGHT_PAREN = JavaErrorCode::MISSING_RIGHT_PAREN;
-constexpr JavaErrorCode MISSING_SEMICOLON = JavaErrorCode::MISSING_SEMICOLON;
-constexpr JavaErrorCode MISSING_THEN = JavaErrorCode::MISSING_THEN;
-constexpr JavaErrorCode MISSING_TO_DOWNTO = JavaErrorCode::MISSING_TO_DOWNTO;
-constexpr JavaErrorCode MISSING_UNTIL = JavaErrorCode::MISSING_UNTIL;
-constexpr JavaErrorCode MISSING_VARIABLE = JavaErrorCode::MISSING_VARIABLE;
-constexpr JavaErrorCode NOT_CONSTANT_IDENTIFIER = JavaErrorCode::NOT_CONSTANT_IDENTIFIER;
-constexpr JavaErrorCode NOT_RECORD_VARIABLE = JavaErrorCode::NOT_RECORD_VARIABLE;
-constexpr JavaErrorCode NOT_TYPE_IDENTIFIER = JavaErrorCode::NOT_TYPE_IDENTIFIER;
-constexpr JavaErrorCode RANGE_INTEGER = JavaErrorCode::RANGE_INTEGER;
-constexpr JavaErrorCode RANGE_REAL = JavaErrorCode::RANGE_REAL;
-constexpr JavaErrorCode STACK_OVERFLOW = JavaErrorCode::STACK_OVERFLOW;
-constexpr JavaErrorCode TOO_MANY_LEVELS = JavaErrorCode::TOO_MANY_LEVELS;
-constexpr JavaErrorCode TOO_MANY_SUBSCRIPTS = JavaErrorCode::TOO_MANY_SUBSCRIPTS;
-constexpr JavaErrorCode UNEXPECTED_EOF = JavaErrorCode::UNEXPECTED_EOF;
-constexpr JavaErrorCode UNEXPECTED_TOKEN = JavaErrorCode::UNEXPECTED_TOKEN;
-constexpr JavaErrorCode UNIMPLEMENTED = JavaErrorCode::UNIMPLEMENTED;
-constexpr JavaErrorCode UNRECOGNIZABLE = JavaErrorCode::UNRECOGNIZABLE;
-constexpr JavaErrorCode WRONG_NUMBER_OF_PARMS = JavaErrorCode::WRONG_NUMBER_OF_PARMS;
+constexpr JavaErrorCode CANT_BREAK_OUTSIDE_LOOP = JavaErrorCode::CANT_BREAK_OUTSIDE_LOOP;
+constexpr JavaErrorCode CANT_CONT_OUTSIDE_LOOP = JavaErrorCode::CANT_CONT_OUTSIDE_LOOP;
+constexpr JavaErrorCode COND_COMP_OFF = JavaErrorCode::COND_COMP_OFF;
+constexpr JavaErrorCode DEF_ONLY_ONCE_IN_SWITCH = JavaErrorCode::DEF_ONLY_ONCE_IN_SWITCH;
+constexpr JavaErrorCode EXPECTED_LEFT_PAR = JavaErrorCode::EXPECTED_LEFT_PAR;
+constexpr JavaErrorCode EXPECTED_RIGHT_PAR = JavaErrorCode::EXPECTED_RIGHT_PAR;
+constexpr JavaErrorCode EXPECTED_FORW_SLASH = JavaErrorCode::EXPECTED_FORW_SLASH;
+constexpr JavaErrorCode EXPECTED_COLON = JavaErrorCode::EXPECTED_COLON;
+constexpr JavaErrorCode EXPECTED_SEMICOLON = JavaErrorCode::EXPECTED_SEMICOLON;
+constexpr JavaErrorCode EXPECTED_AT = JavaErrorCode::EXPECTED_AT;
+constexpr JavaErrorCode EXPECTED_AT_END = JavaErrorCode::EXPECTED_AT_END;
+constexpr JavaErrorCode EXPECTED_RIGHT_BRACKET = JavaErrorCode::EXPECTED_RIGHT_BRACKET;
+constexpr JavaErrorCode EXPECTED_LEFT_BRACE = JavaErrorCode::EXPECTED_LEFT_BRACE;
+constexpr JavaErrorCode EXPECTED_RIGHT_BRACE = JavaErrorCode::EXPECTED_RIGHT_BRACE;
+constexpr JavaErrorCode EXPECTED_EQUALS = JavaErrorCode::EXPECTED_EQUALS;
+constexpr JavaErrorCode EXPECTED_CATCH = JavaErrorCode::EXPECTED_CATCH;
+constexpr JavaErrorCode EXPECTED_CONST = JavaErrorCode::EXPECTED_CONST;
+constexpr JavaErrorCode EXPECTED_HEX_DIGIT = JavaErrorCode::EXPECTED_HEX_DIGIT;
+constexpr JavaErrorCode EXPECTED_ID = JavaErrorCode::EXPECTED_ID;
+constexpr JavaErrorCode EXPECTED_ID_STRING_OR_NUM = JavaErrorCode::EXPECTED_ID_STRING_OR_NUM;
+constexpr JavaErrorCode EXPECTED_WHILE = JavaErrorCode::EXPECTED_WHILE;
+constexpr JavaErrorCode INVALID_CHAR = JavaErrorCode::INVALID_CHAR;
+constexpr JavaErrorCode LABEL_NOT_FOUND = JavaErrorCode::LABEL_NOT_FOUND;
+constexpr JavaErrorCode LABEL_REDEFINED = JavaErrorCode::LABEL_REDEFINED;
+constexpr JavaErrorCode RET_OUTSIDE_FUNC = JavaErrorCode::RET_OUTSIDE_FUNC;
+constexpr JavaErrorCode SYNTAX_ERROR = JavaErrorCode::SYNTAX_ERROR;
+constexpr JavaErrorCode THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE = JavaErrorCode::THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE;
+constexpr JavaErrorCode UNTERMINATED_COMMENT = JavaErrorCode::UNTERMINATED_COMMENT;
+constexpr JavaErrorCode UNTERMINATED_STRING_CONST = JavaErrorCode::UNTERMINATED_STRING_CONST;
+
 
 constexpr JavaErrorCode IO_ERROR = JavaErrorCode::IO_ERROR;
 constexpr JavaErrorCode TOO_MANY_ERRORS = JavaErrorCode::TOO_MANY_ERRORS;
