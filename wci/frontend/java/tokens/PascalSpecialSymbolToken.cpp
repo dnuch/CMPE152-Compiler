@@ -1,28 +1,28 @@
 /**
- * <h1>PascalSpecialSymbolToken</h1>
+ * <h1>JavaSpecialSymbolToken</h1>
  *
- * <p> Pascal special symbol tokens.</p>
+ * <p> Java special symbol tokens.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
 #include <string>
-#include "PascalSpecialSymbolToken.h"
-#include "../PascalError.h"
+#include "JavaSpecialSymbolToken.h"
+#include "../JavaError.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::Java;
 
-PascalSpecialSymbolToken::PascalSpecialSymbolToken(Source *source) throw (string)
-    : PascalToken(source)
+JavaSpecialSymbolToken::JavaSpecialSymbolToken(Source *source) throw (string)
+    : JavaToken(source)
 {
     extract();
 }
 
-void PascalSpecialSymbolToken::extract() throw (string)
+void JavaSpecialSymbolToken::extract() throw (string)
 {
     char current_ch = current_char();
     bool good_symbol = true;
@@ -112,8 +112,8 @@ void PascalSpecialSymbolToken::extract() throw (string)
 
     // Set the type if it wasn't an error.
     if (good_symbol) {
-        type = (TokenType) (PascalToken::SPECIAL_SYMBOLS[text]);
+        type = (TokenType) (JavaToken::SPECIAL_SYMBOLS[text]);
     }
 }
 
-}}}}  // namespace wci::frontend::pascal::tokens
+}}}}  // namespace wci::frontend::Java::tokens

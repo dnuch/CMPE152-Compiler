@@ -1,7 +1,7 @@
 /**
- * <h1>PascalErrorToken</h1>
+ * <h1>JavaErrorToken</h1>
  *
- * <p>Pascal error token.</p>
+ * <p>Java error token.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>

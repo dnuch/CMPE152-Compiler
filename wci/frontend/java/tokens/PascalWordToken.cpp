@@ -1,7 +1,7 @@
 /**
- * <h1>PascalWordToken</h1>
+ * <h1>JavaWordToken</h1>
  *
- * <p> Pascal word tokens (identifiers and reserved words).</p>
+ * <p> Java word tokens (identifiers and reserved words).</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
@@ -10,26 +10,26 @@
 #include <string>
 #include <algorithm>
 #include <map>
-#include "PascalWordToken.h"
-#include "../PascalError.h"
+#include "JavaWordToken.h"
+#include "../JavaError.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::Java;
 
-PascalWordToken::PascalWordToken(Source *source) throw (string)
-    : PascalToken(source)
+JavaWordToken::JavaWordToken(Source *source) throw (string)
+    : JavaToken(source)
 {
     extract();
 }
 
 /**
- * Extract a Pascal word token from the source.
+ * Extract a Java word token from the source.
  * @throws Exception if an error occurred.
  */
-void PascalWordToken::extract() throw (string)
+void JavaWordToken::extract() throw (string)
 {
     char current_ch = current_char();
 
@@ -45,11 +45,11 @@ void PascalWordToken::extract() throw (string)
     string upper_case(text);
     transform(upper_case.begin(), upper_case.end(),
               upper_case.begin(), ::toupper);
-    if (PascalToken::RESERVED_WORDS.find(upper_case)
-            != PascalToken::RESERVED_WORDS.end())
+    if (JavaToken::RESERVED_WORDS.find(upper_case)
+            != JavaToken::RESERVED_WORDS.end())
     {
         // Reserved word.
-        type = (TokenType) PascalToken::RESERVED_WORDS[upper_case];
+        type = (TokenType) JavaToken::RESERVED_WORDS[upper_case];
         value = new DataValue(upper_case);
     }
     else
@@ -59,4 +59,4 @@ void PascalWordToken::extract() throw (string)
     }
 }
 
-}}}}  // namespace wci::frontend::pascal::tokens
+}}}}  // namespace wci::frontend::java::tokens

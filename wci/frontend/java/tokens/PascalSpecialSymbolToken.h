@@ -1,23 +1,23 @@
 /**
- * <h1>PascalSpecialSymbolToken</h1>
+ * <h1>JavaSpecialSymbolToken</h1>
  *
- * <p> Pascal special symbol tokens.</p>
+ * <p> Java special symbol tokens.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
-#ifndef WCI_FRONTEND_PASCAL_TOKENS_PASCALSPECIALSYMBOLTOKEN_H_
-#define WCI_FRONTEND_PASCAL_TOKENS_PASCALSPECIALSYMBOLTOKEN_H_
+#ifndef WCI_FRONTEND_JAVA_TOKENS_JAVASPECIALSYMBOLTOKEN_H_
+#define WCI_FRONTEND_JAVA_TOKENS_JAVASPECIALSYMBOLTOKEN_H_
 
 #include <string>
-#include "../PascalToken.h"
+#include "../JavaToken.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::Java;
 
-class PascalSpecialSymbolToken : public PascalToken
+class JavaSpecialSymbolToken : public JavaToken
 {
 public:
     /**
@@ -25,17 +25,17 @@ public:
      * @param source the source from where to fetch the token's characters.
      * @throw a string message if an error occurred.
      */
-    PascalSpecialSymbolToken(Source *source) throw (string);
+    JavaSpecialSymbolToken(Source *source) throw (string);
 
 protected:
     /**
-     * Extract a Pascal special symbol token from the source.
+     * Extract a Java special symbol token from the source.
      * Override of wci::frontend::Token.
      * @throw a string message if an error occurred.
      */
     void extract() throw (string);
 };
 
-}}}}  // namespace wci::frontend::pascal::tokens
+}}}}  // namespace wci::frontend::Java::tokens
 
-#endif /* WCI_FRONTEND_PASCAL_TOKENS_PASCALSPECIALSYMBOLTOKEN_H_ */
+#endif /* WCI_FRONTEND_JAVA_TOKENS_JAVASPECIALSYMBOLTOKEN_H_ */

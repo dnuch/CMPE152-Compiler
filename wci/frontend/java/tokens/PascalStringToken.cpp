@@ -1,28 +1,28 @@
 /**
- * <h1>PascalStringToken</h1>
+ * <h1>JavaStringToken</h1>
  *
- * <p> Pascal string tokens.</p>
+ * <p> Java string tokens.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
 #include <string>
-#include "PascalStringToken.h"
-#include "../PascalError.h"
+#include "JavaStringToken.h"
+#include "../JavaError.h"
 
-namespace wci { namespace frontend { namespace pascal { namespace tokens {
+namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::pascal;
+using namespace wci::frontend::Java;
 
-PascalStringToken::PascalStringToken(Source *source) throw (string)
-    : PascalToken(source)
+JavaStringToken::JavaStringToken(Source *source) throw (string)
+    : JavaToken(source)
 {
     extract();
 }
 
-void PascalStringToken::extract() throw (string)
+void JavaStringToken::extract() throw (string)
 {
     string value_str = "";
 
@@ -69,4 +69,4 @@ void PascalStringToken::extract() throw (string)
     }
 }
 
-}}}}  // namespace wci::frontend::pascal::tokens
+}}}}  // namespace wci::frontend::java::tokens
