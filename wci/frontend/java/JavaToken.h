@@ -28,17 +28,20 @@ enum class JavaTokenType
     // Reserved words.
     ABSTRACT, DOUBLE, INTEGER, LONG_INT, BREAK, ELSE, SWITCH, CASE, 
     ENUM, NATIVE, SUPER, CHARACTER, EXTENDS, RETURN, THIS, CLASS, 
-    Float, Short, THROW, Const, FOR, PACKAGE, Void, CONTINUE, GOTO, 
-    PROTECTED, VOLATILE, DO, IF, Static, WHILE,
+    FLOAT, SHORT, THROW, Const, FOR, PACKAGE, VOID, CONTINUE, GOTO, 
+    PROTECTED, VOLATILE, DO, IF, STATIC, WHILE,
 
     // Special symbols.
-    TILDA, NOT, AT, MODULE, BIT_XOR, BIT_AND, MULT, MINUS, PLUS, EQUAL, 
+    TILDE, NOT, AT, MODULE, BIT_XOR, BIT_AND, MULT, MINUS, PLUS, EQUAL, 
     BIT_OR, DIVIDE, COLON, SEMICOLON, QUESTIONMARK, LESS_THAN, 
     GREATER_THAN, DOT, COMMA, SINGLE_QUOTE, DOUBLE_QUOTE, LEFT_PAREN, RIGHT_PAREN,
     LEFT_BRACKET, RIGHT_BRACKET, LEFT_BRACE, RIGHT_BRACE, INCREMENT, DECREMENT,
     SHIFT_LEFT, SHIFT_RIGHT, LESS_EQUALS, GREATER_EQUALS, PLUS_ASSIGN, MINUS_ASSIGN,
     MULT_ASSIGN, DIVIDE_ASSIGN, COMPARE, BIT_OR_ASSIGN, MODULE_ASSIGN, BIT_XOR_ASSIGN,
-    NOT_EQUALS, SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN, OR, AND, COMMENT, COMMENT_START, COMMENT_END
+    NOT_EQUALS, SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN, OR, AND, COMMENT, COMMENT_START, COMMENT_END,
+
+    IDENTIFIER, INTEGER, REAL, STRING,
+    ERROR, END_OF_FILE
 };
 
 constexpr JavaTokenType PT_ABSTRACT = JavaTokenType::ABSTRACT;
@@ -59,13 +62,13 @@ constexpr JavaTokenType PT_RETURN = JavaTokenType::RETURN;
 constexpr JavaTokenType PT_THIS = JavaTokenType::THIS;
 constexpr JavaTokenType PT_CLASS = JavaTokenType::CLASS;
 
-constexpr JavaTokenType PT_Float = JavaTokenType::Float;
-constexpr JavaTokenType PT_Short = JavaTokenType::Short;
+constexpr JavaTokenType PT_FLOAT = JavaTokenType::FLOAT;
+constexpr JavaTokenType PT_SHORT = JavaTokenType::SHORT;
 constexpr JavaTokenType PT_THROW = JavaTokenType::THROW;
-constexpr JavaTokenType PT_Const = JavaTokenType::Const;
+constexpr JavaTokenType PT_CONST = JavaTokenType::CONST;
 constexpr JavaTokenType PT_FOR = JavaTokenType::FOR;
 constexpr JavaTokenType PT_PACKAGE = JavaTokenType::PACKAGE;
-constexpr JavaTokenType PT_Void = JavaTokenType::Void;
+constexpr JavaTokenType PT_VOID = JavaTokenType::VOID;
 constexpr JavaTokenType PT_CONTINUE = JavaTokenType::CONTINUE;
 
 constexpr JavaTokenType PT_GOTO = JavaTokenType::GOTO;
@@ -73,10 +76,10 @@ constexpr JavaTokenType PT_PROTECTED = JavaTokenType::PROTECTED;
 constexpr JavaTokenType PT_VOLATILE = JavaTokenType::VOLATILE;
 constexpr JavaTokenType PT_DO = JavaTokenType::DO;
 constexpr JavaTokenType PT_IF = JavaTokenType::IF;
-constexpr JavaTokenType PT_Static = JavaTokenType::Static;
+constexpr JavaTokenType PT_STATIC = JavaTokenType::STATIC;
 constexpr JavaTokenType PT_WHILE = JavaTokenType::WHILE; //end of reserve words
 
-constexpr JavaTokenType PT_TILDA = JavaTokenType::TILDA;
+constexpr JavaTokenType PT_TILDE = JavaTokenType::TILDE;
 constexpr JavaTokenType PT_NOT = JavaTokenType::NOT;
 constexpr JavaTokenType PT_AT = JavaTokenType::AT;
 constexpr JavaTokenType PT_MODULE = JavaTokenType::MODULE;
@@ -130,7 +133,9 @@ constexpr JavaTokenType PT_AND = JavaTokenType::END;
 constexpr JavaTokenType PT_COMMENT_START = JavaTokenType::COMMENT_START;
 constexpr JavaTokenType PT_COMMENT_END = JavaTokenType::COMMENT_END;
 
-
+constexpr JavaTokenType PT_INTEGER = JavaTokenType::INTEGER;  
+constexpr JavaTokenType PT_REAL = JavaTokenType::REAL; 
+constexpr JavaTokenType PT_STRING = JavaTokenType::STRING; 
 constexpr JavaTokenType PT_ERROR = JavaTokenType::ERROR;
 constexpr JavaTokenType PT_END_OF_FILE = JavaTokenType::END_OF_FILE;
 
