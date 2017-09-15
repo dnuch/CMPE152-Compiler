@@ -15,7 +15,7 @@
 namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
-using namespace wci::frontend::Java;
+using namespace wci::frontend::java;
 
 class JavaSpecialSymbolToken : public JavaToken
 {

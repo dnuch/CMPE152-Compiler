@@ -15,7 +15,7 @@
 #include "wci/frontend/Scanner.h"
 #include "wci/frontend/Source.h"
 #include "wci/frontend/FrontendFactory.h"
-#include "wci/frontend/Java/JavaToken.h"
+#include "wci/frontend/java/JavaToken.h"
 #include "wci/intermediate/SymTab.h"
 #include "wci/intermediate/ICode.h"
 #include "wci/backend/Backend.h"
@@ -25,7 +25,7 @@
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::Java;
+using namespace wci::frontend::java;
 using namespace wci::intermediate;
 using namespace wci::backend;
 using namespace wci::message;

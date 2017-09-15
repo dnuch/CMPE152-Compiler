@@ -14,7 +14,7 @@ namespace wci { namespace frontend { namespace java { namespace tokens {
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::Java;
+using namespace wci::frontend::java;
 
 JavaStringToken::JavaStringToken(Source *source) throw (string)
     : JavaToken(source)
