@@ -95,13 +95,11 @@ void JavaToken::initialize()
         JavaTokenType::EQUAL,
         JavaTokenType::BIT_OR,
         JavaTokenType::DIVIDE,
-
         JavaTokenType::COLON,
         JavaTokenType::SEMICOLON,
         JavaTokenType::QUESTIONMARK,
         JavaTokenType::LESS_THAN,
         JavaTokenType::GREATER_THAN,
-        JavaTokenType::DIVIDE,
         JavaTokenType::DOT,
         JavaTokenType::COMMA,
         JavaTokenType::SINGLE_QUOTE,
@@ -109,7 +107,6 @@ void JavaToken::initialize()
         JavaTokenType::LEFT_PAREN,
         JavaTokenType::RIGHT_PAREN,
         JavaTokenType::LEFT_BRACKET,
-
         JavaTokenType::RIGHT_BRACKET,
         JavaTokenType::LEFT_BRACE,
         JavaTokenType::RIGHT_BRACE,
@@ -118,24 +115,11 @@ void JavaToken::initialize()
         JavaTokenType::SHIFT_LEFT,
         JavaTokenType::SHIFT_RIGHT,
         JavaTokenType::LESS_EQUALS,
-        JavaTokenType::GREATER_EQUALS,JavaTokenType::COLON,
-        JavaTokenType::SEMICOLON,
-        JavaTokenType::QUESTIONMARK,
-        JavaTokenType::LESS_THAN,
-        JavaTokenType::GREATER_THAN,
-        JavaTokenType::DIVIDE,
-        JavaTokenType::DOT,
-        JavaTokenType::COMMA,
-        JavaTokenType::SINGLE_QUOTE,
-        JavaTokenType::DOUBLE_QUOTE,
-        JavaTokenType::LEFT_PAREN,
-        JavaTokenType::RIGHT_PAREN,
-        JavaTokenType::LEFT_PAREN,
+        JavaTokenType::GREATER_EQUALS,
         JavaTokenType::PLUS_ASSIGN,
         JavaTokenType::MINUS_ASSIGN,
         JavaTokenType::MULT_ASSIGN,
         JavaTokenType::DIVIDE_ASSIGN,
-
         JavaTokenType::COMPARE,
         JavaTokenType::BIT_OR_ASSIGN,
         JavaTokenType::MODULE_ASSIGN,
@@ -145,6 +129,7 @@ void JavaToken::initialize()
         JavaTokenType::SHIFT_RIGHT_ASSIGN,
         JavaTokenType::OR,
         JavaTokenType::AND,
+		JavaTokenType::COMMENT,
         JavaTokenType::COMMENT_START,
         JavaTokenType::COMMENT_END
 
@@ -154,7 +139,7 @@ void JavaToken::initialize()
     {
         SPECIAL_SYMBOLS[ss_strings[i]] = ss_keys[i];
     }
-//change these
+
     vector<string> ss_names =
     {
          "TILDE", "NOT", "AT", "MODULE", "BIT_XOR", "BIT_AND", "MULT", "MINUS", "PLUS", "EQUAL", "BIT_OR", "DIVIDE", "COLON", "SEMICOLON", "QUESTIONMARK", "LESS_THAN", "GREATER_THAN", "DOT", "COMMA", "SINGLE_QUOTE", "DOUBLE_QUOTE", "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", "INCREMENT", "DECREMENT", "SHIFT_LEFT", "SHIFT_RIGHT", "LESS_EQUALS", "GREATER_EQUALS", "PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIVIDE_ASSIGN", "COMPARE", "BIT_OR_ASSIGN", "MODULE_ASSIGN", "BIT_XOR_ASSIGN", "NOT_EQUALS", "SHIFT_LEFT_ASSIGN", "SHIFT_RIGHT_ASSIGN", "OR", "AND", "COMMENT", "COMMENT_START", "COMMENT_END"

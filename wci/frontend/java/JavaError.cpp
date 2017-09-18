@@ -47,11 +47,14 @@ void JavaError::initialize()
         JavaErrorCode::EXPECTED_ID_STRING_OR_NUM,
         JavaErrorCode::EXPECTED_WHILE,
         JavaErrorCode::INVALID_CHAR,
+		JavaErrorCode::INVALID_NUMBER,
         JavaErrorCode::LABEL_NOT_FOUND,
         JavaErrorCode::LABEL_REDEFINED,
+	    JavaErrorCode::RANGE_INTEGER,
+	    JavaErrorCode::RANGE_REAL,
         JavaErrorCode::RET_OUTSIDE_FUNC,
-        //JavaErrorCode::SYNTAX_ERROR,
         JavaErrorCode::THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE,
+		JavaErrorCode::UNEXPECTED_EOF,
         JavaErrorCode::UNTERMINATED_COMMENT,
         JavaErrorCode::UNTERMINATED_STRING_CONST,
 
@@ -84,11 +87,14 @@ void JavaError::initialize()
         "Expected identifier, string or number",
         "Expected 'while'",
         "Invalid character",
+		"Invalid number",
         "Label not found",
         "Label redefined",
+        "Integer literal out of range",
+        "Real literal out of range",
         "'return' statement outside of function",
-        //"Syntax error",
         "Throw must be followed by an expression on the same source line",
+		"Unexpected end of file",
         "Unterminated comment",
         "Unterminated string constant",
 
@@ -97,7 +103,7 @@ void JavaError::initialize()
         "Too many syntax errors"
     };
 
-    for (int i = 0; i < error_codes.size(); i++)
+    for (unsigned int i = 0; i < error_codes.size(); i++)
     {
         SYNTAX_ERROR_MESSAGES[error_codes[i]] = error_messages[i];
     }

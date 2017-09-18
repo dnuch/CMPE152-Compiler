@@ -92,7 +92,6 @@ constexpr JavaErrorCode UNEXPECTED_EOF = JavaErrorCode::UNEXPECTED_EOF;
 constexpr JavaErrorCode UNTERMINATED_COMMENT = JavaErrorCode::UNTERMINATED_COMMENT;
 constexpr JavaErrorCode UNTERMINATED_STRING_CONST = JavaErrorCode::UNTERMINATED_STRING_CONST;
 
-
 constexpr JavaErrorCode IO_ERROR = JavaErrorCode::IO_ERROR;
 constexpr JavaErrorCode TOO_MANY_ERRORS = JavaErrorCode::TOO_MANY_ERRORS;
 

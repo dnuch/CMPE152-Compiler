@@ -25,7 +25,7 @@
 
 using namespace std;
 using namespace wci::frontend;
-using namespace wci::frontend::java;    
+using namespace wci::frontend::java;
 using namespace wci::intermediate;
 using namespace wci::backend;
 using namespace wci::message;
@@ -48,7 +48,7 @@ int main(int argc, char *args[])
         if ((operation != "compile") && (operation != "execute"))
         {
             throw USAGE;
-        }   
+        }
 
         // Flags.
         string flags = "";
