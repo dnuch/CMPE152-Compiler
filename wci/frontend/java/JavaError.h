@@ -43,11 +43,14 @@ enum class JavaErrorCode
     EXPECTED_ID_STRING_OR_NUM,
     EXPECTED_WHILE,
     INVALID_CHAR,
+    INVALID_NUMBER,
     LABEL_NOT_FOUND,
     LABEL_REDEFINED,
+    RANGE_INTEGER,
+    RANGE_REAL,
     RET_OUTSIDE_FUNC,
-    SYNTAX_ERROR,
     THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE,
+    UNEXPECTED_EOF,
     UNTERMINATED_COMMENT,
     UNTERMINATED_STRING_CONST,
 
@@ -78,11 +81,14 @@ constexpr JavaErrorCode EXPECTED_ID = JavaErrorCode::EXPECTED_ID;
 constexpr JavaErrorCode EXPECTED_ID_STRING_OR_NUM = JavaErrorCode::EXPECTED_ID_STRING_OR_NUM;
 constexpr JavaErrorCode EXPECTED_WHILE = JavaErrorCode::EXPECTED_WHILE;
 constexpr JavaErrorCode INVALID_CHAR = JavaErrorCode::INVALID_CHAR;
+constexpr JavaErrorCode INVALID_NUMBER = JavaErrorCode::INVALID_NUMBER;
 constexpr JavaErrorCode LABEL_NOT_FOUND = JavaErrorCode::LABEL_NOT_FOUND;
 constexpr JavaErrorCode LABEL_REDEFINED = JavaErrorCode::LABEL_REDEFINED;
+constexpr JavaErrorCode RANGE_INTEGER = JavaErrorCode::RANGE_INTEGER;
+constexpr JavaErrorCode RANGE_REAL = JavaErrorCode::RANGE_REAL;
 constexpr JavaErrorCode RET_OUTSIDE_FUNC = JavaErrorCode::RET_OUTSIDE_FUNC;
-constexpr JavaErrorCode SYNTAX_ERROR = JavaErrorCode::SYNTAX_ERROR;
 constexpr JavaErrorCode THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE = JavaErrorCode::THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE;
+constexpr JavaErrorCode UNEXPECTED_EOF = JavaErrorCode::UNEXPECTED_EOF;
 constexpr JavaErrorCode UNTERMINATED_COMMENT = JavaErrorCode::UNTERMINATED_COMMENT;
 constexpr JavaErrorCode UNTERMINATED_STRING_CONST = JavaErrorCode::UNTERMINATED_STRING_CONST;
 

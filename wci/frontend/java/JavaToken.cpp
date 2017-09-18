@@ -6,12 +6,12 @@
   * <p>Copyright (c) 2017 by Ronald Mak</p>
   * <p>For instructional purposes only.  No warranties.</p>
   */
- #include <string>
- #include <vector>
- #include <map>
- #include "JavaToken.h"
+#include <string>
+#include <vector>
+#include <map>
+#include "JavaToken.h"
 
-namespace wci { namespace frontend { namespace Java {
+namespace wci { namespace frontend { namespace java {
 
 using namespace std;
 
@@ -36,7 +36,7 @@ void JavaToken::initialize()
     vector<JavaTokenType> rw_keys =
     {
         JavaTokenType::ABSTRACT,
-        JavaTokenType::DOUBLE
+        JavaTokenType::DOUBLE,
         JavaTokenType::INTEGER,
         JavaTokenType::LONG_INT,
         JavaTokenType::BREAK,
@@ -53,13 +53,13 @@ void JavaToken::initialize()
         JavaTokenType::THIS,
         JavaTokenType::CLASS,
 
-        JavaTokenType::Float,
-        JavaTokenType::Short,
+        JavaTokenType::FLOAT,
+        JavaTokenType::SHORT,
         JavaTokenType::THROW,
-        JavaTokenType::Const,
+        JavaTokenType::CONST,
         JavaTokenType::FOR,
         JavaTokenType::PACKAGE,
-        JavaTokenType::Void,
+        JavaTokenType::VOID,
         JavaTokenType::CONTINUE,
 
         JavaTokenType::GOTO,
@@ -67,28 +67,23 @@ void JavaToken::initialize()
         JavaTokenType::VOLATILE,
         JavaTokenType::DO,
         JavaTokenType::IF,
-        JavaTokenType::Static,
-        JavaTokenType::WHILE,
-
-        
+        JavaTokenType::STATIC,
+        JavaTokenType::WHILE
     };
 
-    for (int i = 0; i < rw_strings.size(); i++)
+    for (unsigned int i = 0; i < rw_strings.size(); i++)
     {
         RESERVED_WORDS[rw_strings[i]] = rw_keys[i];
     }
 
     vector<string> ss_strings =
     {
-        "~", "!", "@", "%", "^", "&", "*", "-", "+", "=", "|", "/", ":",
-        ";", "?", "<", ">", ".", ",", "'", '"', "(", ")", "[", "]", "{", "}", 
-        "++", "--", "<<", ">>", "<=", ">=", "+=", "-=", "*=", "/=", "==",  
-        "|=", "%=", "&=", "^=", "!=", "<<=", ">>=", "||", "&&", "//", "/*", "*/";
+        "~", "!", "@", "%", "^", "&", "*", "-", "+", "=", "|", "/", ":", ";", "?", "<", ">", ".", ",", "'", "\"", "(", ")", "[", "]", "{", "}", "++", "--", "<<", ">>", "<=", ">=", "+=", "-=", "*=", "/=", "==", "|=", "%=", "&=", "^=", "!=", "<<=", ">>=", "||", "&&", "//", "/*", "*/"
     };
-
+    
     vector<JavaTokenType> ss_keys =
     {
-        JavaTokenType::TILDA,
+        JavaTokenType::TILDE,
         JavaTokenType::NOT,
         JavaTokenType::AT,
         JavaTokenType::MODULE,
@@ -149,28 +144,23 @@ void JavaToken::initialize()
         JavaTokenType::SHIFT_LEFT_ASSIGN,
         JavaTokenType::SHIFT_RIGHT_ASSIGN,
         JavaTokenType::OR,
-        JavaTokenType::END,
+        JavaTokenType::AND,
         JavaTokenType::COMMENT_START,
         JavaTokenType::COMMENT_END
 
     };
 
-    for (int i = 0; i < ss_strings.size(); i++)
+    for (unsigned int i = 0; i < ss_strings.size(); i++)
     {
         SPECIAL_SYMBOLS[ss_strings[i]] = ss_keys[i];
     }
 //change these
     vector<string> ss_names =
     {
-         "TILDA", "NOT", "AT", "MODULE", "BIT_XOR", "BIT_AND", "MULT", "MINUS", "PLUS", "EQUAL", "
-    BIT_OR", "DIVIDE", "COLON", "SEMICOLON", "QUESTIONMARK", "LESS_THAN", "
-    GREATER_THAN", "DOT", "COMMA", "SINGLE_QUOTE", "DOUBLE_QUOTE", "LEFT_PAREN", "RIGHT_PAREN", "
-    LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", "INCREMENT", "DECREMENT", "
-    SHIFT_LEFT", "SHIFT_RIGHT", "LESS_EQUALS", "GREATER_EQUALS", "PLUS_ASSIGN", "MINUS_ASSIGN", "
-    MULT_ASSIGN", "DIVIDE_ASSIGN", "COMPARE", "BIT_OR_ASSIGN", "MODULE_ASSIGN", "BIT_XOR_ASSIGN", "
-    NOT_EQUALS", "SHIFT_LEFT_ASSIGN", "SHIFT_RIGHT_ASSIGN", "OR", "AND", "COMMENT", "COMMENT_START", "COMMENT_END"};
+         "TILDE", "NOT", "AT", "MODULE", "BIT_XOR", "BIT_AND", "MULT", "MINUS", "PLUS", "EQUAL", "BIT_OR", "DIVIDE", "COLON", "SEMICOLON", "QUESTIONMARK", "LESS_THAN", "GREATER_THAN", "DOT", "COMMA", "SINGLE_QUOTE", "DOUBLE_QUOTE", "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", "INCREMENT", "DECREMENT", "SHIFT_LEFT", "SHIFT_RIGHT", "LESS_EQUALS", "GREATER_EQUALS", "PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIVIDE_ASSIGN", "COMPARE", "BIT_OR_ASSIGN", "MODULE_ASSIGN", "BIT_XOR_ASSIGN", "NOT_EQUALS", "SHIFT_LEFT_ASSIGN", "SHIFT_RIGHT_ASSIGN", "OR", "AND", "COMMENT", "COMMENT_START", "COMMENT_END"
+    };
 
-    for (int i = 0; i < ss_names.size(); i++)
+    for (unsigned int i = 0; i < ss_names.size(); i++)
     {
         SPECIAL_SYMBOL_NAMES[ss_keys[i]] = ss_names[i];
     }

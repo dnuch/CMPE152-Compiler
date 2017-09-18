@@ -105,7 +105,7 @@ void JavaSpecialSymbolToken::extract() throw (string)
         {
             next_char();  // consume bad character
             type = (TokenType) (PT_ERROR);
-            value = new DataValue((int) INVALID_CHARACTER);
+            value = new DataValue((int) INVALID_CHAR);
             good_symbol = false;
         }
     }
