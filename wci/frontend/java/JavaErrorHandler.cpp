@@ -27,11 +27,13 @@ void JavaErrorHandler::flag(Token *token, JavaErrorCode error_code,
 {
     // Notify the parser's listeners.
     string error_message = JavaError::SYNTAX_ERROR_MESSAGES[error_code];
+    
     Message message(SYNTAX_ERROR,
                     LINE_NUMBER, to_string(token->get_line_number()),
                     POSITION, to_string(token->get_position()),
                     TOKEN_TEXT, token->get_text(),
                     ERROR_MESSAGE, error_message);
+    
     parser->send_message(message);
 
     if (++error_count > MAX_ERRORS)

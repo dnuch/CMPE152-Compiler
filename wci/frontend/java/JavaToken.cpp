@@ -1,15 +1,4 @@
-/**
- * <h1>JavaToken</h1>
- *
- * <p>Base class for Java token classes.</p>
- *
- * <p>Copyright (c) 2017 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
- */
-#include <string>
-#include <vector>
-#include <map>
-#include "JavaToken.h"
+GER
 
 namespace wci { namespace frontend { namespace Java {
 

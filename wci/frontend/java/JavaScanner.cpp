@@ -62,7 +62,7 @@ Token *JavaScanner::extract_token() throw (string)
     }
     else
     {
-        token = new JavaErrorToken(source, INVALID_CHARACTER, string_ch);
+        token = new JavaErrorToken(source, INVALID_CHAR, string_ch);
         next_char();  // consume character
     }
 
@@ -100,8 +100,8 @@ void JavaScanner::skip_white_space() throw (string)
             {
                 do
                 {
-                    current_ch
-                } while (current_ch != '\n')
+                    current_ch = next_char();
+                } while (current_ch != '\n');
             }
         }
 

@@ -26,9 +26,9 @@ using namespace wci::frontend;
 enum class JavaTokenType
 {
     // Reserved words.
-    ABSTRACT, DOUBLE, INTEGER, LONG_INT, BREAK, ELSE, SWITCH, CASE, 
+    ABSTRACT, DOUBLE, LONG_INT, BREAK, ELSE, SWITCH, CASE, 
     ENUM, NATIVE, SUPER, CHARACTER, EXTENDS, RETURN, THIS, CLASS, 
-    FLOAT, SHORT, THROW, Const, FOR, PACKAGE, VOID, CONTINUE, GOTO, 
+    FLOAT, SHORT, THROW, CONST, FOR, PACKAGE, VOID, CONTINUE, GOTO, 
     PROTECTED, VOLATILE, DO, IF, STATIC, WHILE,
 
     // Special symbols.
@@ -46,7 +46,6 @@ enum class JavaTokenType
 
 constexpr JavaTokenType PT_ABSTRACT = JavaTokenType::ABSTRACT;
 constexpr JavaTokenType PT_DOUBLE = JavaTokenType::DOUBLE;
-constexpr JavaTokenType PT_INTEGER = JavaTokenType::INTEGER;
 constexpr JavaTokenType PT_LONG_INT = JavaTokenType::LONG_INT;
 constexpr JavaTokenType PT_BREAK = JavaTokenType::BREAK;
 constexpr JavaTokenType PT_ELSE = JavaTokenType::ELSE;
@@ -98,7 +97,6 @@ constexpr JavaTokenType PT_QUESTIONMARK = JavaTokenType::QUESTIONMARK;
 constexpr JavaTokenType PT_LESS_THAN = JavaTokenType::LESS_THAN;
 
 constexpr JavaTokenType PT_GREATER_THAN = JavaTokenType::GREATER_THAN; //
-constexpr JavaTokenType PT_DIVIDE = JavaTokenType::DIVIDE;
 constexpr JavaTokenType PT_DOT = JavaTokenType::DOT;
 constexpr JavaTokenType PT_COMMA = JavaTokenType::COMMA;
 constexpr JavaTokenType PT_SINGLE_QUOTE = JavaTokenType::SINGLE_QUOTE;
@@ -129,10 +127,11 @@ constexpr JavaTokenType PT_NOT_EQUALS = JavaTokenType::NOT_EQUALS;
 constexpr JavaTokenType PT_SHIFT_LEFT_ASSIGN = JavaTokenType::SHIFT_LEFT_ASSIGN;
 constexpr JavaTokenType PT_SHIFT_RIGHT_ASSIGN = JavaTokenType::SHIFT_RIGHT_ASSIGN;
 constexpr JavaTokenType PT_OR = JavaTokenType::OR;
-constexpr JavaTokenType PT_AND = JavaTokenType::END;
+constexpr JavaTokenType PT_AND = JavaTokenType::AND;
 constexpr JavaTokenType PT_COMMENT_START = JavaTokenType::COMMENT_START;
 constexpr JavaTokenType PT_COMMENT_END = JavaTokenType::COMMENT_END;
 
+constexpr JavaTokenType PT_IDENTIFIER = JavaTokenType::IDENTIFIER;  
 constexpr JavaTokenType PT_INTEGER = JavaTokenType::INTEGER;  
 constexpr JavaTokenType PT_REAL = JavaTokenType::REAL; 
 constexpr JavaTokenType PT_STRING = JavaTokenType::STRING; 

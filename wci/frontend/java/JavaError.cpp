@@ -53,7 +53,7 @@ void JavaError::initialize()
         JavaErrorCode::SYNTAX_ERROR,
         JavaErrorCode::THROW_MUST_BE_FOLL_BY_STAT_ON_SAME_LINE,
         JavaErrorCode::UNTERMINATED_COMMENT,
-        JavaErrorCode::UNTERMINATED_STRING_CONST
+        JavaErrorCode::UNTERMINATED_STRING_CONST,
 
         // Fatal errors.
         JavaErrorCode::IO_ERROR,
