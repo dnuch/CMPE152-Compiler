@@ -78,7 +78,7 @@ void JavaToken::initialize()
 
     vector<string> ss_strings =
     {
-        "~", "!", "@", "%", "^", "&", "*", "-", "+", "=", "|", "/", ":", ";", "?", "<", ">", ".", ",", "'", "\"", "(", ")", "[", "]", "{", "}", "++", "--", "<<", ">>", "<=", ">=", "+=", "-=", "*=", "/=", "==", "|=", "%=", "&=", "^=", "!=", "<<=", ">>=", "||", "&&", "//", "/*", "*/"
+        "~", "!", "@", "%", "^", "&", "*", "-", "+", "=", "|", "/", ":", ";", "?", "<", ">", ".", ",", "\'", "\"", "\t", "\n","(", ")", "[", "]", "{", "}", "++", "--", "<<", ">>", "<=", ">=", "+=", "-=", "*=", "/=", "==", "|=", "%=", "&=", "^=", "!=", "<<=", ">>=", "||", "&&", "//", "/*", "*/"
     };
     
     vector<JavaTokenType> ss_keys =
@@ -86,7 +86,7 @@ void JavaToken::initialize()
         JavaTokenType::TILDE,
         JavaTokenType::NOT,
         JavaTokenType::AT,
-        JavaTokenType::MODULE,
+        JavaTokenType::MODULUS,
         JavaTokenType::BIT_XOR,
         JavaTokenType::BIT_AND,
         JavaTokenType::MULT,
@@ -104,6 +104,8 @@ void JavaToken::initialize()
         JavaTokenType::COMMA,
         JavaTokenType::SINGLE_QUOTE,
         JavaTokenType::DOUBLE_QUOTE,
+        JavaTokenType::TAB,
+        JavaTokenType::NEW_LINE,
         JavaTokenType::LEFT_PAREN,
         JavaTokenType::RIGHT_PAREN,
         JavaTokenType::LEFT_BRACKET,
@@ -122,14 +124,14 @@ void JavaToken::initialize()
         JavaTokenType::DIVIDE_ASSIGN,
         JavaTokenType::COMPARE,
         JavaTokenType::BIT_OR_ASSIGN,
-        JavaTokenType::MODULE_ASSIGN,
+        JavaTokenType::MODULUS_ASSIGN,
         JavaTokenType::BIT_XOR_ASSIGN,
         JavaTokenType::NOT_EQUALS,
         JavaTokenType::SHIFT_LEFT_ASSIGN,
         JavaTokenType::SHIFT_RIGHT_ASSIGN,
         JavaTokenType::OR,
         JavaTokenType::AND,
-		JavaTokenType::COMMENT,
+	JavaTokenType::COMMENT,
         JavaTokenType::COMMENT_START,
         JavaTokenType::COMMENT_END
 
@@ -142,7 +144,7 @@ void JavaToken::initialize()
 
     vector<string> ss_names =
     {
-         "TILDE", "NOT", "AT", "MODULE", "BIT_XOR", "BIT_AND", "MULT", "MINUS", "PLUS", "EQUAL", "BIT_OR", "DIVIDE", "COLON", "SEMICOLON", "QUESTIONMARK", "LESS_THAN", "GREATER_THAN", "DOT", "COMMA", "SINGLE_QUOTE", "DOUBLE_QUOTE", "LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", "INCREMENT", "DECREMENT", "SHIFT_LEFT", "SHIFT_RIGHT", "LESS_EQUALS", "GREATER_EQUALS", "PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIVIDE_ASSIGN", "COMPARE", "BIT_OR_ASSIGN", "MODULE_ASSIGN", "BIT_XOR_ASSIGN", "NOT_EQUALS", "SHIFT_LEFT_ASSIGN", "SHIFT_RIGHT_ASSIGN", "OR", "AND", "COMMENT", "COMMENT_START", "COMMENT_END"
+         "TILDE", "NOT", "AT", "MODULUS", "BIT_XOR", "BIT_AND", "MULT", "MINUS", "PLUS", "EQUAL", "BIT_OR", "DIVIDE", "COLON", "SEMICOLON", "QUESTIONMARK", "LESS_THAN", "GREATER_THAN", "DOT", "COMMA", "SINGLE_QUOTE", "DOUBLE_QUOTE", "TAB", "NEW_LINE","LEFT_PAREN", "RIGHT_PAREN", "LEFT_BRACKET", "RIGHT_BRACKET", "LEFT_BRACE", "RIGHT_BRACE", "INCREMENT", "DECREMENT", "SHIFT_LEFT", "SHIFT_RIGHT", "LESS_EQUALS", "GREATER_EQUALS", "PLUS_ASSIGN", "MINUS_ASSIGN", "MULT_ASSIGN", "DIVIDE_ASSIGN", "COMPARE", "BIT_AND_ASSIGN","BIT_OR_ASSIGN", "MODULUS_ASSIGN", "BIT_XOR_ASSIGN", "NOT_EQUALS", "SHIFT_LEFT_ASSIGN", "SHIFT_RIGHT_ASSIGN", "OR", "AND", "COMMENT", "COMMENT_START", "COMMENT_END"
     };
 
     for (unsigned int i = 0; i < ss_names.size(); i++)

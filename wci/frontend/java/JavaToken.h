@@ -32,12 +32,12 @@ enum class JavaTokenType
     PROTECTED, VOLATILE, DO, IF, STATIC, WHILE,
 
     // Special symbols.
-    TILDE, NOT, AT, MODULE, BIT_XOR, BIT_AND, MULT, MINUS, PLUS, EQUAL, 
+    TILDE, NOT, AT, MODULUS, BIT_XOR, BIT_AND, MULT, MINUS, PLUS, EQUAL, 
     BIT_OR, DIVIDE, COLON, SEMICOLON, QUESTIONMARK, LESS_THAN, 
-    GREATER_THAN, DOT, COMMA, SINGLE_QUOTE, DOUBLE_QUOTE, LEFT_PAREN, RIGHT_PAREN,
+    GREATER_THAN, DOT, COMMA, SINGLE_QUOTE, DOUBLE_QUOTE, TAB, NEW_LINE, LEFT_PAREN, RIGHT_PAREN,
     LEFT_BRACKET, RIGHT_BRACKET, LEFT_BRACE, RIGHT_BRACE, INCREMENT, DECREMENT,
     SHIFT_LEFT, SHIFT_RIGHT, LESS_EQUALS, GREATER_EQUALS, PLUS_ASSIGN, MINUS_ASSIGN,
-    MULT_ASSIGN, DIVIDE_ASSIGN, COMPARE, BIT_OR_ASSIGN, MODULE_ASSIGN, BIT_XOR_ASSIGN,
+    MULT_ASSIGN, DIVIDE_ASSIGN, COMPARE, BIT_OR_ASSIGN, MODULUS_ASSIGN, BIT_XOR_ASSIGN,
     NOT_EQUALS, SHIFT_LEFT_ASSIGN, SHIFT_RIGHT_ASSIGN, OR, AND, COMMENT, COMMENT_START, COMMENT_END,
 
     IDENTIFIER, INTEGER, REAL, STRING,
@@ -78,7 +78,7 @@ constexpr JavaTokenType PT_WHILE = JavaTokenType::WHILE; //end of reserve words
 constexpr JavaTokenType PT_TILDE = JavaTokenType::TILDE;
 constexpr JavaTokenType PT_NOT = JavaTokenType::NOT;
 constexpr JavaTokenType PT_AT = JavaTokenType::AT;
-constexpr JavaTokenType PT_MODULE = JavaTokenType::MODULE;
+constexpr JavaTokenType PT_MODULUS = JavaTokenType::MODULUS;
 constexpr JavaTokenType PT_BIT_XOR = JavaTokenType::BIT_XOR;
 constexpr JavaTokenType PT_BIT_AND = JavaTokenType::BIT_AND;
 constexpr JavaTokenType PT_MULT = JavaTokenType::MULT;
@@ -96,6 +96,8 @@ constexpr JavaTokenType PT_DOT = JavaTokenType::DOT;
 constexpr JavaTokenType PT_COMMA = JavaTokenType::COMMA;
 constexpr JavaTokenType PT_SINGLE_QUOTE = JavaTokenType::SINGLE_QUOTE;
 constexpr JavaTokenType PT_DOUBLE_QUOTE = JavaTokenType::DOUBLE_QUOTE;
+constexpr JavaTokenType PT_TAB = JavaTokenType::TAB;
+constexpr JavaTokenType PT_NEW_LINE = JavaTokenType::NEW_LINE;
 constexpr JavaTokenType PT_LEFT_PAREN = JavaTokenType::LEFT_PAREN;
 constexpr JavaTokenType PT_RIGHT_PAREN = JavaTokenType::RIGHT_PAREN;
 constexpr JavaTokenType PT_LEFT_BRACKET = JavaTokenType::LEFT_BRACKET;
@@ -114,7 +116,7 @@ constexpr JavaTokenType PT_MULT_ASSIGN = JavaTokenType::MULT_ASSIGN;
 constexpr JavaTokenType PT_DIVIDE_ASSIGN = JavaTokenType::DIVIDE_ASSIGN;
 constexpr JavaTokenType PT_PLUS_COMPARE = JavaTokenType::COMPARE;
 constexpr JavaTokenType PT_BIT_OR_ASSIGN = JavaTokenType::BIT_OR_ASSIGN;
-constexpr JavaTokenType PT_MODULE_ASSIGN = JavaTokenType::MODULE_ASSIGN;
+constexpr JavaTokenType PT_MODULUS_ASSIGN = JavaTokenType::MODULUS_ASSIGN;
 constexpr JavaTokenType PT_BIT_XOR_ASSIGN = JavaTokenType::BIT_XOR_ASSIGN;
 constexpr JavaTokenType PT_NOT_EQUALS = JavaTokenType::NOT_EQUALS;
 constexpr JavaTokenType PT_SHIFT_LEFT_ASSIGN = JavaTokenType::SHIFT_LEFT_ASSIGN;

@@ -1,14 +1,16 @@
 /**
- * <h1>JavaStringToken</h1>
+ * <h1>PascalStringToken</h1>
  *
- * <p> Java string tokens.</p>
+ * <p> Pascal string tokens.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
+#include "../../java/tokens/JavaStringToken.h"
+
 #include <string>
-#include "JavaStringToken.h"
-#include "../JavaError.h"
+
+#include "../../java/JavaError.h"
 
 namespace wci { namespace frontend { namespace java { namespace tokens {
 
@@ -27,7 +29,7 @@ void JavaStringToken::extract() throw (string)
     string value_str = "";
 
     char current_ch = next_char();  // consume initial quote
-    text += "'";
+    text += "\"";
 
     // Get string characters.
     do
@@ -35,30 +37,20 @@ void JavaStringToken::extract() throw (string)
         // Replace any whitespace character with a blank.
         if (isspace(current_ch)) current_ch = ' ';
 
-        if ((current_ch != '\'') && (current_ch != EOF))
+        if ((current_ch != '\"') && (current_ch != EOF))
         {
             text += current_ch;
             value_str  += current_ch;
             current_ch = next_char();  // consume character
         }
 
-        // Quote?  Each pair of adjacent quotes represents a single-quote.
-        if (current_ch == '\'')
-        {
-            while ((current_ch == '\'') && (peek_char() == '\''))
-            {
-                text += "''";
-                value_str  += current_ch;  // append single-quote
-                current_ch = next_char();  // consume pair of quotes
-                current_ch = next_char();
-            }
-        }
-    } while ((current_ch != '\'') && (current_ch != Source::END_OF_FILE));
+        
+    } while ((current_ch != '\"') && (current_ch != Source::END_OF_FILE));
 
-    if (current_ch == '\'')
+    if (current_ch == '\"')
     {
         next_char();  // consume final quote
-        text += '\'';
+        text += '\"';
         type = (TokenType) PT_STRING;
         value = new DataValue(value_str);
     }
@@ -69,4 +61,4 @@ void JavaStringToken::extract() throw (string)
     }
 }
 
-}}}}  // namespace wci::frontend::java::tokens
+}}}} // namespace wci::frontend::pascal::tokens

@@ -43,8 +43,6 @@ void JavaWordToken::extract() throw (string)
 
     // Is it a reserved word or an identifier?
     string upper_case(text);
-    transform(upper_case.begin(), upper_case.end(),
-              upper_case.begin(), ::toupper);
     if (JavaToken::RESERVED_WORDS.find(upper_case)
             != JavaToken::RESERVED_WORDS.end())
     {

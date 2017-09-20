@@ -23,97 +23,290 @@ JavaSpecialSymbolToken::JavaSpecialSymbolToken(Source *source) throw (string)
 }
 
 void JavaSpecialSymbolToken::extract() throw (string)
-{
-    char current_ch = current_char();
-    bool good_symbol = true;
+				{
+	char current_ch = current_char();
+	bool good_symbol = true;
 
-    text = current_ch;
+	text = current_ch;
 
-    switch (current_ch)
-    {
-        // Single-character special symbols.
-        case '+':  case '-':  case '*':  case '/':  case ',':
-        case ';':  case '\'': case '=':  case '(':  case ')':
-        case '[':  case ']':  case '{':  case '}':  case '^':
-        {
-            next_char();  // consume character
-            break;
-        }
+	switch (current_ch)
+	{
+	// Single-character special symbols.
 
-        // : or :=
-        case ':':
-        {
-            current_ch = next_char();  // consume ':';
+	case '~' : case '@' : case ';' : case '?' :
+	case '.' : case '\"' : case '\'' : case '(' : case ')' :
+	case '[' : case ']' : case '{' : case'}': case ',' :
 
-            if (current_ch == '=')
-            {
-                text += current_ch;
-                next_char();  // consume '='
-            }
 
-            break;
-        }
+	{
+		next_char();  // consume character
+		break;
+	}
 
-        // < or <= or <>
-        case '<':
-        {
-            current_ch = next_char();  // consume '<';
+	// ! , !=
+	case '!':
+	{
+		current_ch = next_char();  // consume ':';
 
-            if (current_ch == '=')
-            {
-                text += current_ch;
-                next_char();  // consume '='
-            }
-            else if (current_ch == '>')
-            {
-                text += current_ch;
-                next_char();  // consume '>'
-            }
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
 
-            break;
-        }
+		break;
+	}
+        case '\\':
+	{
+		current_ch = next_char();  // consume ':';
 
-        // > or >=
-        case '>':
-        {
-            current_ch = next_char();  // consume '>';
+		if (current_ch == 't')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+                if (current_ch == 'n')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
 
-            if (current_ch == '=')
-            {
-                text += current_ch;
-                next_char();  // consume '='
-            }
+		break;
+	}
+	// : or ::
+	case ':':
+	{
+		current_ch = next_char();  // consume ':';
 
-            break;
-        }
+		if (current_ch == ':')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
 
-        // . or ..
-        case '.':
-        {
-            current_ch = next_char();  // consume '.';
+		break;
+	}
 
-            if (current_ch == '.')
-            {
-                text += current_ch;
-                next_char();  // consume '.'
-            }
+	// < or <= or << or <<=
+	case '<':
+	{
+		current_ch = next_char();  // consume '<';
 
-            break;
-        }
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			current_ch = next_char();  // consume '='
+		}
+		else if (current_ch == '<')
+		{
+			text += current_ch;
+			current_ch = next_char();  // consume '<'
 
-        default:
-        {
-            next_char();  // consume bad character
-            type = (TokenType) (PT_ERROR);
-            value = new DataValue((int) INVALID_CHAR);
-            good_symbol = false;
-        }
-    }
+			if (current_ch == '=')
+			{
+				text += current_ch;
+				next_char();  // consume '<<='
+			}
+		}
 
-    // Set the type if it wasn't an error.
-    if (good_symbol) {
-        type = (TokenType) (JavaToken::SPECIAL_SYMBOLS[text]);
-    }
-}
+		break;
+	}
+
+	// > or >= or >> or >>=
+	case '>':
+	{
+		current_ch = next_char();  // consume '>';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			current_ch = next_char();  // consume '='
+		}
+		else if (current_ch == '>')
+		{
+			text += current_ch;
+			current_ch = next_char();  // consume '>'
+
+			if (current_ch == '=')
+			{
+				text += current_ch;
+				next_char();  // consume '>>='
+			}
+		}
+
+		break;
+	}
+
+	// =, ==
+	case '=':
+	{
+		current_ch = next_char();  // consume '.';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '.'
+		}
+
+		break;
+	}
+
+	// &, &=, &&
+	case '&':
+	{
+		current_ch = next_char();  // consume '&';
+
+		if (current_ch == '&')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+		else if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '&'
+		}
+
+		break;
+	}
+	// ||, |=, |
+	case '|':
+	{
+		current_ch = next_char();  // consume '|';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+		else if (current_ch == '|')
+		{
+			text += current_ch;
+			next_char();  // consume '|'
+		}
+
+		break;
+	}
+
+
+	// +, +=, ++
+	case '+':
+	{
+		current_ch = next_char();  // consume '+';
+
+		if (current_ch == '+')
+		{
+			text += current_ch;
+			next_char();  // consume '+'
+		}
+		else if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+
+		break;
+	}
+
+	// -, -=, --
+	case '-':
+	{
+		current_ch = next_char();  // consume '-';
+
+		if (current_ch == '-')
+		{
+			text += current_ch;
+			next_char();  // consume '-'
+		}
+		else if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+
+		break;
+	}
+
+	// *, *=, */
+	case '*':
+	{
+		current_ch = next_char();  // consume '*';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+		else if (current_ch == '/')
+		{
+			text += current_ch;
+			next_char();  // consume '/'
+		}
+
+		break;
+	}
+
+	// /, /=, //
+	case '/':
+	{
+		current_ch = next_char();  // consume '/';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+		else if (current_ch == '/')
+		{
+			text += current_ch;
+			next_char();  // consume '/'
+		}
+
+		break;
+	}
+
+	// %, %=
+	case '%':
+	{
+		current_ch = next_char();  // consume '%';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+
+		break;
+	}
+
+	// ^, ^=
+	case '^':
+	{
+		current_ch = next_char();  // consume '/';
+
+		if (current_ch == '=')
+		{
+			text += current_ch;
+			next_char();  // consume '='
+		}
+		break;
+	}
+
+
+	default:
+	{
+		next_char();  // consume bad character
+		type = (TokenType) (PT_ERROR);
+		value = new DataValue((int) INVALID_CHAR);
+		good_symbol = false;
+	}
+	}
+
+	// Set the type if it wasn't an error.
+	if (good_symbol) {
+		type = (TokenType) (JavaToken::SPECIAL_SYMBOLS[text]);
+	}
+				}
+
 
 }}}}  // namespace wci::frontend::Java::tokens
