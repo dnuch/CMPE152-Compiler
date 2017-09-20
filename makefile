@@ -20,6 +20,7 @@ SRCS = Java.cpp \
        wci/frontend/java/tokens/JavaNumberToken.cpp \
        wci/frontend/java/tokens/JavaSpecialSymbolToken.cpp \
        wci/frontend/java/tokens/JavaStringToken.cpp \
+       wci/frontend/java/tokens/JavaCharToken.cpp \
        wci/frontend/java/tokens/JavaWordToken.cpp \
        wci/backend/BackendFactory.cpp \
        wci/backend/Backend.cpp \

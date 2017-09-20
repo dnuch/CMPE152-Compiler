@@ -68,6 +68,7 @@ wci/frontend/java/JavaScanner.o: wci/frontend/java/JavaScanner.cpp \
   wci/frontend/java/tokens/JavaWordToken.h \
   wci/frontend/java/tokens/JavaNumberToken.h \
   wci/frontend/java/tokens/JavaStringToken.h \
+  wci/frontend/java/tokens/JavaCharToken.cpp \
   wci/frontend/java/tokens/JavaSpecialSymbolToken.h \
   wci/frontend/java/tokens/JavaErrorToken.h
 wci/frontend/java/JavaError.o: wci/frontend/java/JavaError.cpp \
@@ -128,6 +129,17 @@ wci/frontend/java/tokens/JavaNumberToken.o: wci/frontend/java/tokens/JavaNumberT
   wci/frontend/java/tokens/../JavaError.h
 wci/frontend/java/tokens/JavaStringToken.o: wci/frontend/java/tokens/JavaStringToken.cpp \
   wci/frontend/java/tokens/JavaStringToken.h \
+  wci/frontend/java/tokens/../JavaToken.h \
+  wci/frontend/java/tokens/../../Token.h \
+  wci/frontend/java/tokens/../../Source.h \
+  wci/frontend/java/tokens/../../../message/MessageHandler.h \
+  wci/frontend/java/tokens/../../../message/MessageListener.h \
+  wci/frontend/java/tokens/../../../message/Message.h \
+  wci/frontend/java/tokens/../../../message/MessageProducer.h \
+  wci/frontend/java/tokens/../../../DataValue.h \
+  wci/frontend/java/tokens/../JavaError.h
+wci/frontend/java/tokens/JavaCharToken.o: wci/frontend/java/tokens/JavaCharToken.cpp \
+  wci/frontend/java/tokens/JavaCharToken.h \
   wci/frontend/java/tokens/../JavaToken.h \
   wci/frontend/java/tokens/../../Token.h \
   wci/frontend/java/tokens/../../Source.h \

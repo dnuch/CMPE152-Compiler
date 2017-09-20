@@ -58,7 +58,14 @@ void JavaParserTD::parse() throw (string)
                 value_str = token->get_value()->s;
                 break;
             }
-
+            
+            case PT_CHARACTER:
+            {
+                type_str = "CHAR";
+                value_str = token->get_value()->s;
+                break;
+            }
+                
             case PT_IDENTIFIER:
             {
                 type_str = "IDENTIFIER";

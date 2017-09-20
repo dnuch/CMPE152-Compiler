@@ -16,6 +16,7 @@
 #include "tokens/JavaStringToken.h"
 #include "tokens/JavaSpecialSymbolToken.h"
 #include "tokens/JavaErrorToken.h"
+#include "tokens/JavaCharToken.h"
 
 namespace wci { namespace frontend { namespace java {
 
@@ -51,9 +52,13 @@ Token *JavaScanner::extract_token() throw (string)
     {
         token = new JavaNumberToken(source);
     }
-    else if (current_ch == '\'')
+    else if (current_ch == '\"')
     {
         token = new JavaStringToken(source);
+    }
+    else if (current_ch == '\'')
+    {
+    	token = new JavaCharToken(source);
     }
     else if (JavaToken::SPECIAL_SYMBOLS.find(string_ch)
                 != JavaToken::SPECIAL_SYMBOLS.end())
