@@ -77,39 +77,28 @@ Token *JavaScanner::extract_token() throw (string)
 void JavaScanner::skip_white_space() throw (string)
 {
     char current_ch = current_char();
-
-    while (isspace(current_ch) || (current_ch == '/')) {
+    char before_ch = current_ch;
+    while (isspace(current_ch) || current_ch == '/') {
 
     	current_ch = next_char();
 
         // Start of a comment? /*
-        if (current_ch == '*')
+        if (current_ch == '*' && before_ch != ' ')
         {
-            do
-            {
+            do {
                 current_ch = next_char();  // consume comment characters
-
             } while ((current_ch != '/') && (current_ch != Source::END_OF_FILE));
 
-            // Found closing '}'?
+            // Found closing '/'?
             if (current_ch == '/') {
                 current_ch = next_char();  // consume the '/'
             }
-        }
-        // //
-        else if ( current_ch == '/')
-        {
-        	current_ch = next_char();
-
-		do
-		{
-	            current_ch = next_char();  // consume comment characters
-
+        } else if ( current_ch == '/' && before_ch != ' ') {
+            current_ch = next_char();
+		do {
+            current_ch = next_char();  // consume comment characters
 		}while((current_ch != Source::END_OF_LINE));
-
-
         }
-
         // Not a comment.
         else if(isspace(current_ch)) current_ch = next_char();  // consume whitespace character
     }
