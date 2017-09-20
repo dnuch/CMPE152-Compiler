@@ -77,7 +77,7 @@ void PascalToken::initialize()
         PascalTokenType::WITH
     };
 
-    for (int i = 0; i < rw_strings.size(); i++)
+    for (unsigned int i = 0; i < rw_strings.size(); i++)
     {
         RESERVED_WORDS[rw_strings[i]] = rw_keys[i];
     }
@@ -117,7 +117,7 @@ void PascalToken::initialize()
         PascalTokenType::DOT_DOT
     };
 
-    for (int i = 0; i < ss_strings.size(); i++)
+    for (unsigned int i = 0; i < ss_strings.size(); i++)
     {
         SPECIAL_SYMBOLS[ss_strings[i]] = ss_keys[i];
     }
@@ -132,7 +132,7 @@ void PascalToken::initialize()
         "LEFT_BRACE", "RIGHT_BRACE", "UP_ARROW", "DOT_DOT"
     };
 
-    for (int i = 0; i < ss_names.size(); i++)
+    for (unsigned int i = 0; i < ss_names.size(); i++)
     {
         SPECIAL_SYMBOL_NAMES[ss_keys[i]] = ss_names[i];
     }

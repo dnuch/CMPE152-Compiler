@@ -46,7 +46,7 @@ void JavaSpecialSymbolToken::extract() throw (string)
 	// ! , !=
 	case '!':
 	{
-		current_ch = next_char();  // consume ':';
+		current_ch = next_char();  // consume '!';
 
 		if (current_ch == '=')
 		{
@@ -58,17 +58,17 @@ void JavaSpecialSymbolToken::extract() throw (string)
 	}
         case '\\':
 	{
-		current_ch = next_char();  // consume ':';
+		current_ch = next_char();  // consume '\';
 
 		if (current_ch == 't')
 		{
 			text += current_ch;
-			next_char();  // consume '='
+			next_char();  // consume 't'
 		}
-                if (current_ch == 'n')
+        if (current_ch == 'n')
 		{
 			text += current_ch;
-			next_char();  // consume '='
+			next_char();  // consume 'n'
 		}
 
 		break;
@@ -81,7 +81,7 @@ void JavaSpecialSymbolToken::extract() throw (string)
 		if (current_ch == ':')
 		{
 			text += current_ch;
-			next_char();  // consume '='
+			next_char();  // consume ':'
 		}
 
 		break;
@@ -140,12 +140,12 @@ void JavaSpecialSymbolToken::extract() throw (string)
 	// =, ==
 	case '=':
 	{
-		current_ch = next_char();  // consume '.';
+		current_ch = next_char();  // consume '=';
 
 		if (current_ch == '=')
 		{
 			text += current_ch;
-			next_char();  // consume '.'
+			next_char();  // consume '='
 		}
 
 		break;
@@ -306,7 +306,7 @@ void JavaSpecialSymbolToken::extract() throw (string)
 	if (good_symbol) {
 		type = (TokenType) (JavaToken::SPECIAL_SYMBOLS[text]);
 	}
-				}
+}
 
 
 }}}}  // namespace wci::frontend::Java::tokens

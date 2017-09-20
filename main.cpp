@@ -1,29 +1,11 @@
-#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
 #include "Java.h"
 #include "Pascal.h"
-#include "wci/frontend/Parser.h"
-#include "wci/frontend/Scanner.h"
-#include "wci/frontend/Source.h"
-#include "wci/frontend/FrontendFactory.h"
-#include "wci/intermediate/SymTab.h"
-#include "wci/intermediate/ICode.h"
-#include "wci/backend/Backend.h"
-#include "wci/backend/BackendFactory.h"
-#include "wci/message/Message.h"
-#include "wci/message/MessageListener.h"
 
 using namespace std;
-using namespace wci::frontend;
-using namespace wci::intermediate;
-using namespace wci::backend;
-using namespace wci::message;
 
 const string FLAGS = "[-ix]";
 const string USAGE =
-    "Usage: Java execute|compile " + FLAGS + " <source file path>";
+    "Usage: make execute|compile " + FLAGS + " <source file path>";
 
 /**
  * The main method.
@@ -35,13 +17,13 @@ int main(int argc, char *args[])
     string language = "";
     cout << "What language?(Java, Pascal)" << endl;
     cin >> language;
+
     while((language != "Java" && language != "Pascal")) {
         cout << "Wrong Language(Java, Pascal)" << endl;
         cin >> language;
     }
 
-    try
-    {
+    try {
         // Operation.
         string operation = args[1];
         if ((operation != "compile") && (operation != "execute"))
@@ -67,10 +49,10 @@ int main(int argc, char *args[])
             throw string("Missing source file.");
         }
     }
-    catch (string& msg)
-    {
+    catch (string& msg) {
         cout << "***** ERROR: " << msg << endl;
     }
 
     return 0;
 }
+

@@ -91,7 +91,7 @@ public:
 private:
     ifstream& reader;                 // reader for the source program
     string line_text;                 // source line text
-    int line_number;                  // current source line number
+    unsigned int line_number;                  // current source line number
     int current_pos;                  // current source line position
     MessageHandler message_handler;
 

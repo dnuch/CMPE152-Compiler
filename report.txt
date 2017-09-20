@@ -1,0 +1,3 @@
+IT WORKS!  You must choose the language between pascal or java.  What smart things we did was having a main.cpp which linked both Java and Pascal.  Some troubles we had was compiling it and linking the files. Make sure you have no pre-generated output files.
+
+P.S. RUN ON LINUX plz

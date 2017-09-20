@@ -163,7 +163,7 @@ int PascalNumberToken::compute_integer_value(string digits)
 
     int integer_value = 0;
     int prev_value = -1;    // overflow occurred if prevValue > integerValue
-    int index = 0;
+    unsigned int index = 0;
 
     // Loop over the digits to compute the integer value
     // as long as there is no overflow.
@@ -223,7 +223,7 @@ float PascalNumberToken::compute_float_value(string whole_digits,
     }
 
     // Loop over the digits to compute the float value.
-    int index = 0;
+    unsigned int index = 0;
     while (index < digits.length()) {
         float_value = 10*float_value + (digits[index] - '0');
         index++;

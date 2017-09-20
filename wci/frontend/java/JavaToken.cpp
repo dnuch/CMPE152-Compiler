@@ -131,7 +131,7 @@ void JavaToken::initialize()
         JavaTokenType::SHIFT_RIGHT_ASSIGN,
         JavaTokenType::OR,
         JavaTokenType::AND,
-	JavaTokenType::COMMENT,
+        JavaTokenType::COMMENT,
         JavaTokenType::COMMENT_START,
         JavaTokenType::COMMENT_END
 
