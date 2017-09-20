@@ -30,50 +30,9 @@ using namespace wci::intermediate;
 using namespace wci::backend;
 using namespace wci::message;
 
-const string FLAGS = "[-ix]";
-const string USAGE =
-    "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
-
-/**
- * The main method.
- * @param args command-line arguments: "compile" or "execute" followed by
- *             optional flags followed by the source file path.
- */
-int main(int argc, char *args[])
-{
-    try
-    {
-        // Operation.
-        string operation = args[1];
-        if ((operation != "compile") && (operation != "execute"))
-        {
-            throw USAGE;
-        }
-
-        // Flags.
-        string flags = "";
-        int i = 1;
-        while ((++i < argc) && (args[i][0] == '-'))
-        {
-            flags += string(args[i]).substr(1);
-        }
-
-        // Source path.
-        if (i < argc) {
-            string path = args[i];
-            Pascal(operation, path, flags);
-        }
-        else {
-            throw string("Missing source file.");
-        }
-    }
-    catch (string& msg)
-    {
-        cout << "***** ERROR: " << msg << endl;
-    }
-
-    return 0;
-}
+//const string FLAGS = "[-ix]";
+//const string USAGE =
+//    "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
 
 Pascal::Pascal(string operation, string file_path, string flags)
     throw (string)

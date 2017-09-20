@@ -5,7 +5,9 @@
 # For instructional purposes only.  No warranties.
 #
 TARGET = Chapter3cpp
-SRCS = Java.cpp \
+SRCS = main.cpp \
+       Java.cpp \
+       Pascal.cpp \
        wci/frontend/FrontendFactory.cpp \
        wci/frontend/Parser.cpp \
        wci/frontend/Scanner.cpp \
@@ -22,6 +24,16 @@ SRCS = Java.cpp \
        wci/frontend/java/tokens/JavaStringToken.cpp \
        wci/frontend/java/tokens/JavaCharToken.cpp \
        wci/frontend/java/tokens/JavaWordToken.cpp \
+       wci/frontend/pascal/PascalParserTD.cpp \
+       wci/frontend/pascal/PascalScanner.cpp \
+       wci/frontend/pascal/PascalError.cpp \
+       wci/frontend/pascal/PascalErrorHandler.cpp \
+       wci/frontend/pascal/PascalToken.cpp \
+       wci/frontend/pascal/tokens/PascalErrorToken.cpp \
+       wci/frontend/pascal/tokens/PascalNumberToken.cpp \
+       wci/frontend/pascal/tokens/PascalSpecialSymbolToken.cpp \
+       wci/frontend/pascal/tokens/PascalStringToken.cpp \
+       wci/frontend/pascal/tokens/PascalWordToken.cpp \
        wci/backend/BackendFactory.cpp \
        wci/backend/Backend.cpp \
        wci/backend/interpreter/Executor.cpp \
