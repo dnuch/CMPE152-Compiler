@@ -202,9 +202,10 @@ void Java::message_received(Message& message)
 
             if (   (token_type == "INTEGER")
                 || (token_type == "REAL")
-                || (token_type == "STRING"))
+                || (token_type == "STRING")
+                || (token_type == "CHAR"))
             {
-                if (token_type == "STRING")
+                if ((token_type == "STRING") || (token_type == "CHAR"))
                 {
                     token_value = "\"" + token_value + "\"";
                 }

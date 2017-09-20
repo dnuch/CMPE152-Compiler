@@ -40,8 +40,22 @@ void JavaStringToken::extract() throw (string)
         if ((current_ch != '\"') && (current_ch != EOF))
         {
             text += current_ch;
-            value_str  += current_ch;
-            current_ch = next_char();  // consume character
+            if(current_ch != '\\')
+                value_str  += current_ch;
+            if(current_ch == '\\')
+            {
+                current_ch = next_char();
+                text += current_ch;
+                if(current_ch == 't')
+                    value_str += '\t';
+                if(current_ch == 'n')
+                    value_str += '\n';
+                if(current_ch == '"')
+                    value_str += '\"';
+                current_ch = next_char();
+            }
+            else
+                current_ch = next_char();  // consume character
         }
 
         

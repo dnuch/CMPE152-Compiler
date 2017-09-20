@@ -26,7 +26,7 @@ void JavaCharToken::extract() throw (string)
     // Get string characters.
     do
     {
-        if ((current_ch != '\'') && (current_ch != EOF)) {
+        if ((current_ch != '\'') && (current_ch != EOF) && (current_ch != '\\')) {
             text += current_ch;
             value_str  += current_ch;
             current_ch = next_char();  // consume character
@@ -34,13 +34,20 @@ void JavaCharToken::extract() throw (string)
         // Quote?  Each pair of adjacent quotes represents a single-quote.
         if (current_ch == '\\')
         {
-            if ((current_ch == '\\'))
-            {
-                //text += "''";
-                value_str  += current_ch;  // append single-quote
-                //current_ch = next_char();  // consume pair of quotes
-                current_ch = next_char();
-            }
+            //text += "''";
+            
+            //value_str  += current_ch;  // append single-quote
+            text  += current_ch;
+            current_ch = next_char();
+            if(current_ch == 't')
+                value_str += '\t';
+            else if(current_ch == 'n')
+                value_str += '\n';
+            else
+                value_str += current_ch;
+            text  += current_ch;
+            //current_ch = next_char();  // consume pair of quotes
+            current_ch = next_char();
         }
     } while ((current_ch != '\'') && (current_ch != Source::END_OF_FILE));
 
