@@ -164,10 +164,11 @@ void Java::message_received(Message& message)
                 || (token_type == "STRING")
                 || (token_type == "CHAR"))
             {
-                if ((token_type == "STRING") || (token_type == "CHAR"))
+                if (token_type == "STRING")
                 {
-                    token_value = "\"" + token_value + "\"";
-                }
+                    token_value = '\"' + token_value + '\"';
+                } else if (token_type == "CHAR")
+                    token_value = '\'' + token_value + '\'';
 
                 printf(VALUE_FORMAT.c_str(), token_value.c_str());
             }
