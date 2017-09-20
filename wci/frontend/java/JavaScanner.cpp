@@ -79,7 +79,11 @@ void JavaScanner::skip_white_space() throw (string)
     char current_ch = current_char();
     char before_ch = current_ch;
     while (isspace(current_ch) || current_ch == '/') {
-
+        if(source->peek_char() == '/' && isspace(current_char()))
+        {
+            current_ch = next_char(); 
+            break;
+        }
     	current_ch = next_char();
 
         // Start of a comment? /*
