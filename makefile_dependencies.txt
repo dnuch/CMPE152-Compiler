@@ -128,7 +128,7 @@ wci/frontend/java/tokens/JavaNumberToken.o: wci/frontend/java/tokens/JavaNumberT
   wci/frontend/java/tokens/../../../message/MessageProducer.h \
   wci/frontend/java/tokens/../../../DataValue.h \
   wci/frontend/java/tokens/../JavaError.h
-\JavaSpecialSymbolToken.o: \
+wci/frontend/java/tokens/JavaSpecialSymbolToken.o: \
   wci/frontend/java/tokens/JavaSpecialSymbolToken.cpp \
   wci/frontend/java/tokens/JavaSpecialSymbolToken.h \
   wci/frontend/java/tokens/../JavaToken.h \
@@ -281,7 +281,7 @@ wci/frontend/pascal/tokens/PascalNumberToken.o: wci/frontend/pascal/tokens/Pasca
   wci/frontend/pascal/tokens/../../../message/MessageProducer.h \
   wci/frontend/pascal/tokens/../../../DataValue.h \
   wci/frontend/pascal/tokens/../PascalError.h
-\PascalSpecialSymbolToken.o: \
+wci/frontend/java/tokens/PascalSpecialSymbolToken.o: \
   wci/frontend/pascal/tokens/PascalSpecialSymbolToken.cpp \
   wci/frontend/pascal/tokens/PascalSpecialSymbolToken.h \
   wci/frontend/pascal/tokens/../PascalToken.h \
