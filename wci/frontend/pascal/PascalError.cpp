@@ -153,7 +153,7 @@ void PascalError::initialize()
         "Too many syntax errors"
     };
 
-    for (unsigned int i = 0; i < error_codes.size(); i++)
+    for (int i = 0; i < error_codes.size(); i++)
     {
         SYNTAX_ERROR_MESSAGES[error_codes[i]] = error_messages[i];
     }

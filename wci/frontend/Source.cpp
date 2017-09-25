@@ -44,12 +44,12 @@ char Source::current_char() throw (string)
     else if (reader.eof()) return END_OF_FILE;
 
     // At end of line?
-    else if ((current_pos == -1) || (current_pos == (signed)line_text.length())) {
+    else if ((current_pos == -1) || (current_pos == line_text.length())) {
         return END_OF_LINE;
     }
 
     // Need to read the next line?
-    else if (current_pos > (signed)line_text.length()) {
+    else if (current_pos > line_text.length()) {
         read_line();
         return next_char();
     }
@@ -70,7 +70,7 @@ char Source::peek_char() throw (string)
 
     if (reader.eof()) return END_OF_FILE;
 
-    unsigned int next_pos = current_pos + 1;
+    int next_pos = current_pos + 1;
     return next_pos < line_text.length() ? line_text[next_pos]
                                          : END_OF_LINE;
 }

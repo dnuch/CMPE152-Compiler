@@ -6,6 +6,7 @@
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
+#include <algorithm>
 #include <chrono>
 #include "PascalParserTD.h"
 
@@ -14,6 +15,12 @@
 #include "../Token.h"
 #include "PascalToken.h"
 #include "PascalError.h"
+#include "parsers/StatementParser.h"
+#include "../../intermediate/SymTabEntry.h"
+#include "../../intermediate/ICode.h"
+#include "../../intermediate/ICodeNode.h"
+#include "../../intermediate/ICodeFactory.h"
+#include "../../intermediate/icodeimpl/ICodeNodeImpl.h"
 #include "../../message/Message.h"
 
 namespace wci { namespace frontend { namespace pascal {
@@ -21,6 +28,8 @@ namespace wci { namespace frontend { namespace pascal {
 using namespace std;
 using namespace std::chrono;
 using namespace wci::frontend;
+using namespace wci::frontend::pascal::parsers;
+using namespace wci::intermediate::icodeimpl;
 using namespace wci::message;
 
 PascalErrorHandler PascalParserTD::error_handler;
@@ -37,92 +46,33 @@ PascalParserTD::PascalParserTD(PascalParserTD *parent)
 
 void PascalParserTD::parse() throw (string)
 {
-    Token *token = nullptr;
-    int last_line_number;
     steady_clock::time_point start_time = steady_clock::now();
+    icode = ICodeFactory::create_icode();
 
-    // Loop over each token until the end of file.
-    while ((token = next_token(token)) != nullptr)
+    Token *token = next_token(nullptr);
+    ICodeNode *root_node = nullptr;
+
+    // Look for the BEGIN token to parse a compound statement.
+    if (token->get_type() == (TokenType) PT_BEGIN)
     {
-        TokenType token_type = token->get_type();
-        last_line_number = token->get_line_number();
-
-        string type_str;
-        string value_str;
-
-        switch ((PascalTokenType) token_type)
-        {
-            case PT_STRING:
-            {
-                type_str = "STRING";
-                value_str = token->get_value()->s;
-                break;
-            }
-
-            case PT_IDENTIFIER:
-            {
-                type_str = "IDENTIFIER";
-                value_str = "";
-                break;
-            }
-
-            case PT_INTEGER:
-            {
-                type_str = "INTEGER";
-                value_str = token->get_value()->display();
-                break;
-            }
-
-            case PT_REAL:
-            {
-                type_str = "REAL";
-                value_str = token->get_value()->display();
-                break;
-            }
-
-            case PT_ERROR: break;
-
-            default:  // reserved word or special character
-            {
-                DataValue *token_value = token->get_value();
-
-                // Reserved word
-                if (token_value != nullptr)
-                {
-                    value_str = token_value->s;
-                    type_str = value_str;
-                }
-
-                // Special symbol
-                else
-                {
-                    type_str =
-                        PascalToken::SPECIAL_SYMBOL_NAMES[
-                                           (PascalTokenType) token_type];
-                }
-
-                break;
-            }
-        }
-
-        if (token_type != (TokenType) PT_ERROR)
-        {
-            // Format and send a message about each token.
-            Message message(TOKEN,
-                            LINE_NUMBER, to_string(token->get_line_number()),
-                            POSITION, to_string(token->get_position()),
-                            TOKEN_TYPE, type_str,
-                            TOKEN_TEXT, token->get_text(),
-                            TOKEN_VALUE, value_str);
-            send_message(message);
-        }
-        else
-        {
-            PascalErrorCode error_code =
-                                (PascalErrorCode) token->get_value()->i;
-            error_handler.flag(token, error_code, this);
-        }
+        StatementParser *statement_parser = new StatementParser(this);
+        root_node = statement_parser->parse_statement(token);
+        token = current_token();
     }
+    else {
+        error_handler.flag(token, UNEXPECTED_TOKEN, this);
+    }
+
+    // Look for the final period.
+    if (token->get_type() != (TokenType) PT_DOT)
+    {
+        error_handler.flag(token, MISSING_PERIOD, this);
+    }
+
+    int last_line_number = token->get_line_number();
+
+    // Set the parse tree root node.
+    if (root_node != nullptr) icode->set_root(root_node);
 
     // Send the parser summary message.
     steady_clock::time_point end_time = steady_clock::now();
@@ -138,6 +88,33 @@ void PascalParserTD::parse() throw (string)
 int PascalParserTD::get_error_count() const
 {
     return error_handler.get_error_count();
+}
+
+PascalToken *PascalParserTD::synchronize(
+                                    const set<PascalTokenType>& sync_set)
+    throw (string)
+{
+    Token *token = current_token();
+
+    // If the current token is not in the synchronization set,
+    // then it is unexpected and the parser must recover.
+    if (sync_set.find((PascalTokenType) token->get_type())
+            == sync_set.end())
+    {
+        // Flag the unexpected token.
+        error_handler.flag(token, UNEXPECTED_TOKEN, this);
+
+        // Recover by skipping tokens that are not
+        // in the synchronization set.
+        do
+        {
+            token = next_token(token);
+        } while ((token != nullptr) &&
+                 (sync_set.find((PascalTokenType) token->get_type())
+                      == sync_set.end()));
+    }
+
+    return (PascalToken *) token;
 }
 
 }}} // namespace wci::frontend::pascal

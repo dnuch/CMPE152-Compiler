@@ -54,18 +54,20 @@ public:
     void message_received(Message& message);
 
 private:
-    Parser  *parser;    // language-independent parser
-    Source  *source;    // input file source
-    ICode   *icode;     // generated intermediate code
-    SymTab  *symtab;    // generated symbol table
-    Backend *backend;   // backend
+    Parser      *parser;        // language-independent parser
+    Source      *source;        // input file source
+    ICode       *icode;         // generated intermediate code
+    SymTabStack *symtab_stack;  // generated symbol table stack
+    Backend     *backend;       // backend
+
+    bool first_output_message;
 
     static const string SOURCE_LINE_FORMAT;
     static const string PARSER_SUMMARY_FORMAT;
     static const string INTERPRETER_SUMMARY_FORMAT;
     static const string COMPILER_SUMMARY_FORMAT;
-    static const string TOKEN_FORMAT;
-    static const string VALUE_FORMAT;
+    static const string ASSIGN_FORMAT;
+    static const string RUNTIME_ERROR_FORMAT;
 
     static const int PREFIX_WIDTH;
 };

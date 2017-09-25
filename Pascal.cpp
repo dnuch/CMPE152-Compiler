@@ -22,6 +22,8 @@
 #include "wci/backend/BackendFactory.h"
 #include "wci/message/Message.h"
 #include "wci/message/MessageListener.h"
+#include "wci/util/CrossReferencer.h"
+#include "wci/util/ParseTreePrinter.h"
 
 using namespace std;
 using namespace wci::frontend;
@@ -29,13 +31,56 @@ using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
 using namespace wci::backend;
 using namespace wci::message;
+using namespace wci::util;
 
-//const string FLAGS = "[-ix]";
-//const string USAGE =
-//    "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
+const string FLAGS = "[-ix]";
+const string USAGE =
+    "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
+
+/**
+ * The main method.
+ * @param args command-line arguments: "compile" or "execute" followed by
+ *             optional flags followed by the source file path.
+ */
+int main(int argc, char *args[])
+{
+    try
+    {
+        // Operation.
+        string operation = args[1];
+        if ((operation != "compile") && (operation != "execute"))
+        {
+            throw USAGE;
+        }
+
+        // Flags.
+        string flags = "";
+        int i = 1;
+        while ((++i < argc) && (args[i][0] == '-'))
+        {
+            flags += string(args[i]).substr(1);
+        }
+
+        // Source path.
+        if (i < argc) {
+            string path = args[i];
+            Pascal(operation, path, flags);
+        }
+        else {
+            throw string("Missing source file.");
+        }
+    }
+    catch (string& msg)
+    {
+        cout << "***** ERROR: " << msg << endl;
+    }
+
+    return 0;
+}
 
 Pascal::Pascal(string operation, string file_path, string flags)
     throw (string)
+    : icode(nullptr), symtab_stack(nullptr), backend(nullptr)
 {
     ifstream input;
     input.open(file_path);
@@ -43,6 +88,9 @@ Pascal::Pascal(string operation, string file_path, string flags)
     {
         throw string("Failed to open source file " + file_path);
     }
+
+    bool intermediate = flags.find('i') != string::npos;
+    bool xref         = flags.find('x') != string::npos;
 
     source = new Source(input);
     source->add_message_listener(this);
@@ -53,21 +101,38 @@ Pascal::Pascal(string operation, string file_path, string flags)
 
     source->close();
 
-    symtab = parser->get_symtab();
-    icode = parser->get_icode();
+    if (parser->get_error_count() == 0)
+    {
+        symtab_stack = parser->get_symtab_stack();
+        icode = parser->get_icode();
 
-    backend = BackendFactory::create_backend(operation);
-    backend->add_message_listener(this);
-    backend->process(icode, symtab);
+        if (xref)
+        {
+            CrossReferencer cross_referencer;
+            cross_referencer.print(symtab_stack);
+        }
+
+        if (intermediate)
+        {
+            ParseTreePrinter *tree_printer = new ParseTreePrinter();
+            tree_printer->print(icode);
+        }
+
+        first_output_message = true;
+
+        backend = BackendFactory::create_backend(operation);
+        backend->add_message_listener(this);
+        backend->process(icode, symtab_stack);
+    }
 }
 
 Pascal::~Pascal()
 {
-    if (parser  != nullptr) delete parser;
-    if (source  != nullptr) delete source;
-    if (icode   != nullptr) delete icode;
-    if (symtab  != nullptr) delete symtab;
-    if (backend != nullptr) delete backend;
+    if (parser       != nullptr) delete parser;
+    if (source       != nullptr) delete source;
+    if (icode        != nullptr) delete icode;
+    if (symtab_stack != nullptr) delete symtab_stack;
+    if (backend      != nullptr) delete backend;
 }
 
 const string Pascal::SOURCE_LINE_FORMAT = "%03d %s\n";
@@ -85,11 +150,10 @@ const string Pascal::COMPILER_SUMMARY_FORMAT =
     string("\n%20d instructions generated.\n") +
     string("%20.2f seconds total code generation time.\n");
 
-const string Pascal::TOKEN_FORMAT =
-    ">>> %-15s line=%03d, pos=%2d, text=\"%s\"\n";
+const string Pascal::ASSIGN_FORMAT = ">>> LINE %03d: %s = %s\n";
 
-const string Pascal::VALUE_FORMAT =
-    ">>>                 value=%s\n";
+const string Pascal::RUNTIME_ERROR_FORMAT =
+        "*** RUNTIME ERROR AT LINE %03d: %s\n";
 
 const int Pascal::PREFIX_WIDTH = 5;
 
@@ -147,33 +211,6 @@ void Pascal::message_received(Message& message)
             break;
         }
 
-        case TOKEN:
-        {
-            string token_type = message[TOKEN_TYPE];
-            string line_number = message[LINE_NUMBER];
-            string position = message[POSITION];
-            string token_text = message[TOKEN_TEXT];
-            string token_value = message[TOKEN_VALUE];
-
-            printf(TOKEN_FORMAT.c_str(),
-                   token_type.c_str(), stoi(line_number),
-                   stoi(position), token_text.c_str());
-
-            if (   (token_type == "INTEGER")
-                || (token_type == "REAL")
-                || (token_type == "STRING"))
-            {
-                if (token_type == "STRING")
-                {
-                    token_value = "\"" + token_value + "\"";
-                }
-
-                printf(VALUE_FORMAT.c_str(), token_value.c_str());
-            }
-
-            break;
-        }
-
         case SYNTAX_ERROR:
         {
             string token_type    = message[TOKEN_TYPE];
@@ -198,6 +235,34 @@ void Pascal::message_received(Message& message)
             }
 
             cout << flag;
+            break;
+        }
+
+        case ASSIGN:
+        {
+            if (first_output_message)
+            {
+                cout << endl << "===== OUTPUT =====" << endl << endl;
+                first_output_message = false;
+            }
+
+            string line_number   = message[LINE_NUMBER];
+            string variable_name = message[VARIABLE_NAME];
+            string value_str     = message[RESULT_VALUE];
+
+            printf(ASSIGN_FORMAT.c_str(),
+                   stoi(line_number), variable_name.c_str(),
+                   value_str.c_str());
+            break;
+        }
+
+        case RUNTIME_ERROR:
+        {
+            string line_number   = message[LINE_NUMBER];
+            string error_message = message[ERROR_MESSAGE];
+
+            printf(RUNTIME_ERROR_FORMAT.c_str(),
+                    stoi(line_number), error_message.c_str());
             break;
         }
 

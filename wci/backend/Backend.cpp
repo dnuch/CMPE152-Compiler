@@ -16,7 +16,7 @@ using namespace wci::intermediate;
 
 MessageHandler Backend::message_handler;
 
-SymTab *Backend::get_symtab() const { return symtab; }
+SymTabStack *Backend::get_symtab_stack() const { return symtab_stack; }
 
 ICode *Backend::get_icode() const { return icode; }
 

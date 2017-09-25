@@ -8,7 +8,8 @@
  * <p>For instructional purposes only.  No warranties.</p>
  */
 #include "Parser.h"
-#include "../intermediate/SymTab.h"
+#include "../intermediate/SymTabStack.h"
+#include "../intermediate/SymTabFactory.h"
 #include "../intermediate/ICode.h"
 #include "../message/Message.h"
 #include "../message/MessageListener.h"
@@ -16,7 +17,7 @@
 namespace wci { namespace frontend {
 
 Parser::Parser(Scanner *scanner)
-    : scanner(scanner), symtab(nullptr), icode(nullptr)
+    : scanner(scanner), icode(nullptr)
 {
 }
 
@@ -25,10 +26,11 @@ Parser::~Parser()
 }
 
 MessageHandler Parser::message_handler;
+SymTabStack *Parser::symtab_stack = SymTabFactory::create_symtab_stack();
 
 Scanner *Parser::get_scanner() const { return scanner; }
 
-SymTab *Parser::get_symtab() const { return symtab; }
+SymTabStack *Parser::get_symtab_stack() const { return symtab_stack; }
 
 ICode *Parser::get_icode() const { return icode; }
 

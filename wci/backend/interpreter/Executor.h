@@ -10,6 +10,7 @@
 #define WCI_BACKEND_INTERPRETER_EXECUTOR_H_
 
 #include "../Backend.h"
+#include "RuntimeErrorHandler.h"
 
 namespace wci { namespace backend { namespace interpreter {
 
@@ -20,16 +21,25 @@ class Executor : public Backend
 {
 public:
     /**
+     * Constructor.
+     */
+    Executor();
+
+    /**
      * Process the intermediate code and the symbol table created by the
      * parser to execute the program.
      * Implementation of wci::backend::Backend.
      * @param icode the intermediate code.
-     * @param symtab the symbol table.
+     * @param symtab_stack the symbol table stack.
      * @throw a string message if an error occurred.
      */
-    void process(ICode *icode, SymTab *symtab) throw (string);
+    void process(ICode *icode, SymTabStack *symtab_stack) throw (string);
+
+protected:
+    static RuntimeErrorHandler error_handler;
+    static int execution_count;
 };
 
-}}} // namespace wci::backend::interpreter
+}}} // namespace wci::backend::compiler
 
 #endif /* WCI_BACKEND_INTERPRETER_EXECUTOR_H_ */

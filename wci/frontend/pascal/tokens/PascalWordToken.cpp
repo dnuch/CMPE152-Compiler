@@ -8,8 +8,8 @@
  */
 #include <iostream>
 #include <string>
-#include <algorithm>
 #include <map>
+#include <algorithm>
 #include "PascalWordToken.h"
 #include "../PascalError.h"
 

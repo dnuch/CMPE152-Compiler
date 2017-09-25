@@ -19,16 +19,13 @@ using namespace wci::backend::interpreter;
 
 Backend *BackendFactory::create_backend(string operation) throw (string)
 {
-    if (operation == "compile")
-    {
+    if (operation == "compile") {
         return new CodeGenerator();
     }
-    else if (operation == "execute")
-    {
+    else if (operation == "execute") {
         return new Executor();
     }
-    else
-    {
+    else {
         throw new string("Backend factory: Invalid operation '" +
                          operation + "'");
     }

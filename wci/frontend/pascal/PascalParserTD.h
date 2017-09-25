@@ -9,8 +9,10 @@
 #ifndef WCI_FRONTEND_PASCAL_PASCALPARSERTD_H_
 #define WCI_FRONTEND_PASCAL_PASCALPARSERTD_H_
 
+#include <set>
 #include "../Parser.h"
 #include "../Scanner.h"
+#include "PascalToken.h"
 #include "PascalErrorHandler.h"
 
 namespace wci { namespace frontend { namespace pascal {
@@ -47,6 +49,15 @@ public:
      * @return the error count.
      */
     int get_error_count() const;
+
+    /**
+     * Synchronize the parser.
+     * @param sync_set the set of token types for synchronizing the parser.
+     * @return the token where the parser has synchronized.
+     * @throw a string message if an error occurred.
+     */
+    PascalToken *synchronize(const set<PascalTokenType>& sync_set)
+        throw (string);
 
 protected:
     static PascalErrorHandler error_handler;
