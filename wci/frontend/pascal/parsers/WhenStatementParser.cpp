@@ -1,7 +1,7 @@
 /**
  * <h1>WhenStatementParser</h1>
  *
- * <p>Parse a Pascal WHEN statement.</p>
+ * <p>Parse a Pascal IF statement.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
@@ -27,40 +27,23 @@ using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
 using namespace wci::intermediate::icodeimpl;
 
-set<PascalTokenType> WhenStatementParser::CONSTANT_START_SET =
-{
-    PT_IDENTIFIER, PT_INTEGER, PT_PLUS, PT_MINUS, PT_STRING,
-};
-
-set<PascalTokenType> WhenStatementParser::OF_SET;
-set<PascalTokenType> WhenStatementParser::COMMA_SET;
-
 bool WhenStatementParser::INITIALIZED = false;
+
+set<PascalTokenType> WhenStatementParser::ARROW_SET;
 
 void WhenStatementParser::initialize()
 {
     if (INITIALIZED) return;
 
-    OF_SET = CONSTANT_START_SET;
-    OF_SET.insert(PT_OF);
-
-    COMMA_SET = CONSTANT_START_SET;
-    COMMA_SET.insert(PT_COMMA);
-    COMMA_SET.insert(PT_COLON);
+    THEN_SET = StatementParser::STMT_START_SET;
+    THEN_SET.insert(PascalTokenType::THEN);
 
     set<PascalTokenType>::iterator it;
-    for (it  = StatementParser::STMT_START_SET.begin();
-         it != StatementParser::STMT_START_SET.end();
-         it++)
-    {
-        COMMA_SET.insert(*it);
-    }
     for (it  = StatementParser::STMT_FOLLOW_SET.begin();
          it != StatementParser::STMT_FOLLOW_SET.end();
          it++)
     {
-        OF_SET.insert(*it);
-        COMMA_SET.insert(*it);
+        THEN_SET.insert(*it);
     }
 
     INITIALIZED = true;
@@ -74,261 +57,49 @@ WhenStatementParser::WhenStatementParser(PascalParserTD *parent)
 
 ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
 {
-    token = next_token(token);  // consume the WHEN
+    token = next_token(token);  // consume the IF
 
-    // Create a SELECT node.
-    ICodeNode *select_node =
-            ICodeFactory::create_icode_node((ICodeNodeType) NT_SELECT);
+    // Create an WHEN node.
+    ICodeNode *when_node =
+            ICodeFactory::create_icode_node((ICodeNodeType) NT_WHEN);
 
-    // Parse the WHEN expression.
-    // The SELECT node adopts the expression subtree as its first child.
-    ExpressionParser expression_parser(this);
-    select_node->add_child(expression_parser.parse_statement(token));
+    do {
+        // Parse the expression.
+        // The WHEN node adopts the expression subtree as its first child.
+        ExpressionParser expression_parser(this);
+        when_node->add_child(expression_parser.parse_statement(token));
 
-    // Synchronize at the OF.
-    token = synchronize(OF_SET);
-    if (token->get_type() == (TokenType) PT_OF)
-    {
-        token = next_token(token);  // consume the OF
-    }
-    else {
-        error_handler.flag(token, MISSING_OF, this);
-    }
+        // Synchronize at the arrow.
+        token = synchronize(ARROW_SET);
+        if (token->get_type() == (TokenType) PT_ARROW)
+        {
+            token = next_token(token);  // consume the arrow
+        }
+        else {
+            error_handler.flag(token, MISSING_ARROW, this);
+        }
 
-    // Set of WHEN branch constants.
-    set<int> constant_set;
-
-    // Loop to parse each WHEN branch until the END token
-    // or the end of the source file.
-    while ((token != nullptr) &&
-           (token->get_type() != (TokenType) PT_END))
-    {
-        // The SELECT node adopts the WHEN branch subtree.
-        select_node->add_child(parse_branch(token, constant_set));
-
+        // Parse the ARROW statement.
+        // The WHEN node adopts the statement subtree as its second child.
+        StatementParser statement_parser(this);
+        when_node->add_child(statement_parser.parse_statement(token));
         token = current_token();
-        TokenType token_type = token->get_type();
-
-        // Look for the semicolon between WHEN branches.
-        if (token_type == (TokenType) PT_SEMICOLON)
-        {
-            token = next_token(token);  // consume the ;
-        }
-
-        // If at the start of the next constant, then missing a semicolon.
-        else if (CONSTANT_START_SET.find((PascalTokenType) token_type)
-                      != CONSTANT_START_SET.end())
-        {
-            error_handler.flag(token, MISSING_SEMICOLON, this);
-        }
     }
-
-    // Look for the END token.
-    if (token->get_type() == (TokenType) PT_END)
+    while(token != PT_OTHERWISE && token != nullptr);
+    // Look for an ELSE.
+    if (token->get_type() == (TokenType) PT_OTHERWISE)
     {
-        token = next_token(token);  // consume END
+        token = next_token(token);  // consume the ARROW
+        // Parse the OTHERWISE statement.
+        // The WHEN node adopts the statement subtree as its third child.
+        when_node->add_child(statement_parser.parse_statement(token));
     }
     else
     {
-        error_handler.flag(token, MISSING_END, this);
+        error_handler.flag(token, MISSING_OTHERWISE, this);
     }
 
-    return select_node;
-}
-
-ICodeNode *WhenStatementParser::parse_branch(Token *token,
-                                             set<int>& constant_set)
-    throw (string)
-{
-    // Create an SELECT_BRANCH node and a SELECT_CONSTANTS node.
-    // The SELECT_BRANCH node adopts the SELECT_CONSTANTS node as its
-    // first child.
-    ICodeNode *branch_node =
-            ICodeFactory::create_icode_node(
-                                       (ICodeNodeType) NT_SELECT_BRANCH);
-    ICodeNode *constants_node =
-            ICodeFactory::create_icode_node(
-                                    (ICodeNodeType) NT_SELECT_CONSTANTS);
-    branch_node->add_child(constants_node);
-
-    // Parse the list of WHEN branch constants.
-    // The SELECT_CONSTANTS node adopts each constant.
-    parse_constant_list(token, constants_node, constant_set);
-
-    // Look for the : token.
-    token = current_token();
-    if (token->get_type() == (TokenType) PT_COLON)
-    {
-        token = next_token(token);  // consume the :
-    }
-    else
-    {
-        error_handler.flag(token, MISSING_COLON, this);
-    }
-
-    // Parse the WHEN branch statement. The SELECT_BRANCH node adopts
-    // the statement subtree as its second child.
-    StatementParser statementParser(this);
-    branch_node->add_child(statementParser.parse_statement(token));
-
-    return branch_node;
-}
-
-void WhenStatementParser::parse_constant_list(Token *token,
-                                              ICodeNode *constants_node,
-                                              set<int>& constant_set)
-    throw (string)
-{
-    // Loop to parse each constant.
-    while (CONSTANT_START_SET.find((PascalTokenType) token->get_type())
-            != CONSTANT_START_SET.end())
-    {
-
-        // The constants list node adopts the constant node.
-        constants_node->add_child(parse_constant(token, constant_set));
-
-        // Synchronize at the comma between constants.
-        token = synchronize(COMMA_SET);
-
-        // Look for the comma.
-        if (token->get_type() == (TokenType) PT_COMMA)
-        {
-            token = next_token(token);  // consume the ,
-        }
-
-        // If at the start of the next constant, then missing a comma.
-        else if (CONSTANT_START_SET.find((PascalTokenType) token->get_type())
-                    != CONSTANT_START_SET.end())
-        {
-            error_handler.flag(token, MISSING_COMMA, this);
-        }
-    }
-}
-
-ICodeNode *WhenStatementParser::parse_constant(Token *token,
-                                               set<int>& constant_set)
-    throw (string)
-{
-    bool minus_sign = false;
-    ICodeNode *constant_node = nullptr;
-
-    // Synchronize at the start of a constant.
-    token = synchronize(CONSTANT_START_SET);
-    TokenType token_type = token->get_type();
-
-    // Plus or minus sign?
-    if (   (token_type == (TokenType) PT_PLUS)
-        || (token_type == (TokenType) PT_MINUS))
-    {
-        minus_sign = token_type == (TokenType) PT_MINUS;
-        token = next_token(token);  // consume sign
-    }
-
-    // Parse the constant.
-    switch ((PascalTokenType) token->get_type())
-    {
-        case PT_IDENTIFIER:
-        {
-            constant_node = parse_identifier_constant(token, minus_sign);
-            break;
-        }
-
-        case PT_INTEGER:
-        {
-            constant_node = parse_integer_constant(token->get_text(),
-                                                   minus_sign);
-            break;
-        }
-
-        case PT_STRING:
-        {
-            constant_node =
-                parse_character_constant(token, token->get_value()->s,
-                                         minus_sign);
-            break;
-        }
-
-        default:
-        {
-            error_handler.flag(token, INVALID_CONSTANT, this);
-            break;
-        }
-    }
-
-    // Check for reused constants.
-    if (constant_node != nullptr)
-    {
-        NodeValue *node_value =
-            constant_node->get_attribute((ICodeKey) VALUE);
-        DataValue *data_value = node_value->value;
-
-        if (constant_set.find(data_value->i) != constant_set.end())
-        {
-            error_handler.flag(token, WHEN_CONSTANT_REUSED, this);
-        }
-        else
-        {
-            constant_set.insert(data_value->i);
-        }
-    }
-
-    next_token(token);  // consume the constant
-    return constant_node;
-}
-
-ICodeNode *WhenStatementParser::parse_identifier_constant(
-                                     Token *token, const bool minus_sign)
-    throw (string)
-{
-    // Placeholder: Don't allow for now.
-    error_handler.flag(token, INVALID_CONSTANT, this);
-    return nullptr;
-}
-
-ICodeNode *WhenStatementParser::parse_integer_constant(
-                              const string value, const bool minus_sign)
-{
-    ICodeNode *constant_node =
-            ICodeFactory::create_icode_node(
-                                    (ICodeNodeType) NT_INTEGER_CONSTANT);
-
-    int int_value = stoi(value);
-    if (minus_sign)  int_value = -int_value;
-
-    NodeValue *node_value = new NodeValue();
-    node_value->value = new DataValue(int_value);
-    constant_node->set_attribute((ICodeKey) VALUE, node_value);
-
-    return constant_node;
-}
-
-ICodeNode *WhenStatementParser::parse_character_constant(
-                 Token *token, const string value, const bool minus_sign)
-{
-    ICodeNode *constant_node = nullptr;
-
-    if (minus_sign)
-    {
-        error_handler.flag(token, INVALID_CONSTANT, this);
-    }
-    else
-    {
-        if (value.length() == 1)
-        {
-            constant_node =
-                ICodeFactory::create_icode_node(
-                                     (ICodeNodeType) NT_STRING_CONSTANT);
-            NodeValue *node_value = new NodeValue();
-            node_value->value = new DataValue(value);
-            constant_node->set_attribute((ICodeKey) VALUE, node_value);
-        }
-        else
-        {
-            error_handler.flag(token, INVALID_CONSTANT, this);
-        }
-    }
-
-    return constant_node;
+    return when_node;
 }
 
 }}}}  // namespace wci::frontend::pascal::parsers
