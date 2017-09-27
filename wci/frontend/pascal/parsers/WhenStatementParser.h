@@ -40,7 +40,7 @@ public:
 
 private:
     // Synchronization set for THEN.
-    static set<PascalTokenType> THEN_SET;
+    static set<PascalTokenType> ARROW_SET;
 
     static bool INITIALIZED;
 

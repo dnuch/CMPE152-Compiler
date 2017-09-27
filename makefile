@@ -37,6 +37,7 @@ SRCS =  Pascal.cpp \
         wci/frontend/pascal/parsers/IfStatementParser.cpp \
         wci/frontend/pascal/parsers/RepeatStatementParser.cpp \
         wci/frontend/pascal/parsers/StatementParser.cpp \
+        wci/frontend/pascal/parsers/WhenStatementParser.cpp \
         wci/frontend/pascal/parsers/WhileStatementParser.cpp \
         wci/frontend/pascal/tokens/PascalErrorToken.cpp \
         wci/frontend/pascal/tokens/PascalNumberToken.cpp \

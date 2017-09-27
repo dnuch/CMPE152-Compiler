@@ -85,13 +85,14 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
         when_node->add_child(statement_parser.parse_statement(token));
         token = current_token();
     }
-    while(token != PT_OTHERWISE && token != nullptr);
+    while(token->get_type() != (TokenType) PT_OTHERWISE);
     // Look for an ELSE.
     if (token->get_type() == (TokenType) PT_OTHERWISE)
     {
         token = next_token(token);  // consume the ARROW
         // Parse the OTHERWISE statement.
         // The WHEN node adopts the statement subtree as its third child.
+        StatementParser statement_parser(this);
         when_node->add_child(statement_parser.parse_statement(token));
     }
     else

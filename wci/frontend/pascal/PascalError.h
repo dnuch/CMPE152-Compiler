@@ -43,6 +43,7 @@ enum class PascalErrorCode
     INVALID_TYPE,
     INVALID_VAR_PARM,
     MIN_GT_MAX,
+	MISSING_ARROW,
     MISSING_BEGIN,
     MISSING_COLON,
     MISSING_COLON_EQUALS,
@@ -56,6 +57,7 @@ enum class PascalErrorCode
     MISSING_IDENTIFIER,
     MISSING_LEFT_BRACKET,
     MISSING_OF,
+	MISSING_OTHERWISE,
     MISSING_PERIOD,
     MISSING_PROGRAM,
     MISSING_RIGHT_BRACKET,
@@ -77,6 +79,7 @@ enum class PascalErrorCode
     UNEXPECTED_TOKEN,
     UNIMPLEMENTED,
     UNRECOGNIZABLE,
+	WHEN_CONSTANT_REUSED,
     WRONG_NUMBER_OF_PARMS,
 
     // Fatal errors.
@@ -106,6 +109,7 @@ constexpr PascalErrorCode INVALID_TARGET = PascalErrorCode::INVALID_TARGET;
 constexpr PascalErrorCode INVALID_TYPE = PascalErrorCode::INVALID_TYPE;
 constexpr PascalErrorCode INVALID_VAR_PARM = PascalErrorCode::INVALID_VAR_PARM;
 constexpr PascalErrorCode MIN_GT_MAX = PascalErrorCode::MIN_GT_MAX;
+constexpr PascalErrorCode MISSING_ARROW = PascalErrorCode::MISSING_ARROW;
 constexpr PascalErrorCode MISSING_BEGIN = PascalErrorCode::MISSING_BEGIN;
 constexpr PascalErrorCode MISSING_COLON = PascalErrorCode::ALREADY_FORWARDED;
 constexpr PascalErrorCode MISSING_COMMA = PascalErrorCode::MISSING_COMMA;
@@ -119,6 +123,7 @@ constexpr PascalErrorCode MISSING_FOR_CONTROL = PascalErrorCode::MISSING_FOR_CON
 constexpr PascalErrorCode MISSING_IDENTIFIER = PascalErrorCode::MISSING_IDENTIFIER;
 constexpr PascalErrorCode MISSING_LEFT_BRACKET = PascalErrorCode::MISSING_LEFT_BRACKET;
 constexpr PascalErrorCode MISSING_OF = PascalErrorCode::MISSING_OF;
+constexpr PascalErrorCode MISSING_OTHERWISE = PascalErrorCode::MISSING_OTHERWISE;
 constexpr PascalErrorCode MISSING_PERIOD = PascalErrorCode::MISSING_PERIOD;
 constexpr PascalErrorCode MISSING_PROGRAM = PascalErrorCode::MISSING_PROGRAM;
 constexpr PascalErrorCode MISSING_RIGHT_BRACKET = PascalErrorCode::MISSING_RIGHT_BRACKET;
@@ -140,6 +145,7 @@ constexpr PascalErrorCode UNEXPECTED_EOF = PascalErrorCode::UNEXPECTED_EOF;
 constexpr PascalErrorCode UNEXPECTED_TOKEN = PascalErrorCode::UNEXPECTED_TOKEN;
 constexpr PascalErrorCode UNIMPLEMENTED = PascalErrorCode::UNIMPLEMENTED;
 constexpr PascalErrorCode UNRECOGNIZABLE = PascalErrorCode::UNRECOGNIZABLE;
+constexpr PascalErrorCode WHEN_CONSTANT_REUSED = PascalErrorCode::WHEN_CONSTANT_REUSED;
 constexpr PascalErrorCode WRONG_NUMBER_OF_PARMS = PascalErrorCode::WRONG_NUMBER_OF_PARMS;
 
 constexpr PascalErrorCode IO_ERROR = PascalErrorCode::IO_ERROR;

@@ -44,6 +44,7 @@ void ICodeNodeImpl::initialize()
         NT_SELECT_BRANCH,
         NT_SELECT_CONSTANTS,
         NT_NO_OP,
+		NT_WHEN,
 
         // Relational operators
         NT_EQ,
