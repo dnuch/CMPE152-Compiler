@@ -35,15 +35,15 @@ void WhenStatementParser::initialize()
 {
     if (INITIALIZED) return;
 
-    THEN_SET = StatementParser::STMT_START_SET;
-    THEN_SET.insert(PascalTokenType::THEN);
+    ARROW_SET = StatementParser::STMT_START_SET;
+    ARROW_SET.insert(PascalTokenType::ARROW);
 
     set<PascalTokenType>::iterator it;
     for (it  = StatementParser::STMT_FOLLOW_SET.begin();
          it != StatementParser::STMT_FOLLOW_SET.end();
          it++)
     {
-        THEN_SET.insert(*it);
+        ARROW_SET.insert(*it);
     }
 
     INITIALIZED = true;
