@@ -33,8 +33,7 @@ using namespace wci::intermediate::icodeimpl;
 
 set<PascalTokenType> StatementParser::STMT_START_SET =
 {
-    PT_BEGIN, PT_CASE, PT_FOR, PT_IF, PT_REPEAT, PT_WHEN, PT_WHILE,
-    PT_IDENTIFIER, PT_SEMICOLON,
+    PT_BEGIN, PT_CASE, PT_FOR, PT_IF, PT_REPEAT, PT_WHEN, PT_WHILE, PT_IDENTIFIER, PT_SEMICOLON,
 };
 
 set<PascalTokenType> StatementParser::STMT_FOLLOW_SET =
@@ -76,18 +75,17 @@ ICodeNode *StatementParser::parse_statement(Token *token) throw (string)
             break;
         }
 
-        case PT_WHILE:
-        {
-            WhileStatementParser while_parser(this);
-            statement_node = while_parser.parse_statement(token);
-            break;
-        }
-
-        
         case PT_WHEN:
         {
             WhenStatementParser when_parser(this);
             statement_node = when_parser.parse_statement(token);
+            break;
+        }
+        
+        case PT_WHILE:
+        {
+            WhileStatementParser while_parser(this);
+            statement_node = while_parser.parse_statement(token);
             break;
         }
 

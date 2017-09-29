@@ -12,6 +12,7 @@
 #include "LoopExecutor.h"
 #include "IfExecutor.h"
 #include "SelectExecutor.h"
+#include "WhenExecutor.h"
 #include "../Executor.h"
 #include "../RuntimeError.h"
 #include "../../../DataValue.h"
@@ -74,6 +75,12 @@ DataValue *StatementExecutor::execute(ICodeNode *node)
 
         case NT_NO_OP: return nullptr;
 
+        case NT_WHEN:
+        {
+            WhenExecutor when_executor(this);
+            return when_executor.execute(node);
+        }
+        
         default:
         {
             error_handler.flag(node, UNIMPLEMENTED_FEATURE, this);
