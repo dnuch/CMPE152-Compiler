@@ -1,7 +1,7 @@
 /**
  * <h1>WhenStatementParser</h1>
  *
- * <p>Parse a Pascal IF statement.</p>
+ * <p>Parse a Pascal WHEN statement.</p>
  *
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
@@ -90,7 +90,6 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
         token = next_token(token);  // consume the ARROW
         // Parse the OTHERWISE statement.
         // The WHEN node adopts the statement subtree as its third child.
-        StatementParser statement_parser(this);
         when_node->add_child(statement_parser.parse_statement(token));
     }
     else

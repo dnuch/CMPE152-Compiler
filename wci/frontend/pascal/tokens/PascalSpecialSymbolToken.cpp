@@ -62,7 +62,7 @@ void PascalSpecialSymbolToken::extract() throw (string)
             if (current_ch == '>')
             {
                 text += current_ch;
-                next_char();  // consume '='
+                next_char();  // consume '>'
             }
 
             break;
