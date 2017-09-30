@@ -59,86 +59,96 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
 {
     token = next_token(token);  // consume the WHEN
 
-       // Create an WHEN node.
+    // Create a WHEN node.
     ICodeNode *when_node =
             ICodeFactory::create_icode_node((ICodeNodeType) NT_WHEN);
-    
-    do
-    {
+
+    do {
         // Parse the expression.
-        // The WHEN node adopts the expression subtree as its first child.
-        ExpressionParser expression_parser(this);
-        when_node->add_child(expression_parser.parse_statement(token));
+        // The WHEN node adopts the WHEN_BRANCH subtree as its first child.
+        when_node->add_child(parse_branch(token));
 
-        // Synchronize at the arrow.
-        token = synchronize(ARROW_SET);
-        if (token->get_type() == (TokenType) PT_ARROW)
-        {
-            token = next_token(token);  // consume the arrow
+        if(token->get_type() == (TokenType) PT_SEMICOLON) {
+            token = next_token(token);
         }
         else {
-            error_handler.flag(token, MISSING_ARROW, this);
+            error_handler.flag(token, MISSING_SEMICOLON, this);
         }
-        if(token->get_type() == (TokenType) PT_BEGIN)
-        {
-           token = next_token(token);
-           do
-           {
-              StatementParser statement_parser(this);
-              when_node->add_child(statement_parser.parse_statement(token));
-              token = next_token(token);
-           } while(!(token->get_type() == (TokenType) PT_END));
+    } while(token->get_type() != (TokenType) PT_OTHERWISE);
 
-           token = next_token(token);
-           if(token->get_type() == (TokenType) PT_SEMICOLON)
-           {
-               token = next_token(token);
-           }
-           else
-           {
-               error_handler.flag(token, MISSING_SEMICOLON, this);
-           }
-        }
-        else {
-           // Parse the ARROW statement.
-           // The WHEN node adopts the statement subtree as its second child.
-           StatementParser statement_parser(this);
-           when_node->add_child(statement_parser.parse_statement(token));
-           token = next_token(token);
-        }
-    } while(!(token->get_type() == (TokenType) PT_OTHERWISE) && (token != nullptr) && 
-            !(token->get_type() == (TokenType) PT_END));
-    
     // Look for an OTHERWISE.
-    if (token->get_type() == (TokenType) PT_OTHERWISE)
-    {
-        token = next_token(token); // consume the ARROW
-        token = synchronize(ARROW_SET);
-        if (token->get_type() == (TokenType) PT_ARROW)
-        {
-            token = next_token(token);  // consume the arrow
-        }
-        else {
-            error_handler.flag(token, MISSING_ARROW, this);
-        }
-        // Parse the OTHERWISE statement.
-        // The WHEN node adopts the statement subtree as its third child.
-        StatementParser statement_parser(this);
-        when_node->add_child(statement_parser.parse_statement(token));
+    if (token->get_type() == (TokenType) PT_OTHERWISE) {
+        when_node->add_child(parse_otherwise(token));
     }
-    else
-    {
-        error_handler.flag(token, MISSING_OTHERWISE, this);
-    }
-    if (token->get_type() == (TokenType) PT_END)
-    {
-        token = next_token(token);  // consume the END
+
+    if (token->get_type() == (TokenType) PT_END) {
+        next_token(token);  // consume the END
     }
     else {
         error_handler.flag(token, MISSING_END, this);
     }
 
     return when_node;
+}
+
+ICodeNode *WhenStatementParser::parse_branch(Token *token)
+throw (string)
+{
+    // Create an WHEN_BRANCH node.
+    ICodeNode *branch_node =
+            ICodeFactory::create_icode_node(
+                    (ICodeNodeType) NT_WHEN_BRANCH);
+
+    // Parse expression
+    ExpressionParser expression_parser(this);
+    branch_node->add_child(expression_parser.parse_statement(token));
+
+    // Look for the => token.
+    if (token->get_type() == (TokenType) PT_ARROW) {
+        token = next_token(token);  // consume the arrow
+    }
+    else {
+        error_handler.flag(token, MISSING_ARROW, this);
+    }
+
+    // Parse the WHEN branch statement. The WHEN_BRANCH node adopts
+    // the statement subtree as its second child.
+    StatementParser statementParser(this);
+    branch_node->add_child(statementParser.parse_statement(token));
+
+    return branch_node;
+}
+
+ICodeNode *WhenStatementParser::parse_otherwise(Token *token)
+throw (string)
+{
+    // Create an OTHERWISE_BRANCH node.
+    ICodeNode *otherwise_node =
+            ICodeFactory::create_icode_node(
+                    (ICodeNodeType) NT_OTHERWISE);
+
+    // Look for the OTHERWISE token.
+    if (token->get_type() == (TokenType) PT_OTHERWISE) {
+        token = next_token(token);  // consume OTHERWISE
+    }
+    else {
+        error_handler.flag(token, MISSING_OTHERWISE, this);
+    }
+
+    // Look for the => token.
+    if (token->get_type() == (TokenType) PT_ARROW) {
+        token = next_token(token);  // consume the arrow
+    }
+    else {
+        error_handler.flag(token, MISSING_ARROW, this);
+    }
+
+    // Parse the OTHERWISE branch statement. The OTHERWISE node adopts
+    // the statement subtree as its second child.
+    StatementParser statementParser(this);
+    otherwise_node->add_child(statementParser.parse_statement(token));
+
+    return otherwise_node;
 }
 
 }}}}  // namespace wci::frontend::pascal::parsers
