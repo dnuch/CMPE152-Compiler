@@ -67,18 +67,23 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
         // Parse the expression.
         // The WHEN node adopts the WHEN_BRANCH subtree as its first child.
         when_node->add_child(parse_branch(token));
-	token = current_token();
+        token = current_token();
         if(token->get_type() == (TokenType) PT_SEMICOLON) {
             token = next_token(token);
         }
         else {
             error_handler.flag(token, MISSING_SEMICOLON, this);
         }
-    } while(token->get_type() != (TokenType) PT_OTHERWISE);
+    }  while(!(token->get_type() == (TokenType) PT_OTHERWISE) && (token != nullptr) && 
+            !(token->get_type() == (TokenType) PT_END));
 
     // Look for an OTHERWISE.
     if (token->get_type() == (TokenType) PT_OTHERWISE) {
         when_node->add_child(parse_otherwise(token));
+    }
+    else
+    {
+        error_handler.flag(token, MISSING_OTHERWISE, this);
     }
 
     if (token->get_type() == (TokenType) PT_END) {
@@ -104,6 +109,7 @@ throw (string)
     branch_node->add_child(expression_parser.parse_statement(token));
 
     // Look for the => token.
+    token = synchronize(ARROW_SET);
     if (token->get_type() == (TokenType) PT_ARROW) {
         token = next_token(token);  // consume the arrow
     }
