@@ -33,7 +33,7 @@ set<PascalTokenType> WhenStatementParser::ARROW_SET;
 
 void WhenStatementParser::initialize()
 {
-    if (INITIALIZED) return;
+    if(INITIALIZED) return;
 
     ARROW_SET = StatementParser::STMT_START_SET;
     ARROW_SET.insert(PascalTokenType::ARROW);
@@ -70,26 +70,18 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
         token = current_token();
         if(token->get_type() == (TokenType) PT_SEMICOLON) {
             token = next_token(token);
-        }
-        else {
+        } else {
             error_handler.flag(token, MISSING_SEMICOLON, this);
         }
-    }  while(!(token->get_type() == (TokenType) PT_OTHERWISE) && (token != nullptr) && 
+    }  while(!(token->get_type() == (TokenType) PT_OTHERWISE) && (token != nullptr) &&
             !(token->get_type() == (TokenType) PT_END));
 
-    // Look for an OTHERWISE.
-    if (token->get_type() == (TokenType) PT_OTHERWISE) {
-        when_node->add_child(parse_otherwise(token));
-    }
-    else
-    {
-        error_handler.flag(token, MISSING_OTHERWISE, this);
-    }
+    // WHEN node adopts OTHERWISE node as second child.
+    when_node->add_child(parse_otherwise(token));
 
-    if (token->get_type() == (TokenType) PT_END) {
+    if(token->get_type() == (TokenType) PT_END) {
         next_token(token);  // consume the END
-    }
-    else {
+    } else {
         error_handler.flag(token, MISSING_END, this);
     }
 
@@ -112,8 +104,7 @@ throw (string)
     token = synchronize(ARROW_SET);
     if (token->get_type() == (TokenType) PT_ARROW) {
         token = next_token(token);  // consume the arrow
-    }
-    else {
+    } else {
         error_handler.flag(token, MISSING_ARROW, this);
     }
 
@@ -134,18 +125,17 @@ throw (string)
                     (ICodeNodeType) NT_OTHERWISE);
 
     // Look for the OTHERWISE token.
-    if (token->get_type() == (TokenType) PT_OTHERWISE) {
-        token = next_token(token);  // consume OTHERWISE
-    }
-    else {
+    if(token->get_type() == (TokenType) PT_OTHERWISE) {
+        next_token(token);  // consume OTHERWISE
+    } else {
         error_handler.flag(token, MISSING_OTHERWISE, this);
     }
 
     // Look for the => token.
-    if (token->get_type() == (TokenType) PT_ARROW) {
+    token = synchronize(ARROW_SET);
+    if(token->get_type() == (TokenType) PT_ARROW) {
         token = next_token(token);  // consume the arrow
-    }
-    else {
+    } else {
         error_handler.flag(token, MISSING_ARROW, this);
     }
 
