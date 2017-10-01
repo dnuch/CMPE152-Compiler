@@ -127,22 +127,20 @@ throw (string)
     // Look for the OTHERWISE token.
     if(token->get_type() == (TokenType) PT_OTHERWISE) {
         next_token(token);  // consume OTHERWISE
+        // Look for the => token.
+        token = synchronize(ARROW_SET);
+        if(token->get_type() == (TokenType) PT_ARROW) {
+            token = next_token(token);  // consume the arrow
+            // Parse the OTHERWISE branch statement. The OTHERWISE node adopts
+            // the statement subtree as its second child.
+            StatementParser statementParser(this);
+            otherwise_node->add_child(statementParser.parse_statement(token));
+        } else {
+            error_handler.flag(token, MISSING_ARROW, this);
+        }
     } else {
         error_handler.flag(token, MISSING_OTHERWISE, this);
     }
-
-    // Look for the => token.
-    token = synchronize(ARROW_SET);
-    if(token->get_type() == (TokenType) PT_ARROW) {
-        token = next_token(token);  // consume the arrow
-    } else {
-        error_handler.flag(token, MISSING_ARROW, this);
-    }
-
-    // Parse the OTHERWISE branch statement. The OTHERWISE node adopts
-    // the statement subtree as its second child.
-    StatementParser statementParser(this);
-    otherwise_node->add_child(statementParser.parse_statement(token));
 
     return otherwise_node;
 }
