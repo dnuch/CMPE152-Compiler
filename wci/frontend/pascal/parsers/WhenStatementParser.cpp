@@ -67,7 +67,7 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
         // Parse the expression.
         // The WHEN node adopts the WHEN_BRANCH subtree as its first child.
         when_node->add_child(parse_branch(token));
-
+	token = current_token();
         if(token->get_type() == (TokenType) PT_SEMICOLON) {
             token = next_token(token);
         }
