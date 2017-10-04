@@ -8,6 +8,7 @@
  */
 #include <string>
 #include <set>
+#include <algorithm>
 #include "CaseStatementParser.h"
 #include "StatementParser.h"
 #include "AssignmentStatementParser.h"
@@ -16,16 +17,23 @@
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
+#include "../../../intermediate/symtabimpl/SymTabEntryImpl.h"
+#include "../../../intermediate/symtabimpl/Predefined.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../../../intermediate/TypeSpec.h"
+#include "../../../intermediate/typeimpl/TypeSpecImpl.h"
+#include "../../../intermediate/typeimpl/TypeChecker.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 set<PascalTokenType> CaseStatementParser::CONSTANT_START_SET =
 {
@@ -80,10 +88,28 @@ ICodeNode *CaseStatementParser::parse_statement(Token *token) throw (string)
     ICodeNode *select_node =
             ICodeFactory::create_icode_node((ICodeNodeType) NT_SELECT);
 
+    Token *expr_token = new Token(*token);
+
     // Parse the CASE expression.
     // The SELECT node adopts the expression subtree as its first child.
     ExpressionParser expression_parser(this);
-    select_node->add_child(expression_parser.parse_statement(token));
+    ICodeNode *expr_node = expression_parser.parse_statement(token);
+    select_node->add_child(expr_node);
+
+    // Type check: The CASE expression's type must be integer, character,
+    //             or enumeration.
+    TypeSpec *expr_typespec = expr_node != nullptr
+                                  ? expr_node->get_typespec()
+                                  : Predefined::undefined_type;
+    if (!TypeChecker::is_integer(expr_typespec) &&
+        !TypeChecker::is_char(expr_typespec) &&
+        (expr_typespec->get_form()
+                               != (TypeForm) TypeFormImpl::ENUMERATION))
+    {
+        error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+    }
+
+    delete expr_token;
 
     // Synchronize at the OF.
     token = synchronize(OF_SET);
@@ -104,7 +130,8 @@ ICodeNode *CaseStatementParser::parse_statement(Token *token) throw (string)
            (token->get_type() != (TokenType) PT_END))
     {
         // The SELECT node adopts the CASE branch subtree.
-        select_node->add_child(parse_branch(token, constant_set));
+        select_node->add_child(parse_branch(token, expr_typespec,
+                                            constant_set));
 
         token = current_token();
         TokenType token_type = token->get_type();
@@ -137,6 +164,7 @@ ICodeNode *CaseStatementParser::parse_statement(Token *token) throw (string)
 }
 
 ICodeNode *CaseStatementParser::parse_branch(Token *token,
+                                             TypeSpec *expr_typespec,
                                              set<int>& constant_set)
     throw (string)
 {
@@ -153,7 +181,7 @@ ICodeNode *CaseStatementParser::parse_branch(Token *token,
 
     // Parse the list of CASE branch constants.
     // The SELECT_CONSTANTS node adopts each constant.
-    parse_constant_list(token, constants_node, constant_set);
+    parse_constant_list(token, expr_typespec, constants_node, constant_set);
 
     // Look for the : token.
     token = current_token();
@@ -175,6 +203,7 @@ ICodeNode *CaseStatementParser::parse_branch(Token *token,
 }
 
 void CaseStatementParser::parse_constant_list(Token *token,
+                                              TypeSpec *expr_typespec,
                                               ICodeNode *constants_node,
                                               set<int>& constant_set)
     throw (string)
@@ -185,7 +214,8 @@ void CaseStatementParser::parse_constant_list(Token *token,
     {
 
         // The constants list node adopts the constant node.
-        constants_node->add_child(parse_constant(token, constant_set));
+        constants_node->add_child(parse_constant(token, expr_typespec,
+                                                 constant_set));
 
         // Synchronize at the comma between constants.
         token = synchronize(COMMA_SET);
@@ -206,11 +236,13 @@ void CaseStatementParser::parse_constant_list(Token *token,
 }
 
 ICodeNode *CaseStatementParser::parse_constant(Token *token,
+                                               TypeSpec *expr_typespec,
                                                set<int>& constant_set)
     throw (string)
 {
     bool minus_sign = false;
     ICodeNode *constant_node = nullptr;
+    TypeSpec *constant_typespec = nullptr;
 
     // Synchronize at the start of a constant.
     token = synchronize(CONSTANT_START_SET);
@@ -230,6 +262,10 @@ ICodeNode *CaseStatementParser::parse_constant(Token *token,
         case PT_IDENTIFIER:
         {
             constant_node = parse_identifier_constant(token, minus_sign);
+            if (constant_node != nullptr)
+            {
+                constant_typespec = constant_node->get_typespec();
+            }
             break;
         }
 
@@ -237,6 +273,7 @@ ICodeNode *CaseStatementParser::parse_constant(Token *token,
         {
             constant_node = parse_integer_constant(token->get_text(),
                                                    minus_sign);
+            constant_typespec = Predefined::integer_type;
             break;
         }
 
@@ -245,6 +282,7 @@ ICodeNode *CaseStatementParser::parse_constant(Token *token,
             constant_node =
                 parse_character_constant(token, token->get_value()->s,
                                          minus_sign);
+            constant_typespec = Predefined::char_type;
             break;
         }
 
@@ -270,6 +308,16 @@ ICodeNode *CaseStatementParser::parse_constant(Token *token,
         {
             constant_set.insert(data_value->i);
         }
+
+        // Type check: The constant type must be comparison compatible
+        //             with the CASE expression type.
+        if (!TypeChecker::are_comparison_compatible(expr_typespec,
+                                                    constant_typespec))
+        {
+            error_handler.flag(token, INCOMPATIBLE_TYPES, this);
+        }
+
+        constant_node->set_typespec(constant_typespec);
     }
 
     next_token(token);  // consume the constant
@@ -280,9 +328,56 @@ ICodeNode *CaseStatementParser::parse_identifier_constant(
                                      Token *token, const bool minus_sign)
     throw (string)
 {
-    // Placeholder: Don't allow for now.
-    error_handler.flag(token, INVALID_CONSTANT, this);
-    return nullptr;
+    ICodeNode *constant_node = nullptr;
+    TypeSpec *constant_typespec = nullptr;
+
+    // Look up the identifier in the symbol table stack.
+    string name = token->get_text();
+    transform(name.begin(), name.end(), name.begin(), ::tolower);
+    SymTabEntry *constant_id = symtab_stack->lookup(name);
+
+    // Undefined.
+    if (constant_id == nullptr)
+    {
+        constant_id = symtab_stack->enter_local(name);
+        constant_id->set_definition((Definition) DF_UNDEFINED);
+        constant_id->set_typespec(Predefined::undefined_type);
+        error_handler.flag(token, IDENTIFIER_UNDEFINED, this);
+        return nullptr;
+    }
+
+    Definition defn = constant_id->get_definition();
+
+    // Constant identifier.
+    if (   (defn == (Definition) DF_CONSTANT)
+        || (defn == (Definition) DF_ENUMERATION_CONSTANT))
+    {
+        EntryValue *entry_value =
+            constant_id->get_attribute((SymTabKey) CONSTANT_VALUE);
+        DataValue *constant_value = entry_value->value;
+        constant_typespec = constant_id->get_typespec();
+
+        // Type check: Leading sign permitted only for integer constants.
+        if (minus_sign && !TypeChecker::is_integer(constant_typespec))
+        {
+            error_handler.flag(token, INVALID_CONSTANT, this);
+        }
+
+        constant_node =
+            ICodeFactory::create_icode_node(
+                                    (ICodeNodeType) NT_INTEGER_CONSTANT);
+        constant_node->set_attribute((ICodeKey) VALUE,
+                                     new NodeValue(constant_value));
+    }
+
+    constant_id->append_line_number(token->get_line_number());
+
+    if (constant_node != nullptr)
+    {
+        constant_node->set_typespec(constant_typespec);
+    }
+
+    return constant_node;
 }
 
 ICodeNode *CaseStatementParser::parse_integer_constant(
@@ -317,9 +412,9 @@ ICodeNode *CaseStatementParser::parse_character_constant(
         {
             constant_node =
                 ICodeFactory::create_icode_node(
-                                     (ICodeNodeType) NT_STRING_CONSTANT);
+                                     (ICodeNodeType) NT_INTEGER_CONSTANT);
             NodeValue *node_value = new NodeValue();
-            node_value->value = new DataValue(value);
+            node_value->value = new DataValue((int) value[0]);
             constant_node->set_attribute((ICodeKey) VALUE, node_value);
         }
         else

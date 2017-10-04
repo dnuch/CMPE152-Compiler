@@ -43,6 +43,33 @@ constexpr SymTabKeyImpl ROUTINE_PARMS = SymTabKeyImpl::ROUTINE_PARMS;
 constexpr SymTabKeyImpl ROUTINE_ROUTINES = SymTabKeyImpl::ROUTINE_ROUTINES;
 constexpr SymTabKeyImpl DATA_VALUE = SymTabKeyImpl::DATA_VALUE;
 
+/**
+ * How a Pascal symbol table entry is defined.
+ */
+enum class DefinitionImpl
+{
+    CONSTANT, ENUMERATION_CONSTANT,
+    TYPE, VARIABLE, FIELD,
+    VALUE_PARM, VAR_PARM,
+    PROGRAM_PARM,
+    PROGRAM, PROCEDURE, FUNCTION,
+    UNDEFINED,
+};
+
+constexpr DefinitionImpl DF_CONSTANT = DefinitionImpl::CONSTANT;
+constexpr DefinitionImpl DF_ENUMERATION_CONSTANT =
+                                    DefinitionImpl::ENUMERATION_CONSTANT;
+constexpr DefinitionImpl DF_TYPE = DefinitionImpl::TYPE;
+constexpr DefinitionImpl DF_VARIABLE = DefinitionImpl::VARIABLE;
+constexpr DefinitionImpl DF_FIELD = DefinitionImpl::FIELD;
+constexpr DefinitionImpl DF_VALUE_PARM = DefinitionImpl::VALUE_PARM;
+constexpr DefinitionImpl DF_VAR_PARM = DefinitionImpl::VAR_PARM;
+constexpr DefinitionImpl DF_PROGRAM_PARM = DefinitionImpl::PROGRAM_PARM;
+constexpr DefinitionImpl DF_PROGRAM = DefinitionImpl::PROGRAM;
+constexpr DefinitionImpl DF_PROCEDURE = DefinitionImpl::PROCEDURE;
+constexpr DefinitionImpl DF_FUNCTION = DefinitionImpl::FUNCTION;
+constexpr DefinitionImpl DF_UNDEFINED = DefinitionImpl::UNDEFINED;
+
 class SymTabEntryImpl : public SymTabEntry
 {
 public:
@@ -69,6 +96,30 @@ public:
      * @return the symbol table that contains this entry.
      */
     SymTab *get_symtab() const;
+
+    /**
+     * Getter.
+     * @return the definition.
+     */
+    Definition get_definition() const;
+
+    /**
+     * Setter.
+     * @param definition the definition to set.
+     */
+    void set_definition(const Definition defn);
+
+    /**
+     * Getter.
+     * @return the type specification.
+     */
+    TypeSpec *get_typespec() const;
+
+    /**
+     * Setter.
+     * @param typeSpec the type specification to set.
+     */
+    void set_typespec(TypeSpec *spec);
 
     /**
      * Append a source line number to the entry.
@@ -98,9 +149,20 @@ public:
      */
     EntryValue *get_attribute(const SymTabKey key);
 
+    static map <DefinitionImpl, string> DEFINITION_WORDS;
+
 private:
+    static bool INITIALIZED;
+
+    /**
+     * Initialize the static maps.
+     */
+    static void initialize();
+
     string name;               // entry name
+    Definition definition;     // how the identifier is defined
     SymTab *symtab;            // parent symbol table
+    TypeSpec *typespec;        // type specification
     vector<int> line_numbers;  // source line numbers
     map<SymTabKey, EntryValue *> contents;
 };

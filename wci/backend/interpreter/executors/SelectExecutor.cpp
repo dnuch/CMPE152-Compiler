@@ -50,7 +50,9 @@ DataValue *SelectExecutor::execute(ICodeNode *node)
     DataValue *select_value = expression_executor.execute(expr_node);
 
     // If there is a selection, execute the SELECT_BRANCH's statement.
-    ICodeNode *statement_node = (*jump_table)[select_value->i];
+    int key = select_value->type == INTEGER ? select_value->i
+                                            : select_value->s[0];
+    ICodeNode *statement_node = (*jump_table)[key];
     if (statement_node != nullptr)
     {
         StatementExecutor statement_executor(this);

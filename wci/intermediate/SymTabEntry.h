@@ -12,6 +12,7 @@
 #include <vector>
 #include <string>
 #include "SymTab.h"
+#include "ICode.h"
 #include "../DataValue.h"
 
 namespace wci { namespace intermediate {
@@ -28,6 +29,15 @@ enum class SymTabKey
 };
 
 class SymTab;    // forward declaration
+class TypeSpec;  // forward declaration
+
+/**
+ * Symbol table definitions.
+ */
+enum class Definition
+{
+    // to be "subclassed" by implementation-specific symbol table definitions
+};
 
 /**
  * Symbol table entry value.
@@ -36,9 +46,13 @@ struct EntryValue
 {
     DataValue *value;
     SymTab    *symtab;
+    ICode     *icode;
+    vector<SymTabEntry *> v;
 
-    EntryValue()                 : value(nullptr), symtab(nullptr) {};
-    EntryValue(DataValue *value) : value(value), symtab(nullptr) {};
+    EntryValue()                 : value(nullptr), symtab(nullptr), icode(nullptr) {};
+    EntryValue(DataValue *value) : value(value), symtab(nullptr), icode(nullptr) {};
+    EntryValue(SymTab *symtab)   : value(nullptr), symtab(symtab), icode(nullptr) {};
+    EntryValue(ICode *icode)     : value(nullptr), symtab(nullptr), icode(icode) {};
 
     ~EntryValue() {}
 };
@@ -62,6 +76,30 @@ public:
      * @return the symbol table that contains this entry.
      */
     virtual SymTab *get_symtab() const = 0;
+
+    /**
+     * Getter.
+     * @return the definition.
+     */
+    virtual Definition get_definition() const = 0;
+
+    /**
+     * Setter.
+     * @param definition the definition to set.
+     */
+    virtual void set_definition(const Definition defn) = 0;
+
+    /**
+     * Getter.
+     * @return the type specification.
+     */
+    virtual TypeSpec *get_typespec() const = 0;
+
+    /**
+     * Setter.
+     * @param typeSpec the type specification to set.
+     */
+    virtual void set_typespec(TypeSpec *spec) = 0;
 
     /**
      * Append a source line number to the entry.

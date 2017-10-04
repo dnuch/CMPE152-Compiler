@@ -8,6 +8,7 @@
  */
 
 #include <string>
+#include <vector>
 #include <map>
 #include "SymTabEntryImpl.h"
 #include "../SymTab.h"
@@ -20,9 +21,53 @@ using namespace std;
 using namespace wci;
 using namespace wci::intermediate;
 
-SymTabEntryImpl::SymTabEntryImpl(const string name, SymTab *symtab)
-    : name(name), symtab(symtab)
+bool SymTabEntryImpl::INITIALIZED = false;
+
+map <DefinitionImpl, string> SymTabEntryImpl::DEFINITION_WORDS;
+
+void SymTabEntryImpl::initialize()
 {
+    if (INITIALIZED) return;
+
+    vector<string> defn_words =
+    {
+        "constant", "enumeration constant",
+        "type", "variable", "record field",
+        "value parameter", "VAR parameter",
+        "program parameter",
+        "PROGRAM", "PROCEDURE", "FUNCTION",
+        "undefined",
+    };
+
+    vector<DefinitionImpl> defns =
+    {
+        DefinitionImpl::CONSTANT,
+        DefinitionImpl::ENUMERATION_CONSTANT,
+        DefinitionImpl::TYPE,
+        DefinitionImpl::VARIABLE,
+        DefinitionImpl::FIELD,
+        DefinitionImpl::VALUE_PARM,
+        DefinitionImpl::VAR_PARM,
+        DefinitionImpl::PROGRAM_PARM,
+        DefinitionImpl::PROGRAM,
+        DefinitionImpl::PROCEDURE,
+        DefinitionImpl::FUNCTION,
+        DefinitionImpl::UNDEFINED,
+    };
+
+    for (int i = 0; i < defn_words.size(); i++)
+    {
+        DEFINITION_WORDS[defns[i]] = defn_words[i];
+    }
+
+    INITIALIZED = true;
+}
+
+SymTabEntryImpl::SymTabEntryImpl(const string name, SymTab *symtab)
+    : name(name), definition((Definition) -1), symtab(symtab),
+      typespec(nullptr)
+{
+    initialize();
 }
 
 SymTabEntryImpl::~SymTabEntryImpl()
@@ -32,6 +77,17 @@ SymTabEntryImpl::~SymTabEntryImpl()
 string SymTabEntryImpl::get_name() const { return name; }
 
 SymTab *SymTabEntryImpl::get_symtab() const { return symtab; }
+
+Definition SymTabEntryImpl::get_definition() const { return definition; }
+
+void SymTabEntryImpl::set_definition(const Definition defn)
+{
+    definition = defn;
+}
+
+TypeSpec *SymTabEntryImpl::get_typespec() const { return typespec; }
+
+void SymTabEntryImpl::set_typespec(TypeSpec *spec) { typespec = spec; }
 
 void SymTabEntryImpl::append_line_number(const int line_number)
 {

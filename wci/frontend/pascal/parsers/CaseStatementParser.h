@@ -13,6 +13,7 @@
 #include <set>
 #include "StatementParser.h"
 #include "../../Token.h"
+#include "../../../intermediate/TypeSpec.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
@@ -58,32 +59,38 @@ private:
     /**
      * Parse a CASE branch.
      * @param token the current token.
+     * @param expr_typespec the CASE expression type.
      * @param constant_set the set of CASE branch constants.
      * @return the root SELECT_BRANCH node of the subtree.
      * @throw a string message if an error occurred.
      */
-    ICodeNode *parse_branch(Token *token, set<int>& constant_set)
+    ICodeNode *parse_branch(Token *token, TypeSpec *expr_typespec,
+                            set<int>& constant_set)
         throw (string);
 
     /**
      * Parse a list of CASE branch constants.
      * @param token the current token.
+     * @param expr_typespec the CASE expression type.
      * @param constants_node the parent SELECT_CONSTANTS node.
      * @param constant_set the set of CASE branch constants.
      * @throw a string message if an error occurred.
      */
-    void parse_constant_list(Token *token, ICodeNode *constants_node,
+    void parse_constant_list(Token *token, TypeSpec *expr_typespec,
+                             ICodeNode *constants_node,
                              set<int>& constant_set)
         throw (string);
 
     /**
      * Parse a CASE branch constant.
      * @param token the current token.
+     * @param expr_typespec the CASE expression type.
      * @param constant_set the set of CASE branch constants.
      * @return the constant node.
      * @throw a string message if an error occurred.
      */
-    ICodeNode *parse_constant(Token *token, set<int>& constant_set)
+    ICodeNode *parse_constant(Token *token, TypeSpec *expr_typespec,
+                              set<int>& constant_set)
         throw (string);
 
     /**

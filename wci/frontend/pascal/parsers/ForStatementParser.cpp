@@ -16,16 +16,22 @@
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
+#include "../../../intermediate/symtabimpl/Predefined.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../../../intermediate/TypeSpec.h"
+#include "../../../intermediate/typeimpl/TypeSpecImpl.h"
+#include "../../../intermediate/typeimpl/TypeChecker.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 bool ForStatementParser::INITIALIZED = false;
 
@@ -80,7 +86,20 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
     // Parse the embedded initial assignment.
     AssignmentStatementParser assignment_parser(this);
     ICodeNode *init_assign_node = assignment_parser.parse_statement(token);
+    TypeSpec *control_typespec = init_assign_node != nullptr
+                                     ? init_assign_node->get_typespec()
+                                     : Predefined::undefined_type;
+
     set_line_number(init_assign_node, for_line_number);
+
+    // Type check: The control variable's type must be integer
+    //             or enumeration.
+    if (!TypeChecker::is_integer(control_typespec) &&
+        (control_typespec->get_form()
+                               != (TypeForm) TypeFormImpl::ENUMERATION))
+    {
+        error_handler.flag(token, INCOMPATIBLE_TYPES, this);
+    }
 
     // The COMPOUND node adopts the initial ASSIGN and the LOOP nodes
     // as its first and second children.
@@ -107,6 +126,7 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
         ICodeFactory::create_icode_node(
                 direction == (TokenType) PT_TO ? (ICodeNodeType) NT_GT
                                                : (ICodeNodeType) NT_LT);
+    relop_node->set_typespec(Predefined::boolean_type);
 
     // Copy the control VARIABLE node. The relational operator
     // node adopts the copied VARIABLE node as its first child.
@@ -116,7 +136,19 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
     // Parse the termination expression. The relational operator node
     // adopts the expression as its second child.
     ExpressionParser expression_parser(this);
-    relop_node->add_child(expression_parser.parse_statement(token));
+    ICodeNode *expr_node = expression_parser.parse_statement(token);
+    relop_node->add_child(expr_node);
+
+    // Type check: The termination expression type must be assignment
+    //             compatible with the control variable's type.
+    TypeSpec *expr_typespec = expr_node != nullptr
+                                  ? expr_node->get_typespec()
+                                  : Predefined::undefined_type;
+    if (!TypeChecker::are_assignment_compatible(control_typespec,
+                                                expr_typespec))
+    {
+        error_handler.flag(token, INCOMPATIBLE_TYPES, this);
+    }
 
     // The TEST node adopts the relational operator node as its only child.
     // The LOOP node adopts the TEST node as its first child.
@@ -142,6 +174,7 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
     // to advance the value of the variable.
     ICodeNode *next_assign_node =
             ICodeFactory::create_icode_node((ICodeNodeType) NT_ASSIGN);
+    next_assign_node->set_typespec(control_typespec);
     next_assign_node->add_child(control_var_node->copy());
     set_line_number(next_assign_node, for_line_number);
 
@@ -152,6 +185,8 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
                     direction == (TokenType) PT_TO
                                         ? (ICodeNodeType) NT_ADD
                                         : (ICodeNodeType) NT_SUBTRACT);
+    arith_op_node->set_typespec(Predefined::integer_type);
+
     // The operator node adopts a copy of the loop variable as its
     // first child and the value 1 as its second child.
     arith_op_node->add_child(control_var_node->copy());
@@ -160,6 +195,7 @@ ICodeNode *ForStatementParser::parse_statement(Token *token)
                                     (ICodeNodeType) NT_INTEGER_CONSTANT);
     NodeValue *node_value = new NodeValue();
     node_value->value = new DataValue(1);
+    one_node->set_typespec(Predefined::integer_type);
     one_node->set_attribute((ICodeKey) VALUE, node_value);
     arith_op_node->add_child(one_node);
 

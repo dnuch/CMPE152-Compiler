@@ -17,7 +17,9 @@
 #include "wci/frontend/FrontendFactory.h"
 #include "wci/frontend/pascal/PascalToken.h"
 #include "wci/intermediate/SymTab.h"
+#include "wci/intermediate/SymTabEntry.h"
 #include "wci/intermediate/ICode.h"
+#include "wci/intermediate/symtabimpl/SymTabEntryImpl.h"
 #include "wci/backend/Backend.h"
 #include "wci/backend/BackendFactory.h"
 #include "wci/message/Message.h"
@@ -29,6 +31,7 @@ using namespace std;
 using namespace wci::frontend;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::backend;
 using namespace wci::message;
 using namespace wci::util;
@@ -104,7 +107,11 @@ Pascal::Pascal(string operation, string file_path, string flags)
     if (parser->get_error_count() == 0)
     {
         symtab_stack = parser->get_symtab_stack();
-        icode = parser->get_icode();
+
+        SymTabEntry *program_id = symtab_stack->get_program_id();
+        EntryValue *entry_value = program_id->get_attribute(
+                                              (SymTabKey) ROUTINE_ICODE);
+        icode = entry_value->icode;
 
         if (xref)
         {
@@ -114,8 +121,8 @@ Pascal::Pascal(string operation, string file_path, string flags)
 
         if (intermediate)
         {
-            ParseTreePrinter *tree_printer = new ParseTreePrinter();
-            tree_printer->print(icode);
+            ParseTreePrinter tree_printer;
+            tree_printer.print(symtab_stack);
         }
 
         first_output_message = true;

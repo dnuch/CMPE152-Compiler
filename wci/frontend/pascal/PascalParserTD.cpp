@@ -6,6 +6,7 @@
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
+#include <set>
 #include <algorithm>
 #include <chrono>
 #include "PascalParserTD.h"
@@ -15,11 +16,15 @@
 #include "../Token.h"
 #include "PascalToken.h"
 #include "PascalError.h"
+#include "parsers/BlockParser.h"
 #include "parsers/StatementParser.h"
 #include "../../intermediate/SymTabEntry.h"
 #include "../../intermediate/ICode.h"
 #include "../../intermediate/ICodeNode.h"
 #include "../../intermediate/ICodeFactory.h"
+#include "../../intermediate/symtabimpl/Predefined.h"
+#include "../../intermediate/symtabimpl/SymTabEntryImpl.h"
+#include "../../intermediate/ICodeNode.h"
 #include "../../intermediate/icodeimpl/ICodeNodeImpl.h"
 #include "../../message/Message.h"
 
@@ -29,41 +34,53 @@ using namespace std;
 using namespace std::chrono;
 using namespace wci::frontend;
 using namespace wci::frontend::pascal::parsers;
+using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
 using namespace wci::message;
 
 PascalErrorHandler PascalParserTD::error_handler;
 
-PascalParserTD::PascalParserTD(Scanner *scanner) : Parser(scanner)
+PascalParserTD::PascalParserTD(Scanner *scanner)
+    : Parser(scanner), routine_id(nullptr)
 {
     PascalError::initialize();
 }
 
 PascalParserTD::PascalParserTD(PascalParserTD *parent)
-    : Parser(parent->get_scanner())
+    : Parser(parent->get_scanner()), routine_id(nullptr)
 {
 }
 
 void PascalParserTD::parse() throw (string)
 {
     steady_clock::time_point start_time = steady_clock::now();
+
     icode = ICodeFactory::create_icode();
+    Predefined::initialize(symtab_stack);
+
+    // Create a dummy program identifier symbol table entry.
+    routine_id = symtab_stack->enter_local("dummyprogramname");
+    routine_id->set_definition((Definition) DefinitionImpl::PROGRAM);
+    symtab_stack->set_program_id(routine_id);
+
+    // Push a new symbol table onto the symbol table stack and set
+    // the routine's symbol table and intermediate code.
+    routine_id->set_attribute((SymTabKey) ROUTINE_SYMTAB,
+                              new EntryValue(symtab_stack->push()));
+    routine_id->set_attribute((SymTabKey) ROUTINE_ICODE,
+                              new EntryValue(icode));
 
     Token *token = next_token(nullptr);
-    ICodeNode *root_node = nullptr;
 
-    // Look for the BEGIN token to parse a compound statement.
-    if (token->get_type() == (TokenType) PT_BEGIN)
-    {
-        StatementParser *statement_parser = new StatementParser(this);
-        root_node = statement_parser->parse_statement(token);
-        token = current_token();
-    }
-    else {
-        error_handler.flag(token, UNEXPECTED_TOKEN, this);
-    }
+    // Parse a block.
+    BlockParser block_parser(this);
+    ICodeNode *root_node = block_parser.parse_block(token, routine_id);
+    icode->set_root(root_node);
+    symtab_stack->pop();
 
     // Look for the final period.
+    token = current_token();
     if (token->get_type() != (TokenType) PT_DOT)
     {
         error_handler.flag(token, MISSING_PERIOD, this);

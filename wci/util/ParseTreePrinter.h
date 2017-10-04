@@ -14,6 +14,7 @@
 #include <vector>
 #include "../intermediate/ICode.h"
 #include "../intermediate/ICodeNode.h"
+#include "../intermediate/SymTabStack.h"
 
 namespace wci { namespace util {
 
@@ -31,9 +32,9 @@ public:
 
     /**
      * Print the intermediate code as a parse tree.
-     * @param iCode the intermediate code.
+     * @param symTabStack the symbol table stack.
      */
-    void print(ICode *icode);
+    void print(SymTabStack *symtab_stack);
 
 private:
     static const int INDENT_WIDTH;
@@ -43,6 +44,12 @@ private:
     int length;          // output line length
     string indentation;  // indentation of a line
     string line;         // output line
+
+    /**
+     * Print the parse tree for a routine.
+     * @param routine_id the routine identifier's symbol table entry.
+     */
+    void print_routine(SymTabEntry *routine_id);
 
     /**
      * Print a parse tree node.

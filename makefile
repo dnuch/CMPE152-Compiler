@@ -1,10 +1,10 @@
 #
-# Makefile for Chapter 8
+# Makefile for Chapter 10
 #
 # Copyright (c) 2017 by Ronald Mak
 # For instructional purposes only.  No warranties.
 #
-TARGET = Chapter8cpp
+TARGET = Chapter10cpp
 SRCS =  Pascal.cpp \
         wci/backend/Backend.cpp \
         wci/backend/BackendFactory.cpp \
@@ -19,7 +19,6 @@ SRCS =  Pascal.cpp \
         wci/backend/interpreter/executors/LoopExecutor.cpp \
         wci/backend/interpreter/executors/SelectExecutor.cpp \
         wci/backend/interpreter/executors/StatementExecutor.cpp \
-        wci/backend/interpreter/executors/WhenExecutor.cpp \
         wci/frontend/FrontendFactory.cpp \
         wci/frontend/Parser.cpp \
         wci/frontend/Scanner.cpp \
@@ -30,15 +29,26 @@ SRCS =  Pascal.cpp \
         wci/frontend/pascal/PascalParserTD.cpp \
         wci/frontend/pascal/PascalScanner.cpp \
         wci/frontend/pascal/PascalToken.cpp \
+        wci/frontend/pascal/parsers/ArrayTypeParser.cpp \
         wci/frontend/pascal/parsers/AssignmentStatementParser.cpp \
+        wci/frontend/pascal/parsers/BlockParser.cpp \
         wci/frontend/pascal/parsers/CaseStatementParser.cpp \
         wci/frontend/pascal/parsers/CompoundStatementParser.cpp \
+        wci/frontend/pascal/parsers/ConstantDefinitionsParser.cpp \
+        wci/frontend/pascal/parsers/DeclarationsParser.cpp \
+        wci/frontend/pascal/parsers/EnumerationTypeParser.cpp \
         wci/frontend/pascal/parsers/ExpressionParser.cpp \
         wci/frontend/pascal/parsers/ForStatementParser.cpp \
         wci/frontend/pascal/parsers/IfStatementParser.cpp \
+        wci/frontend/pascal/parsers/RecordTypeParser.cpp \
         wci/frontend/pascal/parsers/RepeatStatementParser.cpp \
+        wci/frontend/pascal/parsers/SimpleTypeParser.cpp \
         wci/frontend/pascal/parsers/StatementParser.cpp \
-        wci/frontend/pascal/parsers/WhenStatementParser.cpp \
+        wci/frontend/pascal/parsers/SubrangeTypeParser.cpp \
+        wci/frontend/pascal/parsers/TypeDefinitionsParser.cpp \
+        wci/frontend/pascal/parsers/TypeSpecificationParser.cpp \
+        wci/frontend/pascal/parsers/VariableDeclarationsParser.cpp \
+        wci/frontend/pascal/parsers/VariableParser.cpp \
         wci/frontend/pascal/parsers/WhileStatementParser.cpp \
         wci/frontend/pascal/tokens/PascalErrorToken.cpp \
         wci/frontend/pascal/tokens/PascalNumberToken.cpp \
@@ -47,11 +57,15 @@ SRCS =  Pascal.cpp \
         wci/frontend/pascal/tokens/PascalWordToken.cpp \
         wci/intermediate/ICodeFactory.cpp \
         wci/intermediate/SymTabFactory.cpp \
+        wci/intermediate/TypeFactory.cpp \
         wci/intermediate/icodeimpl/ICodeImpl.cpp \
         wci/intermediate/icodeimpl/ICodeNodeImpl.cpp \
+        wci/intermediate/symtabimpl/Predefined.cpp \
         wci/intermediate/symtabimpl/SymTabEntryImpl.cpp \
         wci/intermediate/symtabimpl/SymTabImpl.cpp \
         wci/intermediate/symtabimpl/SymTabStackImpl.cpp \
+        wci/intermediate/typeimpl/TypeChecker.cpp \
+        wci/intermediate/typeimpl/TypeSpecImpl.cpp \
         wci/message/Message.cpp \
         wci/message/MessageHandler.cpp \
         wci/util/CrossReferencer.cpp \

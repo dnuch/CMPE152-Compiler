@@ -11,21 +11,28 @@
 #include "AssignmentStatementParser.h"
 #include "StatementParser.h"
 #include "ExpressionParser.h"
+#include "VariableParser.h"
 #include "../PascalParserTD.h"
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
 #include "../../../intermediate/SymTabEntry.h"
+#include "../../../intermediate/symtabimpl/Predefined.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../../../intermediate/TypeSpec.h"
+#include "../../../intermediate/TypeFactory.h"
+#include "../../../intermediate/typeimpl/TypeChecker.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 bool AssignmentStatementParser::INITIALIZED = false;
 
@@ -62,31 +69,15 @@ ICodeNode *AssignmentStatementParser::parse_statement(Token *token)
     ICodeNode *assign_node =
             ICodeFactory::create_icode_node((ICodeNodeType) NT_ASSIGN);
 
-
-    // Look up the target identifier in the symbol table stack.
-    // Enter the identifier into the table if it's not found.
-    string target_name = token->get_text();
-    transform(target_name.begin(), target_name.end(),
-              target_name.begin(), ::tolower);
-    SymTabEntry *target_id = symtab_stack->lookup(target_name);
-    if (target_id == nullptr)
-    {
-        target_id = symtab_stack->enter_local(target_name);
-    }
-    target_id->append_line_number(token->get_line_number());
-
-    token = next_token(token);  // consume the identifier token
-
-    // Create the variable node and set its name attribute.
-    ICodeNode *variable_node =
-            ICodeFactory::create_icode_node(
-                             (ICodeNodeType) NT_VARIABLE);
-    NodeValue *node_value = new NodeValue();
-    node_value->id = target_id;
-    variable_node->set_attribute((ICodeKey) ID, node_value);
+    // Parse the target variable.
+    VariableParser variableParser(this);
+    ICodeNode *target_node = variableParser.parse_variable(token);
+    TypeSpec *target_typespec = target_node != nullptr
+                                    ? target_node->get_typespec()
+                                    : Predefined::undefined_type;
 
     // The ASSIGN node adopts the variable node as its first child.
-    assign_node->add_child(variable_node);
+    assign_node->add_child(target_node);
 
     // Synchronize on the := token.
     token = synchronize(COLON_EQUALS_SET);
@@ -99,11 +90,29 @@ ICodeNode *AssignmentStatementParser::parse_statement(Token *token)
         error_handler.flag(token, MISSING_COLON_EQUALS, this);
     }
 
+    Token *expr_token = new Token(*token);
+
     // Parse the expression.  The ASSIGN node adopts the expression's
     // node as its second child.
     ExpressionParser expression_parser(this);
-    assign_node->add_child(expression_parser.parse_statement(token));
+    ICodeNode *expr_node = expression_parser.parse_statement(token);
+    assign_node->add_child(expr_node);
 
+    // Type check: Assignment compatible?
+    TypeSpec *expr_typespec = expr_node != nullptr
+                                  ? expr_node->get_typespec()
+                                  : Predefined::undefined_type;
+    if (!TypeChecker::are_assignment_compatible(target_typespec,
+                                                expr_typespec))
+    {
+        token = current_token();
+        error_handler.flag(expr_token, PascalErrorCode::INCOMPATIBLE_TYPES,
+                           this);
+    }
+
+    assign_node->set_typespec(target_typespec);
+
+    delete expr_token;
     return assign_node;
 }
 

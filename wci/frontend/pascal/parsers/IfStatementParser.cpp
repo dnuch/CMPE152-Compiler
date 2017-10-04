@@ -16,16 +16,21 @@
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
+#include "../../../intermediate/symtabimpl/Predefined.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../../../intermediate/TypeSpec.h"
+#include "../../../intermediate/typeimpl/TypeChecker.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 bool IfStatementParser::INITIALIZED = false;
 
@@ -63,11 +68,24 @@ ICodeNode *IfStatementParser::parse_statement(Token *token) throw (string)
     ICodeNode *if_node =
             ICodeFactory::create_icode_node((ICodeNodeType) NT_IF);
 
+    Token *expr_token = new Token(*token);
 
     // Parse the expression.
     // The IF node adopts the expression subtree as its first child.
     ExpressionParser expression_parser(this);
-    if_node->add_child(expression_parser.parse_statement(token));
+    ICodeNode *expr_node = expression_parser.parse_statement(token);
+    if_node->add_child(expr_node);
+
+    // Type check: The test expression must be boolean.
+    TypeSpec *expr_typespec = expr_node != nullptr
+                                  ? expr_node->get_typespec()
+                                  : Predefined::undefined_type;
+    if (!TypeChecker::is_boolean(expr_typespec))
+    {
+        error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+    }
+
+    delete expr_token;
 
     // Synchronize at the THEN.
     token = synchronize(THEN_SET);

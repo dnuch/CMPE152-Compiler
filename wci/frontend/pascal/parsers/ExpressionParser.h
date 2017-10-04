@@ -87,6 +87,14 @@ private:
      * @throw a string message if an error occurred.
      */
     ICodeNode *parse_factor(Token *token) throw (string);
+
+    /**
+     * Parse an identifier.
+     * @param token the current token.
+     * @return the root node of the generated parse tree.
+     * @throw a string message if an error occurred.
+     */
+    ICodeNode *parse_identifier(Token *token) throw (string);
 };
 
 }}}}  // namespace wci::frontend::pascal::parsers

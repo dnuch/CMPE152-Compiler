@@ -1,3 +1,7 @@
+VAR
+    i, j, even, odd, prime : integer;
+    ch, str : char;
+
 BEGIN {CASE statements}
     i := 3;  ch := 'b';
 

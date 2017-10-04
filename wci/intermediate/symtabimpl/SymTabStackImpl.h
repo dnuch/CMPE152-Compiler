@@ -11,6 +11,7 @@
 
 #include <vector>
 #include "SymTabImpl.h"
+#include "../SymTabEntry.h"
 #include "../SymTabStack.h"
 
 namespace wci { namespace intermediate { namespace symtabimpl {
@@ -38,11 +39,47 @@ public:
     int get_current_nesting_level() const;
 
     /**
+     * Getter.
+     * @return the symbol table entry for the main program identifier.
+     */
+    SymTabEntry *get_program_id() const;
+
+    /**
+     * Setter.
+     * @param entry the symbol table entry for the main program identifier.
+     */
+    void set_program_id(SymTabEntry *id);
+
+    /**
      * Return the local symbol table which is at the top of the stack.
      * Implementation of wci::intermediate::SymTabStack.
      * @return the local symbol table.
      */
     SymTab *get_local_symtab() const;
+
+    /**
+     * Push a new symbol table onto the stack.
+     * Implementation of wci::intermediate::SymTabStack.
+     * @return the pushed symbol table.
+     */
+    SymTab *push();
+
+    /**
+     * Push a symbol table onto the stack.
+     * To be defined by implementation subclasses.
+     * Implementation of wci::intermediate::SymTabStack.
+     * @param symtab the symbol table to push.
+     * @return the pushed symbol table.
+     */
+    SymTab *push(SymTab *symtab);
+
+    /**
+     * Pop a symbol table off the stack.
+     * To be defined by implementation subclasses.
+     * Implementation of wci::intermediate::SymTabStack.
+     * @return the popped symbol table.
+     */
+    SymTab *pop();
 
     /**
      * Create and enter a new entry into the local symbol table.
@@ -70,6 +107,8 @@ public:
 
 private:
     int current_nesting_level;  // current scope nesting level
+    SymTabEntry *program_id;    // entry for the main program id
+
     vector<SymTab *> stack;
 };
 

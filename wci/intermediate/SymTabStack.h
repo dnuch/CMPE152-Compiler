@@ -26,6 +26,18 @@ public:
 
     /**
      * Getter.
+     * @return the symbol table entry for the main program identifier.
+     */
+    virtual SymTabEntry *get_program_id() const = 0;
+
+    /**
+     * Setter.
+     * @param entry the symbol table entry for the main program identifier.
+     */
+    virtual void set_program_id(SymTabEntry *entry) = 0;
+
+    /**
+     * Getter.
      * @return the current nesting level.
      */
     virtual int get_current_nesting_level() const = 0;
@@ -36,6 +48,28 @@ public:
      * @return the local symbol table.
      */
     virtual SymTab *get_local_symtab() const = 0;
+
+    /**
+     * Push a new symbol table onto the stack.
+     * To be defined by implementation subclasses.
+     * @return the pushed symbol table.
+     */
+    virtual SymTab *push() = 0;
+
+    /**
+     * Push a symbol table onto the stack.
+     * To be defined by implementation subclasses.
+     * @param symtab the symbol table to push.
+     * @return the pushed symbol table.
+     */
+    virtual SymTab *push(SymTab *symtab) = 0;
+
+    /**
+     * Pop a symbol table off the stack.
+     * To be defined by implementation subclasses.
+     * @return the popped symbol table.
+     */
+    virtual SymTab *pop() = 0;
 
     /**
      * Create and enter a new entry into the local symbol table.

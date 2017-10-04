@@ -1,3 +1,7 @@
+VAR
+    i, j, k : integer;
+    ch, ch1, str : char;
+
 BEGIN {CASE syntax errors}
     i := 0;  ch := 'x';  str := 'y';
 

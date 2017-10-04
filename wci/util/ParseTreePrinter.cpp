@@ -7,18 +7,28 @@
  * <p>For instructional purposes only.  No warranties.</p>
  */
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
+#include <functional>
 #include "ParseTreePrinter.h"
+#include "../intermediate/SymTab.h"
+#include "../intermediate/SymTabEntry.h"
+#include "../intermediate/symtabimpl/SymTabImpl.h"
+#include "../intermediate/symtabimpl/SymTabEntryImpl.h"
 #include "../intermediate/ICode.h"
 #include "../intermediate/ICodeNode.h"
 #include "../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../intermediate/TypeSpec.h"
+#include "../intermediate/typeimpl/TypeSpecImpl.h"
 
 namespace wci { namespace util {
 
 using namespace std;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 const int ParseTreePrinter::INDENT_WIDTH = 4;
 const int ParseTreePrinter::LINE_WIDTH = 80;
@@ -28,24 +38,45 @@ ParseTreePrinter::ParseTreePrinter() : length(0), indentation("")
 {
 }
 
-/**
- * Print the intermediate code as a parse tree.
- * @param iCode the intermediate code.
- */
-void ParseTreePrinter::print(ICode *icode)
+void ParseTreePrinter::print(SymTabStack *symtab_stack)
 {
-    cout << endl << "===== INTERMEDIATE CODE =====" << endl << endl;
+    cout << endl << "===== INTERMEDIATE CODE =====" << endl;
 
     line = "";
     indentation = "";
-    print_node(icode->get_root());
-    print_line();
+
+    SymTabEntry *program_id = symtab_stack->get_program_id();
+    print_routine(program_id);
 }
 
-/**
- * Print a parse tree node.
- * @param node the parse tree node.
- */
+void ParseTreePrinter::print_routine(SymTabEntry *routine_id)
+{
+    Definition defn = routine_id->get_definition();
+    cout << endl << "*** "
+         << SymTabEntryImpl::DEFINITION_WORDS[(DefinitionImpl) defn]
+         << " " << routine_id->get_name() << " ***" << endl << endl;
+
+    // Print the intermediate code in the routine's symbol table entry.
+    EntryValue *entry_value = routine_id->get_attribute(
+                                              (SymTabKey) ROUTINE_ICODE);
+    ICode *icode = entry_value->icode;
+    if (icode->get_root() != nullptr)
+    {
+        print_node(icode->get_root());
+    }
+
+    // Print any procedures and functions defined in the routine.
+    entry_value =
+        routine_id->get_attribute((SymTabKey) ROUTINE_ROUTINES);
+    if ((entry_value != nullptr) && (entry_value->v.size() > 0))
+    {
+        for (SymTabEntry *routine_id : entry_value->v)
+        {
+            print_routine(routine_id);
+        }
+    }
+}
+
 void ParseTreePrinter::print_node(ICodeNode *node)
 {
     // Opening tag.
@@ -58,9 +89,8 @@ void ParseTreePrinter::print_node(ICodeNode *node)
     print_attributes(node);
     print_type_spec(node);
 
-    vector<ICodeNode *> child_nodes = node->get_children();
-
     // Print the node's children followed by the closing tag.
+    vector<ICodeNode *> child_nodes = node->get_children();
     if (child_nodes.size() > 0)
     {
         append(">");
@@ -99,11 +129,6 @@ void ParseTreePrinter::print_attributes(ICodeNode *node)
     indentation = save_indentation;
 }
 
-/**
- * Print a node attribute as key="value".
- * @param keyString the key string.
- * @param value the value.
- */
 void ParseTreePrinter::print_attribute(ICodeKey key, NodeValue *node_value)
 {
     DataValue *data_value = node_value->value;
@@ -121,6 +146,7 @@ void ParseTreePrinter::print_attribute(ICodeKey key, NodeValue *node_value)
         case LINE:
         case LEVEL:
         case VALUE:
+        case TYPE_ID:
         {
             value_string = data_value->display();
             break;
@@ -160,6 +186,36 @@ void ParseTreePrinter::print_child_nodes(vector<ICodeNode *> child_nodes)
  */
 void ParseTreePrinter::print_type_spec(ICodeNode *node)
 {
+    TypeSpec *typespec = node->get_typespec();
+
+    if (typespec != nullptr)
+    {
+        string save_margin = indentation;
+        indentation += INDENT;
+
+        string type_name;
+        SymTabEntry *type_id = typespec->get_identifier();
+
+        // Named type: Print the type identifier's name.
+        if (type_id != nullptr) type_name = type_id->get_name();
+
+        // Unnamed type: Print an artificial type identifier name.
+        else
+        {
+            hash<TypeSpec *> typespec_hash;
+            hash<string>     form_hash;
+            TypeFormImpl form = (TypeFormImpl) typespec->get_form();
+            string form_name = TypeSpecImpl::TYPE_FORM_NAMES[form];
+            stringstream stream;
+            stream << hex << abs((int) (  typespec_hash(typespec)
+                                        + form_hash(form_name)));
+            type_name = "$anon_" + stream.str();
+        }
+
+        NodeValue *node_value = new NodeValue(new DataValue(type_name));
+        print_attribute((ICodeKey) TYPE_ID, node_value);
+        indentation = save_margin;
+    }
 }
 
 /**

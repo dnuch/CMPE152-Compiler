@@ -13,6 +13,7 @@
 #include <vector>
 #include "ICode.h"
 #include "SymTabEntry.h"
+#include "TypeSpec.h"
 #include "../frontend/Token.h"
 #include "../DataValue.h"
 
@@ -76,6 +77,18 @@ public:
      * @return the parent node.
      */
     virtual ICodeNode *get_parent() = 0;
+
+    /**
+     * Return the type specification of this node.
+     * @return the type specification.
+     */
+    virtual TypeSpec *get_typespec() const = 0;
+
+    /**
+     * Set the type specification of this node.
+     * @param spec the type specification to set.
+     */
+    virtual void set_typespec(TypeSpec *spec) = 0;
 
     /**
      * Return an array list of this node's children.

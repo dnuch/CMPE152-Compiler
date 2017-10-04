@@ -24,7 +24,7 @@ enum class ICodeNodeTypeImpl
 
     // Statements
     COMPOUND, ASSIGN, LOOP, TEST, CALL, PARAMETERS,
-    IF, SELECT, SELECT_BRANCH, SELECT_CONSTANTS, NO_OP, WHEN, WHEN_BRANCH, OTHERWISE,
+    IF, SELECT, SELECT_BRANCH, SELECT_CONSTANTS, NO_OP,
 
     // Relational operators
     EQ, NE, LT, LE, GT, GE, NOT,
@@ -61,10 +61,7 @@ constexpr ICodeNodeTypeImpl NT_SELECT_BRANCH =
 constexpr ICodeNodeTypeImpl NT_SELECT_CONSTANTS =
                                      ICodeNodeTypeImpl::SELECT_CONSTANTS;
 constexpr ICodeNodeTypeImpl NT_NO_OP = ICodeNodeTypeImpl::NO_OP;
-constexpr ICodeNodeTypeImpl NT_WHEN = ICodeNodeTypeImpl::WHEN;
-constexpr ICodeNodeTypeImpl NT_WHEN_BRANCH = ICodeNodeTypeImpl::WHEN_BRANCH;
-constexpr ICodeNodeTypeImpl NT_OTHERWISE = ICodeNodeTypeImpl::OTHERWISE;    
-    
+
 constexpr ICodeNodeTypeImpl NT_EQ = ICodeNodeTypeImpl::EQ;
 constexpr ICodeNodeTypeImpl NT_NE = ICodeNodeTypeImpl::NE;
 constexpr ICodeNodeTypeImpl NT_LT = ICodeNodeTypeImpl::LT;
@@ -99,13 +96,14 @@ constexpr ICodeNodeTypeImpl NT_WRITE_PARM = ICodeNodeTypeImpl::WRITE_PARM;
  */
 enum class ICodeKeyImpl
 {
-    LINE, ID, LEVEL, VALUE,
+    LINE, ID, LEVEL, VALUE, TYPE_ID,
 };
 
 constexpr ICodeKeyImpl LINE = ICodeKeyImpl::LINE;
 constexpr ICodeKeyImpl ID = ICodeKeyImpl::ID;
 constexpr ICodeKeyImpl LEVEL = ICodeKeyImpl::LEVEL;
 constexpr ICodeKeyImpl VALUE = ICodeKeyImpl::VALUE;
+constexpr ICodeKeyImpl TYPE_ID = ICodeKeyImpl::TYPE_ID;
 
 class ICodeNodeImpl : public ICodeNode
 {
@@ -132,6 +130,18 @@ public:
      * @return the parent node.
      */
     ICodeNode *get_parent();
+
+    /**
+     * Return the type specification of this node.
+     * @return the type specification.
+     */
+    TypeSpec *get_typespec() const;
+
+    /**
+     * Set the type specification of this node.
+     * @param spec the type specification to set.
+     */
+    void set_typespec(TypeSpec *spec);
 
     /**
      * Return an array list of this node's children.
@@ -182,6 +192,7 @@ private:
     ICodeNodeType type;            // node type
     ICodeNode *parent;             // node's parent
     vector<ICodeNode *> children;  // node's children
+    TypeSpec *typespec;            // data type specification
     map<ICodeKey, NodeValue *> contents;
 
     static bool INITIALIZED;

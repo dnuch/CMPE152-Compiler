@@ -14,11 +14,13 @@
 #include "../Scanner.h"
 #include "PascalToken.h"
 #include "PascalErrorHandler.h"
+#include "../../intermediate/SymTabEntry.h"
 
 namespace wci { namespace frontend { namespace pascal {
 
 using namespace std;
 using namespace wci::frontend;
+using namespace wci::intermediate;
 
 class PascalParserTD : public Parser
 {
@@ -61,6 +63,9 @@ public:
 
 protected:
     static PascalErrorHandler error_handler;
+
+private:
+    SymTabEntry *routine_id;  // name of the routine being parsed
 };
 
 }}} // namespace wci::frontend::pascal

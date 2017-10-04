@@ -47,7 +47,6 @@ void PascalError::initialize()
         PascalErrorCode::INVALID_TYPE,
         PascalErrorCode::INVALID_VAR_PARM,
         PascalErrorCode::MIN_GT_MAX,
-	    PascalErrorCode::MISSING_ARROW,
         PascalErrorCode::MISSING_BEGIN,
         PascalErrorCode::MISSING_COLON,
         PascalErrorCode::MISSING_COLON_EQUALS,
@@ -61,7 +60,6 @@ void PascalError::initialize()
         PascalErrorCode::MISSING_IDENTIFIER,
         PascalErrorCode::MISSING_LEFT_BRACKET,
         PascalErrorCode::MISSING_OF,
-        PascalErrorCode::MISSING_OTHERWISE,
         PascalErrorCode::MISSING_PERIOD,
         PascalErrorCode::MISSING_PROGRAM,
         PascalErrorCode::MISSING_RIGHT_BRACKET,
@@ -83,7 +81,6 @@ void PascalError::initialize()
         PascalErrorCode::UNEXPECTED_TOKEN,
         PascalErrorCode::UNIMPLEMENTED,
         PascalErrorCode::UNRECOGNIZABLE,
-	    PascalErrorCode::WHEN_CONSTANT_REUSED,
         PascalErrorCode::WRONG_NUMBER_OF_PARMS,
 
         // Fatal errors.
@@ -115,7 +112,6 @@ void PascalError::initialize()
         "Invalid type",
         "Invalid VAR parameter",
         "Min limit greater than max limit",
-	    "Missing Arrow",
         "Missing BEGIN",
         "Missing :",
         "Missing :=",
@@ -129,7 +125,6 @@ void PascalError::initialize()
         "Missing identifier",
         "Missing [",
         "Missing OF",
-	    "Missing OTHERWISE",
         "Missing .",
         "Missing PROGRAM",
         "Missing ]",
@@ -151,7 +146,6 @@ void PascalError::initialize()
         "Unexpected token",
         "Unimplemented feature",
         "Unrecognizable input",
-	    "WHEN constant reused",
         "Wrong number of actual parameters",
 
         // Fatal errors.

@@ -9,21 +9,30 @@
 #include <string>
 #include <algorithm>
 #include "ExpressionParser.h"
+#include "VariableParser.h"
 #include "../PascalParserTD.h"
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
+#include "../../../frontend/pascal/PascalError.h"
 #include "../../../intermediate/SymTabEntry.h"
+#include "../../../intermediate/symtabimpl/Predefined.h"
+#include "../../../intermediate/symtabimpl/SymTabEntryImpl.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
+#include "../../../intermediate/TypeSpec.h"
+#include "../../../intermediate/TypeFactory.h"
+#include "../../../intermediate/typeimpl/TypeChecker.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
+using namespace wci::intermediate::typeimpl;
 
 bool ExpressionParser::INITIALIZED = false;
 
@@ -77,6 +86,9 @@ ICodeNode *ExpressionParser::parse_expression(Token *token) throw (string)
     // Parse a simple expression and make the root of its tree
     // the root node.
     ICodeNode *root_node = parse_simple_expression(token);
+    TypeSpec *result_typespec = root_node != nullptr
+                                    ? root_node->get_typespec()
+                                    : Predefined::undefined_type;
 
     token = current_token();
     TokenType token_type = token->get_type();
@@ -93,13 +105,37 @@ ICodeNode *ExpressionParser::parse_expression(Token *token) throw (string)
         op_node->add_child(root_node);
 
         token = next_token(token);  // consume the operator
+        Token *expr_token = new Token(*token);
 
         // Parse the second simple expression.  The operator node adopts
         // the simple expression's tree as its second child.
-        op_node->add_child(parse_simple_expression(token));
+        ICodeNode *simexpr_node = parse_simple_expression(token);
+        op_node->add_child(simexpr_node);
 
         // The operator node becomes the new root node.
         root_node = op_node;
+
+        // Type check: The operands must be comparison compatible.
+        TypeSpec *sim_expr_typespec = simexpr_node != nullptr
+                                         ? simexpr_node->get_typespec()
+                                         : Predefined::undefined_type;
+        if (TypeChecker::are_comparison_compatible(result_typespec,
+                                                   sim_expr_typespec))
+        {
+            result_typespec = Predefined::boolean_type;
+        }
+        else {
+            token = current_token();
+            error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+            result_typespec = Predefined::undefined_type;
+        }
+
+        delete expr_token;
+    }
+
+    if (root_node != nullptr)
+    {
+        root_node->set_typespec(result_typespec);
     }
 
     return root_node;
@@ -114,14 +150,25 @@ ICodeNode *ExpressionParser::parse_simple_expression(Token *token)
     bool leading_plus_sign  = token_type == (TokenType) PT_PLUS;
     bool leading_minus_sign = token_type == (TokenType) PT_MINUS;
     bool leading_sign = leading_plus_sign || leading_minus_sign;
+    Token *sign_token;
 
     if (leading_sign)
     {
+        sign_token = new Token(*token);
         token = next_token(token);  // consume the + or -
     }
 
     // Parse a term and make the root of its tree the root node.
     ICodeNode *root_node = parse_term(token);
+    TypeSpec *result_typespec = root_node != nullptr
+                                    ? root_node->get_typespec()
+                                    : Predefined::undefined_type;
+
+    // Type check: Leading sign.
+    if (leading_sign && (!TypeChecker::is_integer_or_real(result_typespec)))
+    {
+        error_handler.flag(sign_token, INCOMPATIBLE_TYPES, this);
+    }
 
     // Was there a leading - sign?
     if (leading_minus_sign)
@@ -131,6 +178,7 @@ ICodeNode *ExpressionParser::parse_simple_expression(Token *token)
         ICodeNode *negate_node =
                 ICodeFactory::create_icode_node((ICodeNodeType) NT_NEGATE);
         negate_node->add_child(root_node);
+        negate_node->set_typespec(root_node->get_typespec());
         root_node = negate_node;
     }
 
@@ -142,6 +190,8 @@ ICodeNode *ExpressionParser::parse_simple_expression(Token *token)
     while ((it = ADD_OPS_MAP.find((PascalTokenType) token_type))
                                                != ADD_OPS_MAP.end())
     {
+        TokenType op = token_type;
+
         // Create a new operator node and adopt the current tree
         // as its first child.
         ICodeNodeType node_type = (ICodeNodeType) it->second;
@@ -149,14 +199,75 @@ ICodeNode *ExpressionParser::parse_simple_expression(Token *token)
         op_node->add_child(root_node);
 
         token = next_token(token);  // consume the operator
+        Token *expr_token = new Token(*token);
 
         // Parse another term.  The operator node adopts
         // the term's tree as its second child.
-        op_node->add_child(parse_term(token));
+        ICodeNode *term_node = parse_term(token);
+        op_node->add_child(term_node);
+        TypeSpec *term_typespec = term_node != nullptr
+                                      ? term_node->get_typespec()
+                                      : Predefined::undefined_type;
 
         // The operator node becomes the new root node.
         root_node = op_node;
 
+        // Determine the result type.
+        switch ((PascalTokenType) op)
+        {
+
+            case PT_PLUS:
+            case PT_MINUS:
+            {
+                // Both operands integer ==> integer result.
+                if (TypeChecker::are_both_integer(result_typespec,
+                                                  term_typespec))
+                {
+                    result_typespec = Predefined::integer_type;
+                }
+
+                // Both real operands or one real and one integer operand
+                // ==> real result.
+                else if (TypeChecker::is_at_least_one_real(result_typespec,
+                                                           term_typespec))
+                {
+                    result_typespec = Predefined::real_type;
+                }
+
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            case PT_OR:
+            {
+                // Both operands boolean ==> boolean result.
+                if (TypeChecker::are_both_boolean(result_typespec,
+                                                  term_typespec))
+                {
+                    result_typespec = Predefined::boolean_type;
+                }
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            default:
+            {
+                // Should never get here ...
+                result_typespec = Predefined::undefined_type;
+            }
+        }
+
+        root_node->set_typespec(result_typespec);
+
+        delete expr_token;
         token = current_token();
         token_type = token->get_type();
     }
@@ -168,6 +279,9 @@ ICodeNode *ExpressionParser::parse_term(Token *token) throw (string)
 {
     // Parse a factor and make its node the root node.
     ICodeNode *root_node = parse_factor(token);
+    TypeSpec *result_typespec = root_node != nullptr
+                                    ? root_node->get_typespec()
+                                    : Predefined::undefined_type;
 
     token = current_token();
     TokenType token_type = token->get_type();
@@ -177,6 +291,8 @@ ICodeNode *ExpressionParser::parse_term(Token *token) throw (string)
     while ((it = MULT_OPS_MAP.find((PascalTokenType) token_type))
                                                != MULT_OPS_MAP.end())
     {
+        TokenType op = token_type;
+
         // Create a new operator node and adopt the current tree
         // as its first child.
         ICodeNodeType node_type = (ICodeNodeType) it->second;
@@ -184,14 +300,109 @@ ICodeNode *ExpressionParser::parse_term(Token *token) throw (string)
         op_node->add_child(root_node);
 
         token = next_token(token);  // consume the operator
+        Token *expr_token = new Token(*token);
 
         // Parse another factor.  The operator node adopts
         // the term's tree as its second child.
-        op_node->add_child(parse_factor(token));
+        ICodeNode *factor_node = parse_factor(token);
+        op_node->add_child(factor_node);
+        TypeSpec *factor_typespec = factor_node != nullptr
+                                        ? factor_node->get_typespec()
+                                        : Predefined::undefined_type;
 
         // The operator node becomes the new root node.
         root_node = op_node;
 
+        // Determine the result type.
+        switch ((PascalTokenType) op)
+        {
+            case PT_STAR:
+            {
+                // Both operands integer ==> integer result.
+                if (TypeChecker::are_both_integer(result_typespec,
+                                                  factor_typespec))
+                {
+                    result_typespec = Predefined::integer_type;
+                }
+
+                // Both real operands or one real and one integer operand
+                // ==> real result.
+                else if (TypeChecker::is_at_least_one_real(result_typespec,
+                                                           factor_typespec))
+                {
+                    result_typespec = Predefined::real_type;
+                }
+
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            case PT_SLASH:
+            {
+                // All integer and real operand combinations
+                // ==> real result.
+                if (   TypeChecker::are_both_integer(result_typespec,
+                                                     factor_typespec)
+                    || TypeChecker::is_at_least_one_real(result_typespec,
+                                                         factor_typespec))
+                {
+                    result_typespec = Predefined::real_type;
+                }
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            case PT_DIV:
+            case PT_MOD:
+            {
+                // Both operands integer ==> integer result.
+                if (TypeChecker::are_both_integer(result_typespec,
+                                                  factor_typespec))
+                {
+                    result_typespec = Predefined::integer_type;
+                }
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            case PT_AND:
+            {
+                // Both operands boolean ==> boolean result.
+                if (TypeChecker::are_both_boolean(result_typespec,
+                                                  factor_typespec))
+                {
+                    result_typespec = Predefined::boolean_type;
+                }
+                else
+                {
+                    error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+                }
+
+                break;
+            }
+
+            default:
+            {
+                // Should never get here ...
+                result_typespec = Predefined::undefined_type;
+            }
+        }
+
+        root_node->set_typespec(result_typespec);
+
+        delete expr_token;
         token = current_token();
         token_type = token->get_type();
     }
@@ -214,28 +425,7 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
     {
         case PT_IDENTIFIER:
         {
-            // Look up the identifier in the symbol table stack.
-            // Flag the identifier as undefined if it's not found.
-            string name = token->get_text();
-            transform(name.begin(), name.end(),
-                      name.begin(), ::tolower);
-            SymTabEntry *id = symtab_stack->lookup(name);
-            if (id == nullptr)
-            {
-                error_handler.flag(token, IDENTIFIER_UNDEFINED, this);
-                id = symtab_stack->enter_local(name);
-            }
-
-            root_node =
-                    ICodeFactory::create_icode_node(
-                                         (ICodeNodeType) NT_VARIABLE);
-            NodeValue *node_value = new NodeValue();
-            node_value->id = id;
-            root_node->set_attribute((ICodeKey) ID, node_value);
-            id->append_line_number(token->get_line_number());
-
-            token = next_token(token);  // consume the identifier
-            break;
+            return parse_identifier(token);
         }
 
         case PT_INTEGER:
@@ -248,6 +438,8 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
             root_node->set_attribute((ICodeKey) VALUE, node_value);
 
             token = next_token(token);  // consume the number
+
+            root_node->set_typespec(Predefined::integer_type);
             break;
         }
 
@@ -261,6 +453,8 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
             root_node->set_attribute((ICodeKey) VALUE, node_value);
 
             token = next_token(token);  // consume the number
+
+            root_node->set_typespec(Predefined::real_type);
             break;
         }
 
@@ -275,13 +469,20 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
             node_value->value = token->get_value();
             root_node->set_attribute((ICodeKey) VALUE, node_value);
 
+            TypeSpec *result_typespec = value.length() == 1
+                              ? Predefined::char_type
+                              : TypeFactory::create_string_type(value);
+
             token = next_token(token);  // consume the string
+
+            root_node->set_typespec(result_typespec);
             break;
         }
 
         case PT_NOT:
         {
             token = next_token(token);  // consume the NOT
+            Token *expr_token = new Token(*token);
 
             // Create a NOT node as the root node.
             root_node = ICodeFactory::create_icode_node(
@@ -289,8 +490,20 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
 
             // Parse the factor.  The NOT node adopts the
             // factor node as its child.
-            root_node->add_child(parse_factor(token));
+            ICodeNode *factor_node = parse_factor(token);
+            root_node->add_child(factor_node);
 
+            // Type check: The factor must be boolean.
+            TypeSpec *factor_typespec = factor_node != nullptr
+                                            ? factor_node->get_typespec()
+                                            : Predefined::undefined_type;
+            if (!TypeChecker::is_boolean(factor_typespec))
+            {
+                error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
+            }
+
+            delete expr_token;
+            root_node->set_typespec(Predefined::boolean_type);
             break;
         }
 
@@ -300,6 +513,9 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
 
             // Parse an expression and make its node the root node.
             root_node = parse_expression(token);
+            TypeSpec *result_typespec = root_node != nullptr
+                                            ? root_node->get_typespec()
+                                            : Predefined::undefined_type;
 
             // Look for the matching ) token.
             token = current_token();
@@ -313,12 +529,105 @@ ICodeNode *ExpressionParser::parse_factor(Token *token) throw (string)
                 error_handler.flag(token, MISSING_RIGHT_PAREN, this);
             }
 
+            root_node->set_typespec(result_typespec);
             break;
         }
 
         default:
         {
             error_handler.flag(token, UNEXPECTED_TOKEN, this);
+            break;
+        }
+    }
+
+    return root_node;
+}
+ICodeNode *ExpressionParser::parse_identifier(Token *token) throw (string)
+{
+    ICodeNode *root_node = nullptr;
+
+    // Look up the identifier in the symbol table stack.
+    // Flag the identifier as undefined if it's not found.
+    string name = token->get_text();
+    transform(name.begin(), name.end(), name.begin(), ::tolower);
+    SymTabEntry *variable_id = symtab_stack->lookup(name);
+
+    // Undefined.
+    if (variable_id == nullptr)
+    {
+        error_handler.flag(token, IDENTIFIER_UNDEFINED, this);
+        variable_id = symtab_stack->enter_local(name);
+        variable_id->set_definition((Definition) DF_UNDEFINED);
+        variable_id->set_typespec(Predefined::undefined_type);
+    }
+
+    Definition defn = variable_id->get_definition();
+
+    switch ((DefinitionImpl) defn)
+    {
+        case DF_CONSTANT:
+        {
+            EntryValue *entry_value =
+                variable_id->get_attribute((SymTabKey) CONSTANT_VALUE);
+            DataValue *data_value = entry_value->value;
+            TypeSpec *typespec = variable_id->get_typespec();
+
+            if (data_value->type == INTEGER)
+            {
+                root_node =
+                    ICodeFactory::create_icode_node(
+                                   (ICodeNodeType) NT_INTEGER_CONSTANT);
+                root_node->set_attribute((ICodeKey) VALUE,
+                                         new NodeValue(data_value));
+            }
+            else if (data_value->type == FLOAT)
+            {
+                root_node =
+                    ICodeFactory::create_icode_node(
+                                       (ICodeNodeType) NT_REAL_CONSTANT);
+                root_node->set_attribute((ICodeKey) VALUE,
+                                         new NodeValue(data_value));
+            }
+            else if (data_value->type == STRING)
+            {
+                root_node =
+                    ICodeFactory::create_icode_node(
+                                     (ICodeNodeType) NT_STRING_CONSTANT);
+                root_node->set_attribute((ICodeKey) VALUE,
+                                         new NodeValue(data_value));
+            }
+
+            variable_id->append_line_number(token->get_line_number());
+            token = next_token(token);  // consume the constant identifier
+
+            if (root_node != nullptr) root_node->set_typespec(typespec);
+            break;
+        }
+
+        case DF_ENUMERATION_CONSTANT:
+        {
+            EntryValue *entry_value =
+                variable_id->get_attribute((SymTabKey) CONSTANT_VALUE);
+            DataValue *data_value = entry_value->value;
+            TypeSpec *typespec = variable_id->get_typespec();
+
+            root_node =
+                ICodeFactory::create_icode_node(
+                                    (ICodeNodeType) NT_INTEGER_CONSTANT);
+            root_node->set_attribute((ICodeKey) VALUE,
+                                     new NodeValue(data_value));
+
+            variable_id->append_line_number(token->get_line_number());
+            token = next_token(token);  // consume the enum constant identifier
+
+            root_node->set_typespec(typespec);
+            break;
+        }
+
+        default:
+        {
+            VariableParser variable_parser(this);
+            root_node = variable_parser.parse_variable(token, variable_id);
             break;
         }
     }
