@@ -29,9 +29,12 @@ public:
     /**
      * Parse a type definition.
      * @param token the initial token.
+     * @param parent_id the symbol table entry of the parent routine's name.
+     * @return nullptr
      * @throw a string message if an error occurred.
      */
-    void parse_declaration(Token *token) throw (string);
+    SymTabEntry *parse_declaration(Token *token, SymTabEntry *parent_id)
+        throw (string);
 
 private:
     // Synchronization set for a type identifier.

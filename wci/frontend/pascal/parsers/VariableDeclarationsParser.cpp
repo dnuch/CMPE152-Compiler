@@ -6,6 +6,7 @@
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
+#include <vector>
 #include <set>
 #include <algorithm>
 #include "VariableDeclarationsParser.h"
@@ -15,12 +16,14 @@
 #include "../../../frontend/pascal/PascalToken.h"
 #include "../../../frontend/pascal/PascalError.h"
 #include "../../../intermediate/SymTabEntry.h"
+#include "../../../intermediate/symtabimpl/SymTabEntryImpl.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
 
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 
 bool VariableDeclarationsParser::INITIALIZED = false;
 
@@ -77,7 +80,8 @@ void VariableDeclarationsParser::set_definition(const Definition defn)
     definition = defn;
 }
 
-void VariableDeclarationsParser::parse_declaration(Token *token)
+SymTabEntry *VariableDeclarationsParser::parse_declaration(
+                                   Token *token, SymTabEntry *routine_id)
     throw (string)
 {
     token = synchronize(IDENTIFIER_SET);
@@ -87,7 +91,7 @@ void VariableDeclarationsParser::parse_declaration(Token *token)
     while (token->get_type() == (TokenType) PT_IDENTIFIER)
     {
         // Parse the identifier sublist and its type specification.
-        parse_identifier_sublist(token);
+        parse_identifier_sublist(token, IDENTIFIER_FOLLOW_SET, COMMA_SET);
 
         token = current_token();
         TokenType tokenType = token->get_type();
@@ -111,10 +115,15 @@ void VariableDeclarationsParser::parse_declaration(Token *token)
 
         token = synchronize(IDENTIFIER_SET);
     }
+
+    return nullptr;
 }
 
 vector<SymTabEntry *>
-    VariableDeclarationsParser::parse_identifier_sublist(Token *token)
+    VariableDeclarationsParser::parse_identifier_sublist(
+                                        Token *token,
+                                        set<PascalTokenType>& follow_set,
+                                        set<PascalTokenType>& comma_set)
         throw (string)
 {
     vector<SymTabEntry *> sublist;
@@ -125,15 +134,15 @@ vector<SymTabEntry *>
 
         if (id != nullptr) sublist.push_back(id);
 
-        token = synchronize(COMMA_SET);
+        token = synchronize(comma_set);
 
         // Look for the comma.
         if (token->get_type() == (TokenType) PT_COMMA)
         {
             token = next_token(token);  // consume the comma
 
-            if (IDENTIFIER_FOLLOW_SET.find((PascalTokenType) token->get_type())
-                    != IDENTIFIER_FOLLOW_SET.end())
+            if (follow_set.find((PascalTokenType) token->get_type())
+                    != follow_set.end())
             {
                 error_handler.flag(token, MISSING_IDENTIFIER, this);
             }
@@ -143,16 +152,19 @@ vector<SymTabEntry *>
         {
             error_handler.flag(token, MISSING_COMMA, this);
         }
-    } while (IDENTIFIER_FOLLOW_SET.find((PascalTokenType) token->get_type())
-                == IDENTIFIER_FOLLOW_SET.end());
+    } while (follow_set.find((PascalTokenType) token->get_type())
+                == follow_set.end());
 
-    // Parse the type specification.
-    TypeSpec *typespec = parse_typespec(token);
-
-    // Assign the type specification to each identifier in the list.
-    for (SymTabEntry *variable_id : sublist)
+    if (definition != (Definition) DF_PROGRAM_PARM)
     {
-        variable_id->set_typespec(typespec);
+        // Parse the type specification.
+        TypeSpec *typespec = parse_typespec(token);
+
+        // Assign the type specification to each identifier in the list.
+        for (SymTabEntry *variable_id : sublist)
+        {
+            variable_id->set_typespec(typespec);
+        }
     }
 
     return sublist;
@@ -204,10 +216,22 @@ TypeSpec *VariableDeclarationsParser::parse_typespec(Token *token)
         error_handler.flag(token, MISSING_COLON, this);
     }
 
+    Token *type_token = new Token(*token);
+
     // Parse the type specification.
     TypeSpecificationParser type_specification_parser(this);
     TypeSpec *typespec = type_specification_parser.parse_declaration(token);
 
+    // Formal parameters and functions must have named types.
+    if (   (definition != (Definition) DF_VARIABLE)
+        && (definition != (Definition) DF_FIELD)
+        && (typespec != nullptr)
+        && (typespec->get_identifier() == nullptr))
+    {
+        error_handler.flag(type_token, INVALID_TYPE, this);
+    }
+
+    delete type_token;
     return typespec;
 }
 

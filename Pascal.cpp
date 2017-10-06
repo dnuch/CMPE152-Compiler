@@ -36,7 +36,7 @@ using namespace wci::backend;
 using namespace wci::message;
 using namespace wci::util;
 
-const string FLAGS = "[-ix]";
+const string FLAGS = "[-ixlafcr]";
 const string USAGE =
     "Usage: Pascal execute|compile " + FLAGS + " <source file path>";
 
@@ -65,11 +65,13 @@ int main(int argc, char *args[])
         }
 
         // Source path.
-        if (i < argc) {
+        if (i < argc)
+        {
             string path = args[i];
             Pascal(operation, path, flags);
         }
-        else {
+        else
+        {
             throw string("Missing source file.");
         }
     }
@@ -83,7 +85,6 @@ int main(int argc, char *args[])
 
 Pascal::Pascal(string operation, string file_path, string flags)
     throw (string)
-    : icode(nullptr), symtab_stack(nullptr), backend(nullptr)
 {
     ifstream input;
     input.open(file_path);
@@ -92,8 +93,13 @@ Pascal::Pascal(string operation, string file_path, string flags)
         throw string("Failed to open source file " + file_path);
     }
 
-    bool intermediate = flags.find('i') != string::npos;
-    bool xref         = flags.find('x') != string::npos;
+    intermediate = flags.find('i') != string::npos;
+    xref         = flags.find('x') != string::npos;
+    lines        = flags.find('l') != string::npos;
+    assign       = flags.find('a') != string::npos;
+    fetch        = flags.find('f') != string::npos;
+    call         = flags.find('c') != string::npos;
+    returnn      = flags.find('r') != string::npos;
 
     source = new Source(input);
     source->add_message_listener(this);
@@ -125,8 +131,6 @@ Pascal::Pascal(string operation, string file_path, string flags)
             tree_printer.print(symtab_stack);
         }
 
-        first_output_message = true;
-
         backend = BackendFactory::create_backend(operation);
         backend->add_message_listener(this);
         backend->process(icode, symtab_stack);
@@ -145,29 +149,33 @@ Pascal::~Pascal()
 const string Pascal::SOURCE_LINE_FORMAT = "%03d %s\n";
 
 const string Pascal::PARSER_SUMMARY_FORMAT =
-    string("\n%20d source lines.\n%20d syntax errors.\n") +
+    string("\n%20s source lines.\n%20d syntax errors.\n") +
     string("%20.2f seconds total parsing time.\n");
 
 const string Pascal::INTERPRETER_SUMMARY_FORMAT =
-    string("\n%20d statements executed.\n") +
+    string("\n%20s statements executed.\n") +
     string("%20d runtime errors.\n") +
     string("%20.2f seconds total execution time.\n");
 
 const string Pascal::COMPILER_SUMMARY_FORMAT =
-    string("\n%20d instructions generated.\n") +
+    string("\n%20s instructions generated.\n") +
     string("%20.2f seconds total code generation time.\n");
 
-const string Pascal::ASSIGN_FORMAT = ">>> LINE %03d: %s = %s\n";
+const string Pascal::LINE_FORMAT = ">>> AT LINE %03d\n";
+
+const string Pascal::ASSIGN_FORMAT = ">>> AT LINE %03d: %s = %s\n";
+
+const string Pascal::FETCH_FORMAT = ">>> AT LINE %03d: %s : %s\n";
+
+const string Pascal::CALL_FORMAT = ">>> AT LINE %03d: CALL %s\n";
+
+const string Pascal::RETURN_FORMAT = ">>> AT LINE %03d: RETURN FROM %s\n";
 
 const string Pascal::RUNTIME_ERROR_FORMAT =
         "*** RUNTIME ERROR AT LINE %03d: %s\n";
 
 const int Pascal::PREFIX_WIDTH = 5;
 
-/**
- * Listen for messages.
- * @param message the received message.
- */
 void Pascal::message_received(Message& message)
 {
     MessageType type = message.get_type();
@@ -186,35 +194,101 @@ void Pascal::message_received(Message& message)
 
         case PARSER_SUMMARY:
         {
-            string line_count = message[LINE_COUNT];
+            string line_count = commafy(message[LINE_COUNT]);
             string error_count = message[ERROR_COUNT];
             string elapsed_time = message[ELAPSED_TIME];
 
             printf(PARSER_SUMMARY_FORMAT.c_str(),
-                   stoi(line_count), stoi(error_count),
+                   line_count.c_str(), stoi(error_count),
                    stof(elapsed_time));
             break;
         }
 
         case INTERPRETER_SUMMARY:
         {
-            string execution_count = message[EXECUTION_COUNT];
+            string execution_count = commafy(message[EXECUTION_COUNT]);
             string error_count = message[ERROR_COUNT];
             string elapsed_time = message[ELAPSED_TIME];
 
             printf(INTERPRETER_SUMMARY_FORMAT.c_str(),
-                   stoi(execution_count), stoi(error_count),
+                   execution_count.c_str(), stoi(error_count),
                    stof(elapsed_time));
             break;
         }
 
         case COMPILER_SUMMARY:
         {
-            string instruction_count = message[INSTRUCTION_COUNT];
+            string instruction_count = commafy(message[INSTRUCTION_COUNT]);
             string elapsed_time = message[ELAPSED_TIME];
 
             printf(COMPILER_SUMMARY_FORMAT.c_str(),
-                   stoi(instruction_count), stof(elapsed_time));
+                   instruction_count.c_str(), stof(elapsed_time));
+            break;
+        }
+
+        case AT_LINE:
+        {
+            if (lines)
+            {
+                string line_number = message[LINE_NUMBER];
+                printf(LINE_FORMAT.c_str(), stoi(line_number));
+            }
+            break;
+        }
+
+        case ASSIGN:
+        {
+            if (assign)
+            {
+                string line_number   = message[LINE_NUMBER];
+                string variable_name = message[VARIABLE_NAME];
+                string value_str     = message[RESULT_VALUE];
+
+                printf(ASSIGN_FORMAT.c_str(),
+                       stoi(line_number), variable_name.c_str(),
+                       value_str.c_str());
+            }
+            break;
+        }
+
+        case FETCH:
+        {
+            if (fetch)
+            {
+                string line_number   = message[LINE_NUMBER];
+                string variable_name = message[VARIABLE_NAME];
+                string value_str     = message[RESULT_VALUE];
+
+                printf(FETCH_FORMAT.c_str(),
+                       stoi(line_number), variable_name.c_str(),
+                       value_str.c_str());
+            }
+            break;
+        }
+
+        case CALL:
+        {
+            if (call)
+            {
+                string line_number  = message[LINE_NUMBER];
+                string routine_name = message[VARIABLE_NAME];
+
+                printf(CALL_FORMAT.c_str(),
+                       stoi(line_number), routine_name.c_str());
+            }
+            break;
+        }
+
+        case RETURN:
+        {
+            if (call)
+            {
+                string line_number   = message[LINE_NUMBER];
+                string routine_name = message[VARIABLE_NAME];
+
+                printf(RETURN_FORMAT.c_str(),
+                       stoi(line_number), routine_name.c_str());
+            }
             break;
         }
 
@@ -245,24 +319,6 @@ void Pascal::message_received(Message& message)
             break;
         }
 
-        case ASSIGN:
-        {
-            if (first_output_message)
-            {
-                cout << endl << "===== OUTPUT =====" << endl << endl;
-                first_output_message = false;
-            }
-
-            string line_number   = message[LINE_NUMBER];
-            string variable_name = message[VARIABLE_NAME];
-            string value_str     = message[RESULT_VALUE];
-
-            printf(ASSIGN_FORMAT.c_str(),
-                   stoi(line_number), variable_name.c_str(),
-                   value_str.c_str());
-            break;
-        }
-
         case RUNTIME_ERROR:
         {
             string line_number   = message[LINE_NUMBER];
@@ -275,4 +331,17 @@ void Pascal::message_received(Message& message)
 
         default: break;
     }
+}
+
+string Pascal::commafy(string str)
+{
+    int pos = str.length() - 3;
+
+    while (pos > 0)
+    {
+        str.insert(pos, ",");
+        pos -= 3;
+    }
+
+    return str;
 }

@@ -11,10 +11,13 @@
 
 #include <string>
 #include "Backend.h"
+#include "interpreter/Cell.h"
+#include "../intermediate/TypeSpec.h"
 
 namespace wci { namespace backend {
 
 using namespace std;
+using namespace wci::backend::interpreter;
 
 class BackendFactory
 {
@@ -23,9 +26,16 @@ public:
      * Create a compiler or an interpreter back end component.
      * @param operation either "compile" or "execute"
      * @return a compiler or an interpreter back end component.
-     * @throws Exception if an error occurred.
+     * @throw a string message if an error occurred.
      */
-    static Backend *create_backend(string operation) throw (string);
+	static Backend *create_backend(string operation) throw (string);
+
+    /**
+     * Return the default value for a data type.
+     * @param typespec the data type.
+     * @return the default value.
+     */
+    static CellValue *default_value(TypeSpec *typespec);
 };
 
 }} // namespace wci::backend

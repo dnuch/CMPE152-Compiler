@@ -61,7 +61,7 @@ TypeSpec *RecordTypeParser::parse_declaration(Token *token) throw (string)
     // Parse the field declarations.
     VariableDeclarationsParser variable_declarations_parser(this);
     variable_declarations_parser.set_definition((Definition) DF_FIELD);
-    variable_declarations_parser.parse_declaration(token);
+    variable_declarations_parser.parse_declaration(token, nullptr);
 
     // Pop off the record's symbol table.
     symtab_stack->pop();

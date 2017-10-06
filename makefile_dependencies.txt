@@ -10,9 +10,10 @@ Pascal.o: Pascal.cpp Pascal.h wci/frontend/Parser.h \
   wci/frontend/FrontendFactory.h wci/frontend/pascal/PascalToken.h \
   wci/intermediate/SymTabEntry.h \
   wci/intermediate/symtabimpl/SymTabEntryImpl.h \
-  wci/backend/BackendFactory.h wci/util/CrossReferencer.h \
-  wci/util/../intermediate/TypeSpec.h wci/util/ParseTreePrinter.h \
-  wci/util/../intermediate/ICodeNode.h
+  wci/backend/BackendFactory.h wci/backend/interpreter/Cell.h \
+  wci/backend/interpreter/MemoryMap.h \
+  wci/backend/../intermediate/TypeSpec.h wci/util/CrossReferencer.h \
+  wci/util/ParseTreePrinter.h wci/util/../intermediate/ICodeNode.h
 wci/backend/Backend.o: wci/backend/Backend.cpp wci/backend/Backend.h \
   wci/backend/../message/MessageProducer.h \
   wci/backend/../message/MessageListener.h \
@@ -29,11 +30,21 @@ wci/backend/BackendFactory.o: wci/backend/BackendFactory.cpp \
   wci/backend/../message/MessageHandler.h \
   wci/backend/../intermediate/SymTabStack.h \
   wci/backend/../intermediate/SymTab.h \
-  wci/backend/../intermediate/ICode.h \
+  wci/backend/../intermediate/ICode.h wci/backend/interpreter/Cell.h \
+  wci/backend/interpreter/MemoryMap.h \
+  wci/backend/interpreter/../../DataValue.h \
+  wci/backend/../intermediate/TypeSpec.h \
+  wci/backend/../intermediate/SymTabEntry.h \
   wci/backend/compiler/CodeGenerator.h \
   wci/backend/interpreter/Executor.h \
+  wci/backend/interpreter/RuntimeStack.h \
+  wci/backend/interpreter/ActivationRecord.h \
   wci/backend/interpreter/RuntimeErrorHandler.h \
-  wci/backend/interpreter/RuntimeError.h
+  wci/backend/interpreter/RuntimeError.h \
+  wci/backend/interpreter/../../frontend/Scanner.h \
+  wci/backend/interpreter/../../frontend/Source.h \
+  wci/backend/interpreter/../../frontend/Token.h \
+  wci/backend/../intermediate/symtabimpl/Predefined.h
 wci/backend/compiler/CodeGenerator.o: wci/backend/compiler/CodeGenerator.cpp \
   wci/backend/compiler/CodeGenerator.h wci/backend/compiler/../Backend.h \
   wci/backend/compiler/../../message/MessageProducer.h \
@@ -53,15 +64,42 @@ wci/backend/interpreter/Executor.o: wci/backend/interpreter/Executor.cpp \
   wci/backend/interpreter/../../intermediate/SymTabStack.h \
   wci/backend/interpreter/../../intermediate/SymTab.h \
   wci/backend/interpreter/../../intermediate/ICode.h \
+  wci/backend/interpreter/RuntimeStack.h \
+  wci/backend/interpreter/ActivationRecord.h \
+  wci/backend/interpreter/Cell.h wci/backend/interpreter/MemoryMap.h \
+  wci/backend/interpreter/../../DataValue.h \
   wci/backend/interpreter/RuntimeErrorHandler.h \
   wci/backend/interpreter/RuntimeError.h \
-  wci/backend/interpreter/../../intermediate/ICodeNode.h \
+  wci/backend/interpreter/../../frontend/Scanner.h \
+  wci/backend/interpreter/../../frontend/Source.h \
+  wci/backend/interpreter/../../frontend/Token.h \
+  wci/backend/interpreter/MemoryFactory.h \
+  wci/backend/interpreter/RuntimeDisplay.h \
   wci/backend/interpreter/../../intermediate/SymTabEntry.h \
-  wci/backend/interpreter/../../intermediate/../DataValue.h \
+  wci/backend/interpreter/../../frontend/pascal/PascalScanner.h \
+  wci/backend/interpreter/../../intermediate/ICodeNode.h \
   wci/backend/interpreter/../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/../../intermediate/../frontend/Source.h \
+  wci/backend/interpreter/../../intermediate/ICodeFactory.h \
+  wci/backend/interpreter/../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/backend/interpreter/executors/CallDeclaredExecutor.h \
+  wci/backend/interpreter/executors/CallExecutor.h \
   wci/backend/interpreter/executors/StatementExecutor.h
+wci/backend/interpreter/MemoryFactory.o: wci/backend/interpreter/MemoryFactory.cpp \
+  wci/backend/interpreter/MemoryFactory.h \
+  wci/backend/interpreter/RuntimeStack.h \
+  wci/backend/interpreter/ActivationRecord.h \
+  wci/backend/interpreter/Cell.h wci/backend/interpreter/MemoryMap.h \
+  wci/backend/interpreter/../../DataValue.h \
+  wci/backend/interpreter/RuntimeDisplay.h \
+  wci/backend/interpreter/../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/../../intermediate/SymTab.h \
+  wci/backend/interpreter/../../intermediate/ICode.h \
+  wci/backend/interpreter/memoryimpl/RuntimeStackImpl.h \
+  wci/backend/interpreter/memoryimpl/RuntimeDisplayImpl.h \
+  wci/backend/interpreter/memoryimpl/ActivationRecordImpl.h \
+  wci/backend/interpreter/memoryimpl/MemoryMapImpl.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/TypeSpec.h \
+  wci/backend/interpreter/memoryimpl/CellImpl.h
 wci/backend/interpreter/RuntimeError.o: wci/backend/interpreter/RuntimeError.cpp \
   wci/backend/interpreter/RuntimeError.h
 wci/backend/interpreter/RuntimeErrorHandler.o: wci/backend/interpreter/RuntimeErrorHandler.cpp \
@@ -95,17 +133,123 @@ wci/backend/interpreter/RuntimeErrorHandler.o: wci/backend/interpreter/RuntimeEr
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
+  wci/backend/interpreter/executors/ExpressionExecutor.h \
+  wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/Predefined.h \
+  wci/backend/interpreter/executors/../../../intermediate/typeimpl/TypeSpecImpl.h
+\CallDeclaredExecutor.o: \
+  wci/backend/interpreter/executors/CallDeclaredExecutor.cpp \
+  wci/backend/interpreter/executors/CallDeclaredExecutor.h \
+  wci/backend/interpreter/executors/CallExecutor.h \
+  wci/backend/interpreter/executors/StatementExecutor.h \
+  wci/backend/interpreter/executors/../Executor.h \
+  wci/backend/interpreter/executors/../../Backend.h \
+  wci/backend/interpreter/executors/../../../message/MessageProducer.h \
+  wci/backend/interpreter/executors/../../../message/MessageListener.h \
+  wci/backend/interpreter/executors/../../../message/Message.h \
+  wci/backend/interpreter/executors/../../../message/MessageHandler.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
+  wci/backend/interpreter/executors/../RuntimeError.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
+  wci/backend/interpreter/executors/AssignmentExecutor.h \
+  wci/backend/interpreter/executors/ExpressionExecutor.h \
+  wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/backend/interpreter/executors/../MemoryFactory.h \
+  wci/backend/interpreter/executors/../RuntimeDisplay.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h
+wci/backend/interpreter/executors/CallExecutor.o: wci/backend/interpreter/executors/CallExecutor.cpp \
+  wci/backend/interpreter/executors/CallExecutor.h \
+  wci/backend/interpreter/executors/StatementExecutor.h \
+  wci/backend/interpreter/executors/../Executor.h \
+  wci/backend/interpreter/executors/../../Backend.h \
+  wci/backend/interpreter/executors/../../../message/MessageProducer.h \
+  wci/backend/interpreter/executors/../../../message/MessageListener.h \
+  wci/backend/interpreter/executors/../../../message/Message.h \
+  wci/backend/interpreter/executors/../../../message/MessageHandler.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
+  wci/backend/interpreter/executors/../RuntimeError.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
+  wci/backend/interpreter/executors/CallDeclaredExecutor.h \
+  wci/backend/interpreter/executors/CallStandardExecutor.h \
   wci/backend/interpreter/executors/ExpressionExecutor.h \
   wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
   wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h
+\CallStandardExecutor.o: \
+  wci/backend/interpreter/executors/CallStandardExecutor.cpp \
+  wci/backend/interpreter/executors/CallStandardExecutor.h \
+  wci/backend/interpreter/executors/CallExecutor.h \
+  wci/backend/interpreter/executors/StatementExecutor.h \
+  wci/backend/interpreter/executors/../Executor.h \
+  wci/backend/interpreter/executors/../../Backend.h \
+  wci/backend/interpreter/executors/../../../message/MessageProducer.h \
+  wci/backend/interpreter/executors/../../../message/MessageListener.h \
+  wci/backend/interpreter/executors/../../../message/Message.h \
+  wci/backend/interpreter/executors/../../../message/MessageHandler.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
+  wci/backend/interpreter/executors/../RuntimeError.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
+  wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
+  wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
+  wci/backend/interpreter/executors/ExpressionExecutor.h \
+  wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/backend/interpreter/executors/AssignmentExecutor.h \
+  wci/backend/interpreter/executors/../MemoryFactory.h \
+  wci/backend/interpreter/executors/../RuntimeDisplay.h \
+  wci/backend/interpreter/executors/../../BackendFactory.h \
+  wci/backend/interpreter/executors/../../../frontend/pascal/PascalToken.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/Predefined.h
 \CompoundExecutor.o: \
   wci/backend/interpreter/executors/CompoundExecutor.cpp \
   wci/backend/interpreter/executors/CompoundExecutor.h \
@@ -119,14 +263,19 @@ wci/backend/interpreter/RuntimeErrorHandler.o: wci/backend/interpreter/RuntimeEr
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
-  wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h
+  wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h
 \ExpressionExecutor.o: \
   wci/backend/interpreter/executors/ExpressionExecutor.cpp \
   wci/backend/interpreter/executors/ExpressionExecutor.h \
@@ -140,16 +289,26 @@ wci/backend/interpreter/RuntimeErrorHandler.o: wci/backend/interpreter/RuntimeEr
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
   wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
-  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h
+  wci/backend/interpreter/executors/CallExecutor.h \
+  wci/backend/interpreter/executors/../../../intermediate/typeimpl/TypeSpecImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/Predefined.h \
+  wci/backend/interpreter/executors/../../../backend/BackendFactory.h \
+  wci/backend/interpreter/executors/../../../backend/interpreter/memoryimpl/MemoryMapImpl.h
 wci/backend/interpreter/executors/IfExecutor.o: wci/backend/interpreter/executors/IfExecutor.cpp \
   wci/backend/interpreter/executors/IfExecutor.h \
   wci/backend/interpreter/executors/StatementExecutor.h \
@@ -162,14 +321,19 @@ wci/backend/interpreter/executors/IfExecutor.o: wci/backend/interpreter/executor
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
   wci/backend/interpreter/executors/ExpressionExecutor.h \
   wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h
 wci/backend/interpreter/executors/LoopExecutor.o: wci/backend/interpreter/executors/LoopExecutor.cpp \
@@ -184,14 +348,19 @@ wci/backend/interpreter/executors/LoopExecutor.o: wci/backend/interpreter/execut
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
   wci/backend/interpreter/executors/ExpressionExecutor.h \
   wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h
 wci/backend/interpreter/executors/SelectExecutor.o: wci/backend/interpreter/executors/SelectExecutor.cpp \
@@ -206,14 +375,19 @@ wci/backend/interpreter/executors/SelectExecutor.o: wci/backend/interpreter/exec
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
   wci/backend/interpreter/executors/ExpressionExecutor.h \
   wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h
 \StatementExecutor.o: \
@@ -228,20 +402,87 @@ wci/backend/interpreter/executors/SelectExecutor.o: wci/backend/interpreter/exec
   wci/backend/interpreter/executors/../../../intermediate/SymTabStack.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTab.h \
   wci/backend/interpreter/executors/../../../intermediate/ICode.h \
+  wci/backend/interpreter/executors/../RuntimeStack.h \
+  wci/backend/interpreter/executors/../ActivationRecord.h \
+  wci/backend/interpreter/executors/../Cell.h \
+  wci/backend/interpreter/executors/../MemoryMap.h \
+  wci/backend/interpreter/executors/../../../DataValue.h \
   wci/backend/interpreter/executors/../RuntimeErrorHandler.h \
   wci/backend/interpreter/executors/../RuntimeError.h \
-  wci/backend/interpreter/executors/../../../DataValue.h \
+  wci/backend/interpreter/executors/../../../frontend/Scanner.h \
+  wci/backend/interpreter/executors/../../../frontend/Source.h \
+  wci/backend/interpreter/executors/../../../frontend/Token.h \
   wci/backend/interpreter/executors/../../../intermediate/ICodeNode.h \
   wci/backend/interpreter/executors/../../../intermediate/SymTabEntry.h \
   wci/backend/interpreter/executors/../../../intermediate/TypeSpec.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Token.h \
-  wci/backend/interpreter/executors/../../../intermediate/../frontend/Source.h \
   wci/backend/interpreter/executors/CompoundExecutor.h \
   wci/backend/interpreter/executors/AssignmentExecutor.h \
   wci/backend/interpreter/executors/LoopExecutor.h \
   wci/backend/interpreter/executors/IfExecutor.h \
   wci/backend/interpreter/executors/SelectExecutor.h \
-  wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h
+  wci/backend/interpreter/executors/CallExecutor.h \
+  wci/backend/interpreter/executors/../MemoryFactory.h \
+  wci/backend/interpreter/executors/../RuntimeDisplay.h \
+  wci/backend/interpreter/executors/../memoryimpl/MemoryMapImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/symtabimpl/Predefined.h \
+  wci/backend/interpreter/executors/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/backend/interpreter/executors/../../../intermediate/typeimpl/TypeSpecImpl.h
+\ActivationRecordImpl.o: \
+  wci/backend/interpreter/memoryimpl/ActivationRecordImpl.cpp \
+  wci/backend/interpreter/memoryimpl/ActivationRecordImpl.h \
+  wci/backend/interpreter/memoryimpl/../ActivationRecord.h \
+  wci/backend/interpreter/memoryimpl/../Cell.h \
+  wci/backend/interpreter/memoryimpl/../MemoryMap.h \
+  wci/backend/interpreter/memoryimpl/../../../DataValue.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/ICode.h \
+  wci/backend/interpreter/memoryimpl/../MemoryFactory.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeStack.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeDisplay.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/symtabimpl/SymTabEntryImpl.h
+wci/backend/interpreter/memoryimpl/CellImpl.o: wci/backend/interpreter/memoryimpl/CellImpl.cpp \
+  wci/backend/interpreter/memoryimpl/CellImpl.h \
+  wci/backend/interpreter/memoryimpl/../Cell.h \
+  wci/backend/interpreter/memoryimpl/../MemoryMap.h \
+  wci/backend/interpreter/memoryimpl/../../../DataValue.h
+wci/backend/interpreter/memoryimpl/MemoryMapImpl.o: wci/backend/interpreter/memoryimpl/MemoryMapImpl.cpp \
+  wci/backend/interpreter/memoryimpl/CellImpl.h \
+  wci/backend/interpreter/memoryimpl/../Cell.h \
+  wci/backend/interpreter/memoryimpl/../MemoryMap.h \
+  wci/backend/interpreter/memoryimpl/../../../DataValue.h \
+  wci/backend/interpreter/memoryimpl/MemoryMapImpl.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/TypeSpec.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/ICode.h \
+  wci/backend/interpreter/memoryimpl/../MemoryFactory.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeStack.h \
+  wci/backend/interpreter/memoryimpl/../ActivationRecord.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeDisplay.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/typeimpl/TypeSpecImpl.h
+\RuntimeDisplayImpl.o: \
+  wci/backend/interpreter/memoryimpl/RuntimeDisplayImpl.cpp \
+  wci/backend/interpreter/memoryimpl/RuntimeDisplayImpl.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeDisplay.h \
+  wci/backend/interpreter/memoryimpl/../ActivationRecord.h \
+  wci/backend/interpreter/memoryimpl/../Cell.h \
+  wci/backend/interpreter/memoryimpl/../MemoryMap.h \
+  wci/backend/interpreter/memoryimpl/../../../DataValue.h
+\RuntimeStackImpl.o: \
+  wci/backend/interpreter/memoryimpl/RuntimeStackImpl.cpp \
+  wci/backend/interpreter/memoryimpl/RuntimeStackImpl.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeStack.h \
+  wci/backend/interpreter/memoryimpl/../ActivationRecord.h \
+  wci/backend/interpreter/memoryimpl/../Cell.h \
+  wci/backend/interpreter/memoryimpl/../MemoryMap.h \
+  wci/backend/interpreter/memoryimpl/../../../DataValue.h \
+  wci/backend/interpreter/memoryimpl/../RuntimeDisplay.h \
+  wci/backend/interpreter/memoryimpl/../MemoryFactory.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTabEntry.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/SymTab.h \
+  wci/backend/interpreter/memoryimpl/../../../intermediate/ICode.h
 wci/frontend/FrontendFactory.o: wci/frontend/FrontendFactory.cpp \
   wci/frontend/FrontendFactory.h wci/frontend/Parser.h \
   wci/frontend/Scanner.h wci/frontend/Source.h \
@@ -317,10 +558,10 @@ wci/frontend/pascal/PascalParserTD.o: wci/frontend/pascal/PascalParserTD.cpp \
   wci/frontend/pascal/PascalErrorHandler.h \
   wci/frontend/pascal/PascalError.h \
   wci/frontend/pascal/../../intermediate/SymTabEntry.h \
-  wci/frontend/pascal/parsers/BlockParser.h \
-  wci/frontend/pascal/parsers/../../../intermediate/ICodeNode.h \
-  wci/frontend/pascal/../../intermediate/TypeSpec.h \
-  wci/frontend/pascal/parsers/StatementParser.h \
+  wci/frontend/pascal/parsers/ProgramParser.h \
+  wci/frontend/pascal/parsers/DeclarationsParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/../../intermediate/ICodeNode.h \
   wci/frontend/pascal/../../intermediate/ICodeFactory.h \
   wci/frontend/pascal/../../intermediate/symtabimpl/Predefined.h \
   wci/frontend/pascal/../../intermediate/symtabimpl/SymTabEntryImpl.h \
@@ -430,6 +671,100 @@ wci/frontend/pascal/parsers/BlockParser.o: wci/frontend/pascal/parsers/BlockPars
   wci/frontend/pascal/parsers/StatementParser.h \
   wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
   wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h
+wci/frontend/pascal/parsers/CallDeclaredParser.o: wci/frontend/pascal/parsers/CallDeclaredParser.cpp \
+  wci/frontend/pascal/parsers/CallDeclaredParser.h \
+  wci/frontend/pascal/parsers/CallParser.h \
+  wci/frontend/pascal/parsers/StatementParser.h \
+  wci/frontend/pascal/parsers/../PascalParserTD.h \
+  wci/frontend/pascal/parsers/../../Parser.h \
+  wci/frontend/pascal/parsers/../../Scanner.h \
+  wci/frontend/pascal/parsers/../../Source.h \
+  wci/frontend/pascal/parsers/../../../message/MessageHandler.h \
+  wci/frontend/pascal/parsers/../../../message/MessageListener.h \
+  wci/frontend/pascal/parsers/../../../message/Message.h \
+  wci/frontend/pascal/parsers/../../../message/MessageProducer.h \
+  wci/frontend/pascal/parsers/../../Token.h \
+  wci/frontend/pascal/parsers/../../../DataValue.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabStack.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTab.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICode.h \
+  wci/frontend/pascal/parsers/../PascalToken.h \
+  wci/frontend/pascal/parsers/../PascalErrorHandler.h \
+  wci/frontend/pascal/parsers/../PascalError.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeNode.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/parsers/ExpressionParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeSpecImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeChecker.h
+wci/frontend/pascal/parsers/CallParser.o: wci/frontend/pascal/parsers/CallParser.cpp \
+  wci/frontend/pascal/parsers/CallParser.h \
+  wci/frontend/pascal/parsers/StatementParser.h \
+  wci/frontend/pascal/parsers/../PascalParserTD.h \
+  wci/frontend/pascal/parsers/../../Parser.h \
+  wci/frontend/pascal/parsers/../../Scanner.h \
+  wci/frontend/pascal/parsers/../../Source.h \
+  wci/frontend/pascal/parsers/../../../message/MessageHandler.h \
+  wci/frontend/pascal/parsers/../../../message/MessageListener.h \
+  wci/frontend/pascal/parsers/../../../message/Message.h \
+  wci/frontend/pascal/parsers/../../../message/MessageProducer.h \
+  wci/frontend/pascal/parsers/../../Token.h \
+  wci/frontend/pascal/parsers/../../../DataValue.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabStack.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTab.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICode.h \
+  wci/frontend/pascal/parsers/../PascalToken.h \
+  wci/frontend/pascal/parsers/../PascalErrorHandler.h \
+  wci/frontend/pascal/parsers/../PascalError.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeNode.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/parsers/CallDeclaredParser.h \
+  wci/frontend/pascal/parsers/CallStandardParser.h \
+  wci/frontend/pascal/parsers/ExpressionParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeSpecImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeChecker.h
+wci/frontend/pascal/parsers/CallStandardParser.o: wci/frontend/pascal/parsers/CallStandardParser.cpp \
+  wci/frontend/pascal/parsers/CallStandardParser.h \
+  wci/frontend/pascal/parsers/CallParser.h \
+  wci/frontend/pascal/parsers/StatementParser.h \
+  wci/frontend/pascal/parsers/../PascalParserTD.h \
+  wci/frontend/pascal/parsers/../../Parser.h \
+  wci/frontend/pascal/parsers/../../Scanner.h \
+  wci/frontend/pascal/parsers/../../Source.h \
+  wci/frontend/pascal/parsers/../../../message/MessageHandler.h \
+  wci/frontend/pascal/parsers/../../../message/MessageListener.h \
+  wci/frontend/pascal/parsers/../../../message/Message.h \
+  wci/frontend/pascal/parsers/../../../message/MessageProducer.h \
+  wci/frontend/pascal/parsers/../../Token.h \
+  wci/frontend/pascal/parsers/../../../DataValue.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabStack.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTab.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICode.h \
+  wci/frontend/pascal/parsers/../PascalToken.h \
+  wci/frontend/pascal/parsers/../PascalErrorHandler.h \
+  wci/frontend/pascal/parsers/../PascalError.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeNode.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/parsers/ExpressionParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeSpecImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeChecker.h
 \CaseStatementParser.o: \
   wci/frontend/pascal/parsers/CaseStatementParser.cpp \
   wci/frontend/pascal/parsers/CaseStatementParser.h \
@@ -534,7 +869,38 @@ wci/frontend/pascal/parsers/DeclarationsParser.o: wci/frontend/pascal/parsers/De
   wci/frontend/pascal/parsers/ConstantDefinitionsParser.h \
   wci/frontend/pascal/parsers/TypeDefinitionsParser.h \
   wci/frontend/pascal/parsers/VariableDeclarationsParser.h \
+  wci/frontend/pascal/parsers/DeclaredRoutineParser.h \
   wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h
+\DeclaredRoutineParser.o: \
+  wci/frontend/pascal/parsers/DeclaredRoutineParser.cpp \
+  wci/frontend/pascal/parsers/DeclaredRoutineParser.h \
+  wci/frontend/pascal/parsers/DeclarationsParser.h \
+  wci/frontend/pascal/parsers/../PascalParserTD.h \
+  wci/frontend/pascal/parsers/../../Parser.h \
+  wci/frontend/pascal/parsers/../../Scanner.h \
+  wci/frontend/pascal/parsers/../../Source.h \
+  wci/frontend/pascal/parsers/../../../message/MessageHandler.h \
+  wci/frontend/pascal/parsers/../../../message/MessageListener.h \
+  wci/frontend/pascal/parsers/../../../message/Message.h \
+  wci/frontend/pascal/parsers/../../../message/MessageProducer.h \
+  wci/frontend/pascal/parsers/../../Token.h \
+  wci/frontend/pascal/parsers/../../../DataValue.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabStack.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTab.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICode.h \
+  wci/frontend/pascal/parsers/../PascalToken.h \
+  wci/frontend/pascal/parsers/../PascalErrorHandler.h \
+  wci/frontend/pascal/parsers/../PascalError.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/parsers/VariableDeclarationsParser.h \
+  wci/frontend/pascal/parsers/BlockParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeNode.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
+  wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
+  wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeSpecImpl.h
 \EnumerationTypeParser.o: \
   wci/frontend/pascal/parsers/EnumerationTypeParser.cpp \
   wci/frontend/pascal/parsers/EnumerationTypeParser.h \
@@ -585,6 +951,7 @@ wci/frontend/pascal/parsers/ExpressionParser.o: wci/frontend/pascal/parsers/Expr
   wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
   wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h \
   wci/frontend/pascal/parsers/VariableParser.h \
+  wci/frontend/pascal/parsers/CallParser.h \
   wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
   wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
   wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
@@ -647,6 +1014,28 @@ wci/frontend/pascal/parsers/IfStatementParser.o: wci/frontend/pascal/parsers/IfS
   wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/Predefined.h \
   wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
   wci/frontend/pascal/parsers/../../../intermediate/typeimpl/TypeChecker.h
+wci/frontend/pascal/parsers/ProgramParser.o: wci/frontend/pascal/parsers/ProgramParser.cpp \
+  wci/frontend/pascal/parsers/ProgramParser.h \
+  wci/frontend/pascal/parsers/DeclarationsParser.h \
+  wci/frontend/pascal/parsers/../PascalParserTD.h \
+  wci/frontend/pascal/parsers/../../Parser.h \
+  wci/frontend/pascal/parsers/../../Scanner.h \
+  wci/frontend/pascal/parsers/../../Source.h \
+  wci/frontend/pascal/parsers/../../../message/MessageHandler.h \
+  wci/frontend/pascal/parsers/../../../message/MessageListener.h \
+  wci/frontend/pascal/parsers/../../../message/Message.h \
+  wci/frontend/pascal/parsers/../../../message/MessageProducer.h \
+  wci/frontend/pascal/parsers/../../Token.h \
+  wci/frontend/pascal/parsers/../../../DataValue.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabStack.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTab.h \
+  wci/frontend/pascal/parsers/../../../intermediate/ICode.h \
+  wci/frontend/pascal/parsers/../PascalToken.h \
+  wci/frontend/pascal/parsers/../PascalErrorHandler.h \
+  wci/frontend/pascal/parsers/../PascalError.h \
+  wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
+  wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
+  wci/frontend/pascal/parsers/DeclaredRoutineParser.h
 wci/frontend/pascal/parsers/RecordTypeParser.o: wci/frontend/pascal/parsers/RecordTypeParser.cpp \
   wci/frontend/pascal/parsers/RecordTypeParser.h \
   wci/frontend/pascal/parsers/TypeSpecificationParser.h \
@@ -755,7 +1144,9 @@ wci/frontend/pascal/parsers/StatementParser.o: wci/frontend/pascal/parsers/State
   wci/frontend/pascal/parsers/ForStatementParser.h \
   wci/frontend/pascal/parsers/IfStatementParser.h \
   wci/frontend/pascal/parsers/CaseStatementParser.h \
+  wci/frontend/pascal/parsers/CallParser.h \
   wci/frontend/pascal/parsers/../../../intermediate/ICodeFactory.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h \
   wci/frontend/pascal/parsers/../../../intermediate/icodeimpl/ICodeNodeImpl.h
 wci/frontend/pascal/parsers/SubrangeTypeParser.o: wci/frontend/pascal/parsers/SubrangeTypeParser.cpp \
   wci/frontend/pascal/parsers/SimpleTypeParser.h \
@@ -858,7 +1249,8 @@ wci/frontend/pascal/parsers/SubrangeTypeParser.o: wci/frontend/pascal/parsers/Su
   wci/frontend/pascal/parsers/../PascalError.h \
   wci/frontend/pascal/parsers/../../../intermediate/SymTabEntry.h \
   wci/frontend/pascal/parsers/../../../intermediate/TypeSpec.h \
-  wci/frontend/pascal/parsers/TypeSpecificationParser.h
+  wci/frontend/pascal/parsers/TypeSpecificationParser.h \
+  wci/frontend/pascal/parsers/../../../intermediate/symtabimpl/SymTabEntryImpl.h
 wci/frontend/pascal/parsers/VariableParser.o: wci/frontend/pascal/parsers/VariableParser.cpp \
   wci/frontend/pascal/parsers/VariableParser.h \
   wci/frontend/pascal/parsers/StatementParser.h \
@@ -1029,11 +1421,11 @@ wci/intermediate/icodeimpl/ICodeNodeImpl.o: wci/intermediate/icodeimpl/ICodeNode
   wci/intermediate/icodeimpl/../ICodeFactory.h
 wci/intermediate/symtabimpl/Predefined.o: wci/intermediate/symtabimpl/Predefined.cpp \
   wci/intermediate/symtabimpl/Predefined.h \
-  wci/intermediate/symtabimpl/../TypeSpec.h \
   wci/intermediate/symtabimpl/../SymTabEntry.h \
   wci/intermediate/symtabimpl/../SymTab.h \
   wci/intermediate/symtabimpl/../ICode.h \
   wci/intermediate/symtabimpl/../../DataValue.h \
+  wci/intermediate/symtabimpl/../TypeSpec.h \
   wci/intermediate/symtabimpl/../SymTabStack.h \
   wci/intermediate/symtabimpl/SymTabEntryImpl.h \
   wci/intermediate/symtabimpl/../TypeFactory.h \

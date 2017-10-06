@@ -10,8 +10,9 @@
 #define STATEMENTEXECUTOR_H_
 
 #include <string>
+#include <map>
 #include "../Executor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../message/Message.h"
 
@@ -38,17 +39,113 @@ public:
      * @param node the root node of the statement.
      * @return nullptr.
      */
-    virtual DataValue *execute(ICodeNode *node);
+    virtual CellValue *execute(ICodeNode *node);
 
 protected:
     Executor *parent;  // parent executor
 
+    /**
+     * Convert a Java string to a Pascal string or character.
+     * @param target_typespec the target type specification.
+     * @param java_value the Java string.
+     * @return the Pascal string or character.
+     */
+    CellValue *to_pascal(TypeSpec *target_typespec, CellValue *java_value);
+
+    /**
+     * Convert a Pascal string to a Java string.
+     * @param target_typespec the target type specification
+     * @param pascal_value the Pascal string.
+     * @param node the statement node.
+     * @return the Java string.
+     */
+    CellValue *to_java(TypeSpec *target_typespec, CellValue *pascal_value,
+                       ICodeNode *node);
+
+    /**
+     * Return a copy of a Pascal value.
+     * @param cell_value the value.
+     * @param node the statement node.
+     * @return the copy.
+     */
+    CellValue *copy_of(CellValue *cell_value, ICodeNode *node);
+
+    /**
+     * Runtime range check.
+     * @param node the root node of the expression subtree to check.
+     * @param typespec the target type specification.
+     * @param cell_value the value.
+     * @return the value to use.
+     */
+    CellValue *check_range(ICodeNode *node, TypeSpec *typespec,
+                           CellValue *cell_value);
+
+    /**
+     * Send a message about an assignment operation.
+     * @param node the parse tree node.
+     * @param variable_name the name of the target variable.
+     * @param cell_value the value of the expression.
+     */
+    void send_assign_message(ICodeNode *node, string variable_name,
+                             CellValue *cell_value);
+
+    /**
+     * Send a message about a value fetch operation.
+     * @param node the parse tree node.
+     * @param variable_name the name of the variable.
+     * @param cell_value the value of the expression.
+     */
+    void send_fetch_message(ICodeNode *node, string variable_name,
+                            CellValue *cell_value);
+
+    /**
+     * Send a message about a call to a declared procedure or function.
+     * @param node the parse tree node.
+     * @param routine_name the name of the routine.
+     */
+    void send_call_message(ICodeNode *node, string routine_name);
+
+    /**
+     * Send a message about a return from a declared procedure or function.
+     * @param node the parse tree node.
+     * @param routine_name the name of the routine.
+     */
+    void send_return_message(ICodeNode *node, string routine_name);
+
 private:
+    /**
+     * Return a copy of a Pascal array.
+     * @param cell_value the cell array.
+     * @param node the statement node.
+     * @return the copy of the array cells.
+     */
+    CellValue *copy_array(CellValue *cell_value, ICodeNode *node);
+
+    /**
+     * Return a copy of a Pascal record.
+     * @param record_value the record value.
+     * @param node the statement node.
+     * @return the copy of the hashmap.
+     */
+    CellValue *copy_record(CellValue *record_value, ICodeNode *node);
+
+    /**
+     * Convert a cell value to a display string.
+     */
+    string display_value(const CellValue *cell_value) const;
+
     /**
      * Send a message about the current source line.
      * @param node the statement node.
      */
     void send_at_line_message(ICodeNode *node);
+
+    /**
+     * Get the source line number of a parse tree node.
+     * @param node the parse tree node.
+     * @return the line number.
+     */
+    int get_line_number(ICodeNode *node);
 };
 
 }}}}  // namespace wci::backend::interpreter::executors

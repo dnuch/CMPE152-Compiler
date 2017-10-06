@@ -11,6 +11,7 @@
 
 #include <string>
 #include "StatementExecutor.h"
+#include "../Cell.h"
 #include "../../../DataValue.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../message/Message.h"
@@ -37,16 +38,20 @@ public:
      * @param node the root node of the compound statement.
      * @return nullptr.
      */
-    DataValue *execute(ICodeNode *node);
+    CellValue *execute(ICodeNode *node);
 
     /**
-     * Send a message about the assignment operation.
-     * @param node the ASSIGN node.
-     * @param variable_name the name of the target variable.
-     * @param data_value the value of the expression.
+     * Assign a value to a target cell.
+     * @param node the ancester parse tree node of the assignment.
+     * @param target_id the symbol table entry of the target variable or parm.
+     * @param target_cell the target cell.
+     * @param target_typespec the target type.
+     * @param value the value to assign.
+     * @param value_typespec the value type.
      */
-    void send_assignment_message(ICodeNode *node, string variable_name,
-                                 DataValue *data_value);
+    void assign_value(ICodeNode *node, SymTabEntry *target_id,
+                      Cell *target_cell, TypeSpec *target_typespec,
+                      CellValue *value, TypeSpec *value_typespec);
 };
 
 }}}}  // namespace wci::backend::interpreter::executors

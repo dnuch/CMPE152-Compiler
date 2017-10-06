@@ -7,6 +7,7 @@
  * <p>For instructional purposes only.  No warranties.</p>
  */
 #include <string>
+#include <algorithm>
 #include "StatementParser.h"
 #include "CompoundStatementParser.h"
 #include "AssignmentStatementParser.h"
@@ -15,12 +16,14 @@
 #include "ForStatementParser.h"
 #include "IfStatementParser.h"
 #include "CaseStatementParser.h"
+#include "CallParser.h"
 #include "../PascalParserTD.h"
 #include "../PascalToken.h"
 #include "../PascalError.h"
 #include "../../Token.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/ICodeFactory.h"
+#include "../../../intermediate/symtabimpl/SymTabEntryImpl.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
 
 namespace wci { namespace frontend { namespace pascal { namespace parsers {
@@ -28,6 +31,7 @@ namespace wci { namespace frontend { namespace pascal { namespace parsers {
 using namespace std;
 using namespace wci::frontend::pascal;
 using namespace wci::intermediate;
+using namespace wci::intermediate::symtabimpl;
 using namespace wci::intermediate::icodeimpl;
 
 set<PascalTokenType> StatementParser::STMT_START_SET =
@@ -60,11 +64,53 @@ ICodeNode *StatementParser::parse_statement(Token *token) throw (string)
             break;
         }
 
-        // An assignment statement begins with a variable's identifier.
         case PT_IDENTIFIER:
         {
-            AssignmentStatementParser assignment_parser(this);
-            statement_node = assignment_parser.parse_statement(token);
+            string name = token->get_text();
+            transform(name.begin(), name.end(), name.begin(), ::tolower);
+            SymTabEntry *id = symtab_stack->lookup(name);
+            Definition defn = id != nullptr
+                            ? id->get_definition()
+                            : (Definition) DF_UNDEFINED;
+
+            // Assignment statement or procedure call.
+            switch ((DefinitionImpl) defn)
+            {
+                case DF_VARIABLE:
+                case DF_VALUE_PARM:
+                case DF_VAR_PARM:
+                case DF_UNDEFINED:
+                {
+                    AssignmentStatementParser assignment_parser(this);
+                    statement_node = assignment_parser.parse_statement(token);
+                    break;
+                }
+
+                case DF_FUNCTION:
+                {
+                    AssignmentStatementParser assignmentParser =
+                        new AssignmentStatementParser(this);
+                    statement_node =
+                        assignmentParser.parse_function_name_assignment(token);
+                    break;
+                }
+
+                case DF_PROCEDURE:
+                {
+                    CallParser callParser(this);
+                    statement_node = callParser.parse_statement(token);
+                    break;
+                }
+
+                default:
+                {
+                    error_handler.flag(token,
+                                       UNEXPECTED_TOKEN,
+                                       this);
+                    token = next_token(token);  // consume identifier
+                }
+            }
+
             break;
         }
 

@@ -60,16 +60,27 @@ private:
     SymTabStack *symtab_stack;  // generated symbol table stack
     Backend     *backend;       // backend
 
-    bool first_output_message;
+    bool intermediate, xref, lines, assign, fetch, call, returnn;
 
     static const string SOURCE_LINE_FORMAT;
     static const string PARSER_SUMMARY_FORMAT;
     static const string INTERPRETER_SUMMARY_FORMAT;
     static const string COMPILER_SUMMARY_FORMAT;
+    static const string LINE_FORMAT;
     static const string ASSIGN_FORMAT;
+    static const string FETCH_FORMAT;
+    static const string CALL_FORMAT;
+    static const string RETURN_FORMAT;
     static const string RUNTIME_ERROR_FORMAT;
 
     static const int PREFIX_WIDTH;
+
+    /**
+     * Convert a number as a string to a string with commas.
+     * @param str the number as a string.
+     * @return the commafied number.
+     */
+    string commafy(string str);
 };
 
 #endif /* PASCAL_H_ */

@@ -10,7 +10,7 @@
 #include "IfExecutor.h"
 #include "StatementExecutor.h"
 #include "ExpressionExecutor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
 
@@ -27,7 +27,7 @@ IfExecutor::IfExecutor(Executor *parent)
 {
 }
 
-DataValue *IfExecutor::execute(ICodeNode *node)
+CellValue *IfExecutor::execute(ICodeNode *node)
 {
     // Get the IF node's children.
     vector<ICodeNode *> children = node->get_children();
@@ -39,8 +39,12 @@ DataValue *IfExecutor::execute(ICodeNode *node)
     StatementExecutor statement_executor(this);
 
     // Evaluate the expression to determine which statement to execute.
-    DataValue *data_value = expression_executor.execute(expr_node);
-    if (data_value->b)
+    CellValue *cell_value = expression_executor.execute(expr_node);
+    DataValue *data_value = cell_value->value;
+    bool b = data_value->b;
+    delete cell_value;
+
+    if (b)
     {
         statement_executor.execute(then_stmt_node);
     }

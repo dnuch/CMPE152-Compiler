@@ -22,7 +22,7 @@ using namespace wci::message;
 const char Source::END_OF_LINE = '\n';
 const char Source::END_OF_FILE = (char) 0;
 
-Source::Source(ifstream &reader)
+Source::Source(istream &reader)
     : reader(reader), line_number(0), current_pos(-2)
     // set position to -2 to read the first source line
 {
@@ -75,6 +75,24 @@ char Source::peek_char() throw (string)
                                          : END_OF_LINE;
 }
 
+bool Source::at_eol() throw (string)
+{
+    return current_pos == line_text.length();
+}
+
+bool Source::at_eof() throw (string)
+{
+    // First time?
+    if (current_pos == -2)  read_line();
+
+    return reader.eof();
+}
+
+void Source::skip_to_next_line() throw (string)
+{
+    current_pos = line_text.length() + 1;
+}
+
 void Source::read_line() throw (string)
 {
     getline(reader, line_text);
@@ -105,7 +123,7 @@ void Source::read_line() throw (string)
 
 void Source::close() throw (string)
 {
-    reader.close();
+    // reader.close();
 }
 
 void Source::add_message_listener(MessageListener *listener)

@@ -11,6 +11,7 @@
 
 #include <set>
 #include "StatementExecutor.h"
+#include "../Cell.h"
 #include "../../../DataValue.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
 
@@ -36,7 +37,21 @@ public:
      * @param node the root intermediate code node of the compound statement.
      * @return the computed value of the expression.
      */
-    DataValue *execute(ICodeNode *node);
+    CellValue *execute(ICodeNode *node);
+
+    /**
+     * Return a variable's value.
+     * @param node the variable node.
+     * @return the value.
+     */
+    CellValue *execute_value(ICodeNode *node);
+
+    /**
+     * Execute a variable and return the reference to its cell.
+     * @param node the variable node.
+     * @return the reference to the variable's cell.
+     */
+    Cell *execute_variable(ICodeNode *node);
 
 private:
     static set<ICodeNodeTypeImpl> ARITH_OPS;
@@ -47,7 +62,7 @@ private:
      * @param node_type the node type.
      * @return the computed value of the expression.
      */
-    DataValue *execute_binary_operator(ICodeNode *node,
+    CellValue *execute_binary_operator(ICodeNode *node,
                                        const ICodeNodeTypeImpl node_type);
 };
 

@@ -40,6 +40,15 @@ public:
     ICodeNode *parse_variable(Token *token) throw (string);
 
     /**
+     * Parse a function name as the target of an assignment statement.
+     * @param token the initial token.
+     * @return the root node of the generated parse tree.
+     * @throw a string message if an error occurred.
+     */
+    ICodeNode *parse_function_name_target(Token *token)
+        throw (string);
+
+    /**
      * Parse a variable.
      * @param token the initial token.
      * @param variable_id the symbol table entry of the variable identifier.
@@ -55,6 +64,10 @@ private:
 
     // Synchronization set for the ] token.
     static set<PascalTokenType> RIGHT_BRACKET_SET;
+
+    // Set to true to parse a function name
+    // as the target of an assignment.
+    bool is_function_target;
 
     /**
      * Parse a set of comma-separated subscript expressions.

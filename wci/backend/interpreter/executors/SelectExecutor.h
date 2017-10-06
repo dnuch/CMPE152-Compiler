@@ -11,7 +11,7 @@
 
 #include <map>
 #include "StatementExecutor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 
 namespace wci { namespace backend { namespace interpreter { namespace executors {
@@ -38,7 +38,7 @@ public:
      * @param node the root node of the compound statement.
      * @return nullptr.
      */
-    DataValue *execute(ICodeNode *node);
+    CellValue *execute(ICodeNode *node);
 
 private:
     static JumpCache jump_cache;

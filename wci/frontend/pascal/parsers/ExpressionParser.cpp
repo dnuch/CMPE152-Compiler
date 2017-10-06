@@ -10,6 +10,7 @@
 #include <algorithm>
 #include "ExpressionParser.h"
 #include "VariableParser.h"
+#include "CallParser.h"
 #include "../PascalParserTD.h"
 #include "../PascalToken.h"
 #include "../PascalError.h"
@@ -621,6 +622,13 @@ ICodeNode *ExpressionParser::parse_identifier(Token *token) throw (string)
             token = next_token(token);  // consume the enum constant identifier
 
             root_node->set_typespec(typespec);
+            break;
+        }
+
+        case DF_FUNCTION:
+        {
+            CallParser call_parser(this);
+            root_node = call_parser.parse_statement(token);
             break;
         }
 

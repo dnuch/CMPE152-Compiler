@@ -11,6 +11,7 @@
 #include "ConstantDefinitionsParser.h"
 #include "TypeDefinitionsParser.h"
 #include "VariableDeclarationsParser.h"
+#include "DeclaredRoutineParser.h"
 #include "../PascalParserTD.h"
 #include "../../../frontend/pascal/PascalToken.h"
 #include "../../../intermediate/TypeSpec.h"
@@ -56,7 +57,9 @@ DeclarationsParser::DeclarationsParser(PascalParserTD *parent)
     initialize();
 }
 
-void DeclarationsParser::parse_declaration(Token *token) throw (string)
+SymTabEntry *DeclarationsParser::parse_declaration(Token *token,
+                                                   SymTabEntry *parent_id)
+    throw (string)
 {
     token = synchronize(DECLARATION_START_SET);
 
@@ -65,7 +68,7 @@ void DeclarationsParser::parse_declaration(Token *token) throw (string)
         token = next_token(token);  // consume CONST
 
         ConstantDefinitionsParser constant_definitions_parser(this);
-        constant_definitions_parser.parse_declaration(token);
+        constant_definitions_parser.parse_declaration(token, nullptr);
     }
 
     token = synchronize(TYPE_START_SET);
@@ -75,7 +78,7 @@ void DeclarationsParser::parse_declaration(Token *token) throw (string)
         token = next_token(token);  // consume TYPE
 
         TypeDefinitionsParser type_definitions_parser(this);
-        type_definitions_parser.parse_declaration(token);
+        type_definitions_parser.parse_declaration(token, nullptr);
     }
 
     token = synchronize(VAR_START_SET);
@@ -87,10 +90,33 @@ void DeclarationsParser::parse_declaration(Token *token) throw (string)
         VariableDeclarationsParser variable_declarations_parser(this);
         variable_declarations_parser.set_definition(
                                                (Definition) DF_VARIABLE);
-        variable_declarations_parser.parse_declaration(token);
+        variable_declarations_parser.parse_declaration(token, nullptr);
     }
 
     token = synchronize(ROUTINE_START_SET);
+    TokenType token_type = token->get_type();
+
+    while (   (token_type == (TokenType) PT_PROCEDURE)
+           || (token_type == (TokenType) PT_FUNCTION))
+    {
+        DeclaredRoutineParser routine_parser(this);
+        routine_parser.parse_declaration(token, parent_id);
+
+        // Look for one or more semicolons after a definition.
+        token = current_token();
+        if (token->get_type() == (TokenType) PT_SEMICOLON)
+        {
+            while (token->get_type() == (TokenType) PT_SEMICOLON)
+            {
+                token = next_token(token);  // consume the ;
+            }
+        }
+
+        token = synchronize(ROUTINE_START_SET);
+        token_type = token->get_type();
+    }
+
+    return nullptr;
 }
 
 }}}}  // namespace wci::frontend::pascal::parsers

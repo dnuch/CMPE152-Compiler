@@ -9,7 +9,7 @@
 #include <vector>
 #include "CompoundExecutor.h"
 #include "StatementExecutor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 
 namespace wci { namespace backend { namespace interpreter { namespace executors {
@@ -24,7 +24,7 @@ CompoundExecutor::CompoundExecutor(Executor *parent)
 {
 }
 
-DataValue *CompoundExecutor::execute(ICodeNode *node)
+CellValue *CompoundExecutor::execute(ICodeNode *node)
 {
     // Loop over the children of the COMPOUND node and execute each child.
     StatementExecutor statement_executor(this);

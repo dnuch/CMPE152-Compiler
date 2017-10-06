@@ -28,7 +28,7 @@ public:
      * Constructor.
      * @param reader the reader for the source program
      */
-    Source(ifstream &reader);
+    Source(istream &reader);
 
     /**
      * Getter.
@@ -66,6 +66,25 @@ public:
     char peek_char() throw (string);
 
     /**
+     * @return true if at the end of the line, else return false.
+     * @throw a string message if an error occurred.
+     */
+    bool at_eol() throw (string);
+
+    /**
+     * @return true if at the end of the file, else return false.
+     * @throw a string message if an error occurred.
+     */
+    bool at_eof() throw (string);
+
+    /**
+     * Skip the rest of the current input line
+     * by forcing the next read to read a new line.
+     * @throw a string message if an error occurred.
+     */
+    void skip_to_next_line() throw (string);
+
+    /**
      * Close the source.
      * @throw a string message if an error occurred.
      */
@@ -89,7 +108,7 @@ public:
     static const char END_OF_FILE;
 
 private:
-    ifstream& reader;                 // reader for the source program
+    istream& reader;                  // reader for the source program
     string line_text;                 // source line text
     int line_number;                  // current source line number
     int current_pos;                  // current source line position

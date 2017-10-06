@@ -9,6 +9,7 @@
 #ifndef DATAVALUE_H_
 #define DATAVALUE_H_
 
+#include <iostream>
 #include <string>
 
 namespace wci {
@@ -56,6 +57,20 @@ public:
         new (&this->s) string(s);
     }
 
+    DataValue(const DataValue& orig)
+    {
+        this->type = orig.type;
+
+        switch (orig.type)
+        {
+            case ValueType::INTEGER: this->i = orig.i; break;
+            case ValueType::FLOAT:   this->f = orig.f; break;
+            case ValueType::CHAR:    this->c = orig.c; break;
+            case ValueType::BOOLEAN: this->b = orig.b; break;
+            case ValueType::STRING:  new (&this->s) string(orig.s); break;
+        }
+	}
+
     ~DataValue() {}
 
     string display() const
@@ -64,7 +79,7 @@ public:
         {
             case ValueType::INTEGER: return to_string(this->i);
             case ValueType::FLOAT:   return to_string(this->f);
-            case ValueType::CHAR:    return to_string(this->c);
+            case ValueType::CHAR:    return string(1, this->c);
             case ValueType::BOOLEAN: return to_string(this->b);
             case ValueType::STRING:  return this->s;
 

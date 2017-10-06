@@ -35,7 +35,7 @@ ICodeNode *BlockParser::parse_block(Token *token, SymTabEntry *routine_id)
     StatementParser statement_parser(this);
 
     // Parse any declarations.
-    declarations_parser.parse_declaration(token);
+    declarations_parser.parse_declaration(token, routine_id);
 
     token = synchronize(StatementParser::STMT_START_SET);
     TokenType token_type = token->get_type();

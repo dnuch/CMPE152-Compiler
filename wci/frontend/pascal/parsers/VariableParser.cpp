@@ -44,7 +44,7 @@ set<PascalTokenType> VariableParser::RIGHT_BRACKET_SET =
 };
 
 VariableParser::VariableParser(PascalParserTD *parent)
-    : StatementParser(parent)
+    : StatementParser(parent), is_function_target(false)
 {
 }
 
@@ -68,15 +68,26 @@ ICodeNode *VariableParser::parse_variable(Token *token) throw (string)
     return parse_variable(token, variable_id);
 }
 
+ICodeNode *VariableParser::parse_function_name_target(Token *token)
+    throw (string)
+{
+    is_function_target = true;
+    return parse_variable(token);
+}
+
 ICodeNode *VariableParser::parse_variable(Token *token,
                                           SymTabEntry *variable_id)
     throw (string)
 {
     // Check how the variable is defined.
     Definition defn = variable_id->get_definition();
-    if (   (defn != (Definition) DF_VARIABLE)
-        && (defn != (Definition) DF_VALUE_PARM)
-        && (defn != (Definition) DF_VAR_PARM))
+    if (! (   (defn == (Definition) DF_VARIABLE)
+           || (defn == (Definition) DF_VALUE_PARM)
+           || (defn == (Definition) DF_VAR_PARM)
+           || (   is_function_target
+               && (defn == (Definition) DF_FUNCTION))
+          )
+       )
     {
         error_handler.flag(token, INVALID_IDENTIFIER_USAGE, this);
     }
@@ -89,23 +100,27 @@ ICodeNode *VariableParser::parse_variable(Token *token,
                                  new NodeValue(variable_id));
 
     token = next_token(token);  // consume the identifier
-
-    // Parse array subscripts or record fields.
     TypeSpec *variable_typespec = variable_id->get_typespec();
-    while (SUBSCRIPT_FIELD_START_SET.find(
-                                     (PascalTokenType) token->get_type())
-                != SUBSCRIPT_FIELD_START_SET.end())
-    {
-        ICodeNode *sub_fld_node =
-            token->get_type() == (TokenType) PT_LEFT_BRACKET
-                      ? parse_subscripts(variable_typespec)
-                      : parse_field(variable_typespec);
-        token = current_token();
 
-        // Update the variable's type.
-        // The variable node adopts the SUBSCRIPTS or FIELD node.
-        variable_typespec = sub_fld_node->get_typespec();
-        variable_node->add_child(sub_fld_node);
+    if (!is_function_target)
+    {
+        // Parse array subscripts or record fields.
+        while (SUBSCRIPT_FIELD_START_SET.find(
+                                     (PascalTokenType) token->get_type())
+                    != SUBSCRIPT_FIELD_START_SET.end())
+        {
+            ICodeNode *sub_fld_node =
+                token->get_type() ==
+                               (TokenType) PT_LEFT_BRACKET
+                          ? parse_subscripts(variable_typespec)
+                          : parse_field(variable_typespec);
+            token = current_token();
+
+            // Update the variable's type.
+            // The variable node adopts the SUBSCRIPTS or FIELD node.
+            variable_typespec = sub_fld_node->get_typespec();
+            variable_node->add_child(sub_fld_node);
+        }
     }
 
     variable_node->set_typespec(variable_typespec);
@@ -191,7 +206,9 @@ ICodeNode *VariableParser::parse_field(TypeSpec *variable_typespec)
     Token *field_token = current_token();
 
     TokenType token_type = token->get_type();
-    TypeForm variable_form = variable_typespec->get_form();
+    TypeForm variable_form = variable_typespec != nullptr
+                                ? (TypeForm) variable_typespec->get_form()
+                                : (TypeForm) -1;
 
     if (   (token_type == (TokenType) PT_IDENTIFIER)
         && (variable_form == (TypeForm) TypeFormImpl::RECORD))

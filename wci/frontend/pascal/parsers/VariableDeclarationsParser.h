@@ -37,17 +37,25 @@ public:
     /**
      * Parse a type definition.
      * @param token the initial token.
+     * @param parent_id the symbol table entry of the parent routine's name.
+     * @return nullptr
      * @throw a string message if an error occurred.
      */
-    void parse_declaration(Token *token) throw (string);
+    SymTabEntry *parse_declaration(Token *token, SymTabEntry *parent_id)
+        throw (string);
 
     /**
      * Parse a sublist of identifiers and their type specification.
      * @param token the current token.
+     * @param follow_set the synchronization set to follow an identifier.
+     * @param comma_set the synchronization set for a comma.
      * @return the sublist of identifiers in a declaration.
      * @throw a string message if an error occurred.
      */
-    vector<SymTabEntry *> parse_identifier_sublist(Token *token)
+    vector<SymTabEntry *> parse_identifier_sublist(
+                                        Token *token,
+                                        set<PascalTokenType>& follow_set,
+                                        set<PascalTokenType>& comma_set)
         throw (string);
 
     /**

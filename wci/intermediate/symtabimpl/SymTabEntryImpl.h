@@ -70,6 +70,42 @@ constexpr DefinitionImpl DF_PROCEDURE = DefinitionImpl::PROCEDURE;
 constexpr DefinitionImpl DF_FUNCTION = DefinitionImpl::FUNCTION;
 constexpr DefinitionImpl DF_UNDEFINED = DefinitionImpl::UNDEFINED;
 
+/**
+ * Pascal routines.
+ */
+enum class RoutineCodeImpl
+{
+    DECLARED, FORWARD,
+    READ, READLN, WRITE, WRITELN,
+    ABS, ARCTAN, CHR, COS, EXP, LN, ODD, ORD,
+    EOF_FUNCTION, EOLN_FUNCTION,
+    PRED, ROUND, SIN, SQR, SQRT, SUCC, TRUNC,
+};
+
+constexpr RoutineCodeImpl RT_DECLARED = RoutineCodeImpl::DECLARED;
+constexpr RoutineCodeImpl RT_FORWARD = RoutineCodeImpl::FORWARD;
+constexpr RoutineCodeImpl RT_READ = RoutineCodeImpl::READ;
+constexpr RoutineCodeImpl RT_READLN = RoutineCodeImpl::READLN;
+constexpr RoutineCodeImpl RT_WRITE = RoutineCodeImpl::WRITE;
+constexpr RoutineCodeImpl RT_WRITELN = RoutineCodeImpl::WRITELN;
+constexpr RoutineCodeImpl RT_ABS = RoutineCodeImpl::ABS;
+constexpr RoutineCodeImpl RT_ARCTAN = RoutineCodeImpl::ARCTAN;
+constexpr RoutineCodeImpl RT_CHR = RoutineCodeImpl::CHR;
+constexpr RoutineCodeImpl RT_COS = RoutineCodeImpl::COS;
+constexpr RoutineCodeImpl RT_EXP = RoutineCodeImpl::EXP;
+constexpr RoutineCodeImpl RT_LN = RoutineCodeImpl::LN;
+constexpr RoutineCodeImpl RT_ODD = RoutineCodeImpl::ODD;
+constexpr RoutineCodeImpl RT_ORD = RoutineCodeImpl::ORD;
+constexpr RoutineCodeImpl RT_EOF = RoutineCodeImpl::EOF_FUNCTION;
+constexpr RoutineCodeImpl RT_EOLN = RoutineCodeImpl::EOLN_FUNCTION;
+constexpr RoutineCodeImpl RT_PRED = RoutineCodeImpl::PRED;
+constexpr RoutineCodeImpl RT_ROUND = RoutineCodeImpl::ROUND;
+constexpr RoutineCodeImpl RT_SIN = RoutineCodeImpl::SIN;
+constexpr RoutineCodeImpl RT_SQR = RoutineCodeImpl::SQR;
+constexpr RoutineCodeImpl RT_SQRT = RoutineCodeImpl::SQRT;
+constexpr RoutineCodeImpl RT_SUCC = RoutineCodeImpl::SUCC;
+constexpr RoutineCodeImpl RT_TRUNC = RoutineCodeImpl::TRUNC;
+
 class SymTabEntryImpl : public SymTabEntry
 {
 public:

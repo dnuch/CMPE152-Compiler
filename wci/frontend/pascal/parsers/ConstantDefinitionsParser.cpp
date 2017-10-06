@@ -66,7 +66,9 @@ ConstantDefinitionsParser::ConstantDefinitionsParser(PascalParserTD *parent)
     initialize();
 }
 
-void ConstantDefinitionsParser::parse_declaration(Token *token) throw (string)
+SymTabEntry *ConstantDefinitionsParser::parse_declaration(
+                                    Token *token, SymTabEntry *parent_id)
+    throw (string)
 {
     token = synchronize(IDENTIFIER_SET);
 
@@ -147,6 +149,8 @@ void ConstantDefinitionsParser::parse_declaration(Token *token) throw (string)
 
         token = synchronize(IDENTIFIER_SET);
     }
+
+    return nullptr;
 }
 
 DataValue *ConstantDefinitionsParser::parse_constant(Token *token)

@@ -55,6 +55,26 @@ public:
      */
     char next_char() throw (string);
 
+    /**
+     * Call the source's at_eol() method.
+     * @return true if at the end of the source line, else return false.
+     * @throw a string message if an error occurred.
+     */
+    bool at_eol() throw (string);
+
+    /**
+     * Call the source's at_eof() method.
+     * @return true if at the end of the source file, else return false.
+     * @throw a string message if an error occurred.
+     */
+    bool at_eof() throw (string);
+
+    /**
+     * Call the source's skip_to_next_line() method.
+     * @throw a string message if an error occurred.
+     */
+    void skip_to_next_line() throw (string);
+
 protected:
     Source *source;
 

@@ -10,12 +10,14 @@
 #include "BackendFactory.h"
 #include "compiler/CodeGenerator.h"
 #include "interpreter/Executor.h"
+#include "../intermediate/symtabimpl/Predefined.h"
 
 namespace wci { namespace backend {
 
 using namespace std;
 using namespace wci::backend::compiler;
 using namespace wci::backend::interpreter;
+using namespace wci::intermediate::symtabimpl;
 
 Backend *BackendFactory::create_backend(string operation) throw (string)
 {
@@ -28,6 +30,32 @@ Backend *BackendFactory::create_backend(string operation) throw (string)
     else {
         throw new string("Backend factory: Invalid operation '" +
                          operation + "'");
+    }
+}
+
+CellValue *BackendFactory::default_value(TypeSpec *typespec)
+{
+    typespec = typespec->base_type();
+
+    if (typespec == Predefined::integer_type)
+    {
+        return new CellValue(0);
+    }
+    else if (typespec == Predefined::real_type)
+    {
+        return new CellValue(0.0f);
+    }
+    else if (typespec == Predefined::boolean_type)
+    {
+        return new CellValue(false);
+    }
+    else if (typespec == Predefined::char_type)
+    {
+        return new CellValue('#');
+    }
+    else // string
+    {
+        return new CellValue("#");
     }
 }
 

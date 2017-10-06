@@ -40,19 +40,48 @@ enum class Definition
 };
 
 /**
+ * Routine codes.
+ */
+enum class RoutineCode
+{
+    // to be "subclassed" by implementation-specific routine codes
+};
+
+/**
  * Symbol table entry value.
  */
 struct EntryValue
 {
-    DataValue *value;
-    SymTab    *symtab;
-    ICode     *icode;
+    DataValue   *value;
+    SymTab      *symtab;
+    ICode       *icode;
+    RoutineCode routine_code;
     vector<SymTabEntry *> v;
 
-    EntryValue()                 : value(nullptr), symtab(nullptr), icode(nullptr) {};
-    EntryValue(DataValue *value) : value(value), symtab(nullptr), icode(nullptr) {};
-    EntryValue(SymTab *symtab)   : value(nullptr), symtab(symtab), icode(nullptr) {};
-    EntryValue(ICode *icode)     : value(nullptr), symtab(nullptr), icode(icode) {};
+    EntryValue()
+        : value(nullptr), symtab(nullptr), icode(nullptr),
+          routine_code((RoutineCode) -1)
+    {};
+
+    EntryValue(DataValue *value)
+        : value(value), symtab(nullptr), icode(nullptr),
+          routine_code((RoutineCode) -1)
+    {};
+
+    EntryValue(SymTab *symtab)
+        : value(nullptr), symtab(symtab), icode(nullptr),
+          routine_code((RoutineCode) -1)
+    {};
+
+    EntryValue(ICode *icode)
+        : value(nullptr), symtab(nullptr), icode(icode),
+          routine_code((RoutineCode) -1)
+    {};
+
+    EntryValue(RoutineCode routine_code)
+        : value(nullptr), symtab(nullptr), icode(nullptr),
+          routine_code(routine_code)
+    {};
 
     ~EntryValue() {}
 };

@@ -37,10 +37,22 @@ public:
      */
     ICodeNode *parse_statement(Token *token) throw (string);
 
+    /**
+     * Parse an assignment to a function name.
+     * @param token the initial token.
+     * @return the root node of the generated parse tree.
+     * @throw a string message if an error occurred.
+     */
+    ICodeNode *parse_function_name_assignment(Token *token);
+
 private:
     static set<PascalTokenType> COLON_EQUALS_SET;
 
     static bool INITIALIZED;
+
+    // Set to true to parse a function name
+    // as the target of an assignment.
+    bool is_function_target;
 
     /**
      * Initialize the synchronization set.

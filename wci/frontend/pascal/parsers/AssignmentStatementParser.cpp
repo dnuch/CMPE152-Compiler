@@ -57,7 +57,7 @@ void AssignmentStatementParser::initialize()
 }
 
 AssignmentStatementParser::AssignmentStatementParser(PascalParserTD *parent)
-    : StatementParser(parent)
+    : StatementParser(parent), is_function_target(false)
 {
     initialize();
 }
@@ -71,7 +71,9 @@ ICodeNode *AssignmentStatementParser::parse_statement(Token *token)
 
     // Parse the target variable.
     VariableParser variableParser(this);
-    ICodeNode *target_node = variableParser.parse_variable(token);
+    ICodeNode *target_node = is_function_target
+                    ? variableParser.parse_function_name_target(token)
+                    : variableParser.parse_variable(token);
     TypeSpec *target_typespec = target_node != nullptr
                                     ? target_node->get_typespec()
                                     : Predefined::undefined_type;
@@ -106,14 +108,20 @@ ICodeNode *AssignmentStatementParser::parse_statement(Token *token)
                                                 expr_typespec))
     {
         token = current_token();
-        error_handler.flag(expr_token, PascalErrorCode::INCOMPATIBLE_TYPES,
-                           this);
+        error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
     }
 
     assign_node->set_typespec(target_typespec);
 
     delete expr_token;
     return assign_node;
+}
+
+ICodeNode *AssignmentStatementParser::parse_function_name_assignment
+                                                           (Token *token)
+{
+    is_function_target = true;
+    return parse_statement(token);
 }
 
 }}}}  // namespace wci::frontend::pascal::parsers

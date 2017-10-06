@@ -54,6 +54,8 @@ ICodeNode *RepeatStatementParser::parse_statement(Token *token)
     token = current_token();
     Token *expr_token = new Token(*token);
 
+    set_line_number(test_node, token->get_line_number());
+
     // Parse the expression.
     // The TEST node adopts the expression subtree as its only child.
     // The LOOP node adopts the TEST node.

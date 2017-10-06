@@ -10,7 +10,7 @@
 #include "LoopExecutor.h"
 #include "StatementExecutor.h"
 #include "ExpressionExecutor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
 
@@ -27,7 +27,7 @@ LoopExecutor::LoopExecutor(Executor *parent)
 {
 }
 
-DataValue *LoopExecutor::execute(ICodeNode *node)
+CellValue *LoopExecutor::execute(ICodeNode *node)
 {
     bool exit_loop = false;
     ICodeNode *expr_node = nullptr;
@@ -54,9 +54,11 @@ DataValue *LoopExecutor::execute(ICodeNode *node)
                     expr_node = child->get_children()[0];
                 }
 
-                DataValue *data_value =
-                                  expression_executor.execute(expr_node);
+                CellValue *cell_value =
+                                expression_executor.execute(expr_node);
+                DataValue *data_value = cell_value->value;
                 exit_loop = data_value->b;
+                delete cell_value;
             }
 
             // Statement node.
@@ -66,7 +68,7 @@ DataValue *LoopExecutor::execute(ICodeNode *node)
             }
 
             // Exit if the TEST expression value is true,
-            if (exit_loop) break;
+            if (exit_loop)  break;
         }
     }
 

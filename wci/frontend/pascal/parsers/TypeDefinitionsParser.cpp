@@ -69,7 +69,9 @@ TypeDefinitionsParser::TypeDefinitionsParser(PascalParserTD *parent)
     initialize();
 }
 
-void TypeDefinitionsParser::parse_declaration(Token *token) throw (string)
+SymTabEntry *TypeDefinitionsParser::parse_declaration(
+                                   Token *token, SymTabEntry *routine_id)
+    throw (string)
 {
     token = synchronize(IDENTIFIER_SET);
 
@@ -151,6 +153,8 @@ void TypeDefinitionsParser::parse_declaration(Token *token) throw (string)
 
         token = synchronize(IDENTIFIER_SET);
     }
+
+    return nullptr;
 }
 
 }}}}  // namespace wci::frontend::pascal::parsers

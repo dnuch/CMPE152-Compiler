@@ -11,7 +11,7 @@
 #include "SelectExecutor.h"
 #include "StatementExecutor.h"
 #include "ExpressionExecutor.h"
-#include "../../../DataValue.h"
+#include "../Cell.h"
 #include "../../../intermediate/ICodeNode.h"
 #include "../../../intermediate/icodeimpl/ICodeNodeImpl.h"
 
@@ -30,7 +30,7 @@ SelectExecutor::SelectExecutor(Executor *parent)
 {
 }
 
-DataValue *SelectExecutor::execute(ICodeNode *node)
+CellValue *SelectExecutor::execute(ICodeNode *node)
 {
     // Is there already an entry for this SELECT node in the
     // jump table cache? If not, create a jump table entry.
@@ -47,12 +47,13 @@ DataValue *SelectExecutor::execute(ICodeNode *node)
 
     // Evaluate the SELECT expression.
     ExpressionExecutor expression_executor(this);
-    DataValue *select_value = expression_executor.execute(expr_node);
+    CellValue *cell_value = expression_executor.execute(expr_node);
+    DataValue *select_value = cell_value->value;
+    int index = select_value->i;
+    delete cell_value;
 
     // If there is a selection, execute the SELECT_BRANCH's statement.
-    int key = select_value->type == INTEGER ? select_value->i
-                                            : select_value->s[0];
-    ICodeNode *statement_node = (*jump_table)[key];
+    ICodeNode *statement_node = (*jump_table)[index];
     if (statement_node != nullptr)
     {
         StatementExecutor statement_executor(this);

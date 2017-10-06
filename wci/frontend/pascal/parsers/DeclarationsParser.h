@@ -36,9 +36,12 @@ public:
      * Parse a declaration.
      * To be overridden by the specialized declarations parser subclasses.
      * @param token the initial token.
+     * @param parent_id the symbol table entry of the parent routine's name.
+     * @return nullptr
      * @throw a string message if an error occurred.
      */
-    void parse_declaration(Token *token) throw (string);
+    SymTabEntry *parse_declaration(Token *token, SymTabEntry *parent_id)
+        throw (string);
 
     // Synchronization set for starting a variable declaration.
     static set<PascalTokenType> VAR_START_SET;

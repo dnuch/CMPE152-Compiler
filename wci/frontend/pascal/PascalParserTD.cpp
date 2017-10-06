@@ -16,8 +16,7 @@
 #include "../Token.h"
 #include "PascalToken.h"
 #include "PascalError.h"
-#include "parsers/BlockParser.h"
-#include "parsers/StatementParser.h"
+#include "parsers/ProgramParser.h"
 #include "../../intermediate/SymTabEntry.h"
 #include "../../intermediate/ICode.h"
 #include "../../intermediate/ICodeNode.h"
@@ -62,34 +61,15 @@ void PascalParserTD::parse() throw (string)
     // Create a dummy program identifier symbol table entry.
     routine_id = symtab_stack->enter_local("dummyprogramname");
     routine_id->set_definition((Definition) DefinitionImpl::PROGRAM);
-    symtab_stack->set_program_id(routine_id);
-
-    // Push a new symbol table onto the symbol table stack and set
-    // the routine's symbol table and intermediate code.
-    routine_id->set_attribute((SymTabKey) ROUTINE_SYMTAB,
-                              new EntryValue(symtab_stack->push()));
-    routine_id->set_attribute((SymTabKey) ROUTINE_ICODE,
-                              new EntryValue(icode));
 
     Token *token = next_token(nullptr);
 
-    // Parse a block.
-    BlockParser block_parser(this);
-    ICodeNode *root_node = block_parser.parse_block(token, routine_id);
-    icode->set_root(root_node);
-    symtab_stack->pop();
-
-    // Look for the final period.
+    // Parse a program.
+    ProgramParser program_parser(this);
+    program_parser.parse_declaration(token, nullptr);
     token = current_token();
-    if (token->get_type() != (TokenType) PT_DOT)
-    {
-        error_handler.flag(token, MISSING_PERIOD, this);
-    }
 
     int last_line_number = token->get_line_number();
-
-    // Set the parse tree root node.
-    if (root_node != nullptr) icode->set_root(root_node);
 
     // Send the parser summary message.
     steady_clock::time_point end_time = steady_clock::now();

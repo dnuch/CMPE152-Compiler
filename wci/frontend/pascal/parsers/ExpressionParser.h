@@ -44,17 +44,17 @@ public:
     // Synchronization set for starting an expression.
     static set<PascalTokenType> EXPR_START_SET;
 
+    /**
+     * Initialize the static maps.
+     */
+    static void initialize();
+
 private:
     static map<PascalTokenType, ICodeNodeTypeImpl> REL_OPS_MAP;
     static map<PascalTokenType, ICodeNodeTypeImpl> ADD_OPS_MAP;
     static map<PascalTokenType, ICodeNodeTypeImpl> MULT_OPS_MAP;
 
     static bool INITIALIZED;
-
-    /**
-     * Initialize the static maps.
-     */
-    static void initialize();
 
     /**
      * Parse an expression.
