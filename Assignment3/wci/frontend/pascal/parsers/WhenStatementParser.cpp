@@ -2,9 +2,6 @@
  * <h1>WhenStatementParser</h1>
  *
  * <p>Parse a Pascal WHEN statement.</p>
- *
- * <p>Copyright (c) 2017 by Ronald Mak</p>
- * <p>For instructional purposes only.  No warranties.</p>
  */
 #include <string>
 #include <set>
@@ -29,21 +26,19 @@ using namespace wci::intermediate::icodeimpl;
 
 bool WhenStatementParser::INITIALIZED = false;
 
-set<PascalTokenType> WhenStatementParser::ARROW_SET;
+set<PascalTokenType> WhenStatementParser::WHEN_SET;
 
 void WhenStatementParser::initialize()
 {
     if(INITIALIZED) return;
 
-    ARROW_SET = StatementParser::STMT_START_SET;
-    ARROW_SET.insert(PascalTokenType::ARROW);
+    WHEN_SET = StatementParser::STMT_START_SET;
 
     set<PascalTokenType>::iterator it;
     for (it  = StatementParser::STMT_FOLLOW_SET.begin();
          it != StatementParser::STMT_FOLLOW_SET.end();
-         it++)
-    {
-        ARROW_SET.insert(*it);
+         it++) {
+        WHEN_SET.insert(*it);
     }
 
     INITIALIZED = true;
@@ -66,7 +61,7 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
     do {
         // WHEN node adopts expression subtree as its first child.
         when_node->add_child(parse_branch(token));
-        token = current_token();
+        token = synchronize(WHEN_SET);
         if (token->get_type() == (TokenType) PT_SEMICOLON) {
             token = next_token(token);
         } else {
@@ -77,7 +72,7 @@ ICodeNode *WhenStatementParser::parse_statement(Token *token) throw (string)
 
     // WHEN node adopts OTHERWISE node as second child.
     when_node->add_child(parse_otherwise(token));
-    token = current_token();
+    token = synchronize(WHEN_SET);
     if (token->get_type() == (TokenType) PT_END) {
         token = next_token(token);
     } else {
@@ -99,7 +94,7 @@ throw (string)
     branch_node->add_child(expression_parser.parse_statement(token));
 
     // Look for the => token.
-    token = synchronize(ARROW_SET);
+    token = synchronize(WHEN_SET);
     if (token->get_type() == (TokenType) PT_ARROW) {
         token = next_token(token);
     } else {
@@ -121,10 +116,11 @@ throw (string)
             ICodeFactory::create_icode_node((ICodeNodeType) NT_OTHERWISE);
 
     // Look for the OTHERWISE token.
+    token = synchronize(WHEN_SET);
     if(token->get_type() == (TokenType) PT_OTHERWISE) {
         next_token(token);  // consume OTHERWISE
         // Look for the => token.
-        token = synchronize(ARROW_SET);
+        token = synchronize(WHEN_SET);
         if(token->get_type() == (TokenType) PT_ARROW) {
             token = next_token(token);  // consume the arrow
             // Parse the OTHERWISE branch statement. The OTHERWISE node adopts

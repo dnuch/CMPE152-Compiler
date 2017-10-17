@@ -31,23 +31,28 @@ DataValue *WhenExecutor::execute(ICodeNode *node)
 {
     // Get the WHEN node's children.
     vector<ICodeNode *> children = node->get_children();
-    ICodeNode *expr_node = children[0];
-    ICodeNode *arrow_stmt_node = children[1];
-    ICodeNode *otherwise_stmt_node = children.size() > 2 ? children[2] : nullptr;
+    vector<ICodeNode *> when_branch_node;
+    // Last node is OTHERWISE NODE
+    ICodeNode *otherwise_node = children[children.size()-1];
+
+    ICodeNode *expr_node = nullptr;
+    ICodeNode *stmt_node = nullptr;
 
     ExpressionExecutor expression_executor(this);
     StatementExecutor statement_executor(this);
 
-    // Evaluate the expression to determine which statement to execute.
-    DataValue *data_value = expression_executor.execute(expr_node);
-    if (data_value->b)
-    {
-        statement_executor.execute(arrow_stmt_node);
+    // Iterate until last node and execute WHEN BRANCH
+    for(unsigned int i = 0; i < children.size()-1; i++) {
+        when_branch_node.push_back(children[i]);
+        expr_node = when_branch_node[i]->get_children()[0];
+        stmt_node = when_branch_node[i]->get_children()[1];
+        expression_executor.execute(expr_node);
+        statement_executor.execute(stmt_node);
     }
-    else if (otherwise_stmt_node != nullptr)
-    {
-        statement_executor.execute(otherwise_stmt_node);
-    }
+
+    // Execute OTHERWISE node
+    stmt_node = otherwise_node->get_children()[0];
+    statement_executor.execute(stmt_node);
 
     ++execution_count;  // count the WHEN statement itself
     return nullptr;

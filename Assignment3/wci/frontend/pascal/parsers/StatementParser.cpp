@@ -38,7 +38,7 @@ set<PascalTokenType> StatementParser::STMT_START_SET =
 
 set<PascalTokenType> StatementParser::STMT_FOLLOW_SET =
 {
-    PT_OTHERWISE, PT_SEMICOLON, PT_END, PT_ELSE, PT_UNTIL, PT_DOT,
+    PT_ARROW, PT_OTHERWISE, PT_SEMICOLON, PT_END, PT_ELSE, PT_UNTIL, PT_DOT,
 };
 
 StatementParser::StatementParser(PascalParserTD *parent)
