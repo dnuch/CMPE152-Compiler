@@ -40,6 +40,7 @@ DataValue *WhenExecutor::execute(ICodeNode *node)
     DataValue *data_value = nullptr;
     ExpressionExecutor expression_executor(this);
     StatementExecutor statement_executor(this);
+    bool execute_otherwise_node = true;
 
     // Iterate until last node and execute WHEN BRANCH
     for (unsigned int i = 0; i < children.size()-1; i++) {
@@ -50,11 +51,12 @@ DataValue *WhenExecutor::execute(ICodeNode *node)
         if (data_value->b) {
             stmt_node = when_branch_node[i]->get_children()[1];
             statement_executor.execute(stmt_node);
+            execute_otherwise_node = false;
         }
     }
 
     // Execute OTHERWISE node when all EXPRESSION nodes fail
-    if (data_value == nullptr) {
+    if (execute_otherwise_node) {
         stmt_node = otherwise_node->get_children()[0];
         statement_executor.execute(stmt_node);
     }
