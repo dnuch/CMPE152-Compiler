@@ -30,6 +30,7 @@ TypeSpec *Predefined::integer_type;
 TypeSpec *Predefined::real_type;
 TypeSpec *Predefined::boolean_type;
 TypeSpec *Predefined::char_type;
+TypeSpec *Predefined::complex_type;
 TypeSpec *Predefined::undefined_type;
 
 // Predefined identifiers.
@@ -37,6 +38,7 @@ SymTabEntry *Predefined::integer_id;
 SymTabEntry *Predefined::real_id;
 SymTabEntry *Predefined::boolean_id;
 SymTabEntry *Predefined::char_id;
+SymTabEntry *Predefined::complex_id;
 SymTabEntry *Predefined::false_id;
 SymTabEntry *Predefined::true_id;
 SymTabEntry *Predefined::read_id;
@@ -101,6 +103,22 @@ void Predefined::initialize_types(SymTabStack *symtab_stack)
     char_type->set_identifier(char_id);
     char_id->set_definition((Definition) DF_TYPE);
     char_id->set_typespec(char_type);
+
+    // Type complex
+    complex_id = symtab_stack->enter_local("complex");
+    complex_type = TypeFactory::create_type((TypeForm) TF_RECORD);
+    // Create symbol table for record type
+    SymTab *record_table = SymTabFactory::create_symtab(0);
+    SymTabEntry *re = record_table->enter("re");
+    SymTabEntry *im = record_table->enter("im");
+    re->set_typespec(real_type);
+    im->set_typespec(real_type);
+    TypeValue *record_table_value = new TypeValue(record_table);
+    complex_type->set_attribute((TypeKey) RECORD_SYMTAB, record_table_value);
+    complex_type->set_identifier(complex_id);
+    complex_id->set_definition((Definition) DF_TYPE);
+    complex_id->set_typespec(complex_type);
+
 
     // Undefined type.
     undefined_type = TypeFactory::create_type((TypeForm) TF_SCALAR);

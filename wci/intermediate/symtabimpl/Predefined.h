@@ -28,6 +28,7 @@ public:
     static TypeSpec *real_type;
     static TypeSpec *boolean_type;
     static TypeSpec *char_type;
+    static TypeSpec *complex_type;
     static TypeSpec *undefined_type;
 
     // Predefined identifiers.
