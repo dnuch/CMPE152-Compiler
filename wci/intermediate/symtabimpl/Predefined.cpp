@@ -39,6 +39,7 @@ SymTabEntry *Predefined::real_id;
 SymTabEntry *Predefined::boolean_id;
 SymTabEntry *Predefined::char_id;
 SymTabEntry *Predefined::complex_id;
+SymTabEntry *Predefined::complex_field_id;
 SymTabEntry *Predefined::false_id;
 SymTabEntry *Predefined::true_id;
 SymTabEntry *Predefined::read_id;
@@ -67,6 +68,7 @@ void Predefined::initialize(SymTabStack *symtab_stack)
 {
     initialize_types(symtab_stack);
     initialize_constants(symtab_stack);
+    initialize_fields(symtab_stack);
     initialize_standard_routines(symtab_stack);
 }
 
@@ -107,18 +109,9 @@ void Predefined::initialize_types(SymTabStack *symtab_stack)
     // Type complex
     complex_id = symtab_stack->enter_local("complex");
     complex_type = TypeFactory::create_type((TypeForm) TF_RECORD);
-    // Create symbol table for record type
-    SymTab *record_table = SymTabFactory::create_symtab(0);
-    SymTabEntry *re = record_table->enter("re");
-    SymTabEntry *im = record_table->enter("im");
-    re->set_typespec(real_type);
-    im->set_typespec(real_type);
-    TypeValue *record_table_value = new TypeValue(record_table);
-    complex_type->set_attribute((TypeKey) RECORD_SYMTAB, record_table_value);
     complex_type->set_identifier(complex_id);
     complex_id->set_definition((Definition) DF_TYPE);
     complex_id->set_typespec(complex_type);
-
 
     // Undefined type.
     undefined_type = TypeFactory::create_type((TypeForm) TF_SCALAR);
@@ -145,6 +138,30 @@ void Predefined::initialize_constants(SymTabStack *symtab_stack)
     type_value->v.push_back(false_id);
     type_value->v.push_back(true_id);
     boolean_type->set_attribute((TypeKey) ENUMERATION_CONSTANTS,
+                                type_value);
+}
+
+void Predefined::initialize_fields(SymTabStack *symtab_stack)
+{
+    // Real record data field
+    complex_field_id[0] = symtab_stack->enter_local("re");
+    complex_field_id[0]->set_definition((Definition) DF_FIELD);
+    complex_field_id[0]->set_typespec(real_type);
+    complex_field_id[0]->set_attribute((SymTabKey) DATA_VALUE,
+                            new EntryValue(new DataValue(0)));
+
+    // Imaginary record data field
+    complex_field_id[1] = symtab_stack->enter_local("im");
+    complex_field_id[1]->set_definition((Definition) DF_FIELD);
+    complex_field_id[1]->set_typespec(real_type);
+    complex_field_id[1]->set_attribute((SymTabKey) DATA_VALUE,
+                           new EntryValue(new DataValue(0)));
+
+    // Add real and imaginary to the data complex type.
+    TypeValue *type_value = new TypeValue();
+    type_value->v.push_back(complex_field_id[0]);
+    type_value->v.push_back(complex_field_id[1]);
+    complex_type->set_attribute((TypeKey) RECORD_SYMTAB,
                                 type_value);
 }
 
