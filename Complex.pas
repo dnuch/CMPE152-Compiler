@@ -1,39 +1,40 @@
-PROGRAM Complex;
+PROGRAM Cmplx;
 
 TYPE
-    complex = RECORD
+    cmplx = RECORD
                   re, im : real
               END;
               
     mystring = ARRAY[1..3] OF char;
 
 VAR
-    x, y, z : complex;
+    x, y, z : cmplx;
     
-PROCEDURE print(name : mystring; VAR z : complex);
+PROCEDURE print(name : mystring; VAR z : cmplx);
     BEGIN
-        write(name, ' = (', z.re:0:5, ', ', z.im:0:5, ') ');
+        write(name);
+        write(' = (', z.re:0:5, ', ', z.im:0:5, ') ');
     END;
     
-PROCEDURE add(VAR x, y, z : complex);   
+PROCEDURE add(VAR x, y, z : cmplx);
     BEGIN
         z.re := x.re + y.re;
         z.im := x.im + y.im;
     END;
     
-PROCEDURE subtract(VAR x, y, z : complex);
+PROCEDURE subtract(VAR x, y, z : cmplx);
     BEGIN
         z.re := x.re - y.re;
         z.im := x.im - y.im;
     END;
     
-PROCEDURE multiply(VAR x, y, z: complex);
+PROCEDURE multiply(VAR x, y, z: cmplx);
     BEGIN
         z.re := x.re*y.re - x.im*y.im;
         z.im := x.re*y.im + x.im*y.re;
     END;
     
-PROCEDURE divide(VAR x, y, z : complex);
+PROCEDURE divide(VAR x, y, z : cmplx);
     VAR
         denom : real;
     

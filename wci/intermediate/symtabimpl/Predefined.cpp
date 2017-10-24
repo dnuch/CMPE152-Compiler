@@ -39,7 +39,7 @@ SymTabEntry *Predefined::real_id;
 SymTabEntry *Predefined::boolean_id;
 SymTabEntry *Predefined::char_id;
 SymTabEntry *Predefined::complex_id;
-SymTabEntry *Predefined::complex_field_id;
+SymTabEntry *Predefined::complex_field_id[2];
 SymTabEntry *Predefined::false_id;
 SymTabEntry *Predefined::true_id;
 SymTabEntry *Predefined::read_id;
@@ -106,9 +106,9 @@ void Predefined::initialize_types(SymTabStack *symtab_stack)
     char_id->set_definition((Definition) DF_TYPE);
     char_id->set_typespec(char_type);
 
-    // Type complex
+    // Type complex.
     complex_id = symtab_stack->enter_local("complex");
-    complex_type = TypeFactory::create_type((TypeForm) TF_RECORD);
+    complex_type = TypeFactory::create_type((TypeForm) TF_SCALAR);
     complex_type->set_identifier(complex_id);
     complex_id->set_definition((Definition) DF_TYPE);
     complex_id->set_typespec(complex_type);
