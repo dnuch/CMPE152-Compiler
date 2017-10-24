@@ -43,7 +43,7 @@ map<PascalTokenType, ICodeNodeTypeImpl> ExpressionParser::MULT_OPS_MAP;
 
 set<PascalTokenType> ExpressionParser::EXPR_START_SET =
 {
-    PT_PLUS, PT_MINUS, PT_IDENTIFIER, PT_INTEGER, PT_REAL, PT_STRING,
+    PT_PLUS, PT_MINUS, PT_IDENTIFIER, PT_COMPLEX, PT_INTEGER, PT_REAL, PT_STRING,
     PT_NOT, PT_LEFT_PAREN,
 };
 
@@ -235,6 +235,11 @@ ICodeNode *ExpressionParser::parse_simple_expression(Token *token)
                     result_typespec = Predefined::real_type;
                 }
 
+                else if(TypeChecker::are_both_complex(result_typespec, term_typespec))
+                {
+                    result_typespec = Predefined::complex_type;
+                }
+
                 else
                 {
                     error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
@@ -334,6 +339,11 @@ ICodeNode *ExpressionParser::parse_term(Token *token) throw (string)
                     result_typespec = Predefined::real_type;
                 }
 
+                else if (TypeChecker::are_both_complex(result_typespec, factor_typespec))
+                {
+                    result_typespec = Predefined::complex_type;
+                }
+
                 else
                 {
                     error_handler.flag(expr_token, INCOMPATIBLE_TYPES, this);
@@ -352,6 +362,10 @@ ICodeNode *ExpressionParser::parse_term(Token *token) throw (string)
                                                          factor_typespec))
                 {
                     result_typespec = Predefined::real_type;
+                }
+                else if(TypeChecker::are_both_complex(result_typespec, factor_typespec))
+                {
+                    result_typespec = Predefined::complex_type;
                 }
                 else
                 {

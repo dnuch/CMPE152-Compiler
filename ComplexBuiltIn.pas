@@ -12,7 +12,7 @@ PROCEDURE print(expr : mystring; VAR z : complex);
         write(' = (', z.re:0:5, ', ', z.im:0:5, ') ');
     END;
 
-BEGIN {ComplexTest}make
+BEGIN {ComplexTest}
     x.re := 3; x.im := 2;  print('  x', x);
     y.re := 8; y.im := -5; print('  y', y);
     z := x + y;            print('x+y', z);

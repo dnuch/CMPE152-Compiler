@@ -34,6 +34,10 @@ public:
      */
     static bool are_both_integer(TypeSpec *typespec1, TypeSpec *typespec2);
 
+    static bool is_complex(TypeSpec *typespec);
+
+    static bool are_both_complex(TypeSpec *typespec1, TypeSpec *typespec2);
+    
     /**
      * Check if a type specification is real.
      * @param typespec the type specification to check.

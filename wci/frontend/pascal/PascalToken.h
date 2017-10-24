@@ -39,7 +39,7 @@ enum class PascalTokenType
     LEFT_BRACKET, RIGHT_BRACKET, LEFT_BRACE, RIGHT_BRACE,
     UP_ARROW, DOT_DOT,
 
-    IDENTIFIER, INTEGER, REAL, STRING,
+    IDENTIFIER, COMPLEX, INTEGER, REAL, STRING,
     ERROR, END_OF_FILE,
 };
 
@@ -110,6 +110,7 @@ constexpr PascalTokenType PT_UP_ARROW = PascalTokenType::UP_ARROW;
 constexpr PascalTokenType PT_DOT_DOT = PascalTokenType::DOT_DOT;
 
 constexpr PascalTokenType PT_IDENTIFIER = PascalTokenType::IDENTIFIER;
+constexpr PascalTokenType PT_COMPLEX = PascalTokenType::COMPLEX;
 constexpr PascalTokenType PT_INTEGER = PascalTokenType::INTEGER;
 constexpr PascalTokenType PT_REAL = PascalTokenType::REAL;
 constexpr PascalTokenType PT_STRING = PascalTokenType::STRING;
