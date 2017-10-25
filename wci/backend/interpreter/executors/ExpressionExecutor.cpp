@@ -85,6 +85,7 @@ CellValue *ExpressionExecutor::execute(ICodeNode *node)
             break;
         }
 
+
         case NT_STRING_CONSTANT:
         {
             NodeValue *node_value = node->get_attribute((ICodeKey) VALUE);

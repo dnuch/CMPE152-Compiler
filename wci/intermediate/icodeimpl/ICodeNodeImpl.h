@@ -38,7 +38,7 @@ enum class ICodeNodeTypeImpl
     // Operands
     VARIABLE, SUBSCRIPTS, FIELD,
     INTEGER_CONSTANT, REAL_CONSTANT,
-    STRING_CONSTANT, BOOLEAN_CONSTANT,
+    STRING_CONSTANT, BOOLEAN_CONSTANT, COMPLEX_CONSTANT, 
 
     // WRITE parameter
     WRITE_PARM,
@@ -86,6 +86,7 @@ constexpr ICodeNodeTypeImpl NT_SUBSCRIPTS = ICodeNodeTypeImpl::SUBSCRIPTS;
 constexpr ICodeNodeTypeImpl NT_FIELD = ICodeNodeTypeImpl::FIELD;
 constexpr ICodeNodeTypeImpl NT_INTEGER_CONSTANT = ICodeNodeTypeImpl::INTEGER_CONSTANT;
 constexpr ICodeNodeTypeImpl NT_REAL_CONSTANT = ICodeNodeTypeImpl::REAL_CONSTANT;
+constexpr ICodeNodeTypeImpl NT_COMPLEX_CONSTANT = ICodeNodeTypeImpl::COMPLEX_CONSTANT;
 constexpr ICodeNodeTypeImpl NT_STRING_CONSTANT = ICodeNodeTypeImpl::STRING_CONSTANT;
 constexpr ICodeNodeTypeImpl NT_BOOLEAN_CONSTANT = ICodeNodeTypeImpl::BOOLEAN_CONSTANT;
 

@@ -101,7 +101,7 @@ void ICodeNodeImpl::initialize()
         // Operands
         "VARIABLE", "SUBSCRIPTS", "FIELD",
         "INTEGER_CONSTANT", "REAL_CONSTANT",
-        "STRING_CONSTANT", "BOOLEAN_CONSTANT",
+        "STRING_CONSTANT", "BOOLEAN_CONSTANT","COMPLEX_CONSTANT",
 
         // WRITE parameter
         "WRITE_PARM",
@@ -222,6 +222,12 @@ ICodeNode *ICodeNodeImpl::copy()
                     copy_data_value = new DataValue(orig_data_value->i);
                     break;
                 }
+//
+//                case COMPLEX:
+//                {
+//                    copy_data_value = new DataValue(orig_data_value->i);
+//                    break;
+//                }
 
                 case FLOAT:
                 {

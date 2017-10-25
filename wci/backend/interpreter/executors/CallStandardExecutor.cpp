@@ -68,6 +68,10 @@ CellValue *CallStandardExecutor::execute(ICodeNode *node)
         case RT_WRITE:
         case RT_WRITELN: return execute_write_writeln(node, routine_code);
 
+        case RT_PRINT:
+        case RT_PRINTLN: return execute_print_println(node, routine_code); 
+
+
         case RT_EOF:
         case RT_EOLN:    return execute_eof_eoln(node, routine_code);
 
@@ -217,6 +221,17 @@ CellValue *CallStandardExecutor::parse_number(Token *token,
         return new CellValue(f);
     }
 
+    // Complex value. 
+    else if (   (token_type == (TokenType) PT_COMPLEX)
+             && (typespec == Predefined::complex_type))
+    {
+        float i = token->get_value()->i;
+        if (minus_sign) i = -i;
+
+        delete token;
+        return new CellValue(i);
+    }
+
     // Bad input.
     else
     {
@@ -263,6 +278,7 @@ CellValue *CallStandardExecutor::execute_write_writeln(
                         : typespec == Predefined::real_type    ? "f"
                         : typespec == Predefined::boolean_type ? "s"
                         : typespec == Predefined::char_type    ? "c"
+                        : typespec == Predefined::complex_type ? "i"
                         :                                        "s";
 
             CellValue *cell_value = expression_executor.execute(expr_node);
@@ -302,6 +318,7 @@ CellValue *CallStandardExecutor::execute_write_writeln(
                 case 'd': printf(format.c_str(), value->i); break;
                 case 'f': printf(format.c_str(), value->f); break;
                 case 'c': printf(format.c_str(), value->c); break;
+                case 'i': printf(format.c_str(), value->i); break; 
 
                 case 's':
                 {

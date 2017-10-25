@@ -45,6 +45,10 @@ CellValue *BackendFactory::default_value(TypeSpec *typespec)
     {
         return new CellValue(0.0f);
     }
+    else if (typespec == Predefined::complex_type)
+    {
+        return new CellValue(0.0i);
+    }
     else if (typespec == Predefined::boolean_type)
     {
         return new CellValue(false);

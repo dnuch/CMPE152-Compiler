@@ -6,6 +6,7 @@
  * <p>Copyright (c) 2017 by Ronald Mak</p>
  * <p>For instructional purposes only.  No warranties.</p>
  */
+
 #ifndef WCI_INTERMEDIATE_SYMTABIMPL_SYMTABENTRYIMPL_H_
 #define WCI_INTERMEDIATE_SYMTABIMPL_SYMTABENTRYIMPL_H_
 
@@ -76,7 +77,7 @@ constexpr DefinitionImpl DF_UNDEFINED = DefinitionImpl::UNDEFINED;
 enum class RoutineCodeImpl
 {
     DECLARED, FORWARD,
-    READ, READLN, WRITE, WRITELN,
+    READ, READLN, WRITE, WRITELN, PRINT, PRINTLN,
     ABS, ARCTAN, CHR, COS, EXP, LN, ODD, ORD,
     EOF_FUNCTION, EOLN_FUNCTION,
     PRED, ROUND, SIN, SQR, SQRT, SUCC, TRUNC,
@@ -88,6 +89,8 @@ constexpr RoutineCodeImpl RT_READ = RoutineCodeImpl::READ;
 constexpr RoutineCodeImpl RT_READLN = RoutineCodeImpl::READLN;
 constexpr RoutineCodeImpl RT_WRITE = RoutineCodeImpl::WRITE;
 constexpr RoutineCodeImpl RT_WRITELN = RoutineCodeImpl::WRITELN;
+constexpr RoutineCodeImpl RT_PRINT = RoutineCodeImpl::PRINT;
+constexpr RoutineCodeImpl RT_PRINTLN = RoutineCodeImpl::PRINTLN;
 constexpr RoutineCodeImpl RT_ABS = RoutineCodeImpl::ABS;
 constexpr RoutineCodeImpl RT_ARCTAN = RoutineCodeImpl::ARCTAN;
 constexpr RoutineCodeImpl RT_CHR = RoutineCodeImpl::CHR;
