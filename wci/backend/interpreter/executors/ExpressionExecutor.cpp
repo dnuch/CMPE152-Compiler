@@ -308,11 +308,17 @@ CellValue *ExpressionExecutor::execute_binary_operator(
     bool integer_mode = false;
     bool character_mode = false;
     bool string_mode = false;
+    bool complex_mode = false;
 
     if (   (typespec1 == Predefined::integer_type)
         && (typespec2 == Predefined::integer_type))
     {
         integer_mode = true;
+    }
+    else if (   (typespec1 == Predefined::complex_type)
+             && (typespec2 == Predefined::complex_type))
+    {
+        complex_mode = true;
     }
     else if (   (   (typespec1 == Predefined::char_type)
                  || (   (operand1->type == STRING)
@@ -335,7 +341,86 @@ CellValue *ExpressionExecutor::execute_binary_operator(
 
     if (ARITH_OPS.find(node_type) != ARITH_OPS.end())
     {
-        if (integer_mode)
+        // GOTTA WORK ON THIS
+        if (complex_mode)
+        {
+            int value1 = operand1->i;
+            int value2 = operand2->i;
+
+            // COMPLEX operations.
+            switch (node_type)
+            {
+                case NT_ADD:
+                {
+                    result_cell_value = new CellValue(value1 + value2);
+                    break;
+                }
+
+                case NT_SUBTRACT:
+                {
+                    result_cell_value = new CellValue(value1 - value2);
+                    break;
+                }
+
+                case NT_MULTIPLY:
+                {
+                    result_cell_value = new CellValue(value1 * value2);
+                    break;
+                }
+
+                case NT_FLOAT_DIVIDE:
+                {
+                    // Check for division by zero.
+                    if (value2 != 0)
+                    {
+                        result_cell_value = new CellValue(((float) value1) /
+                                                          ((float) value2));
+                    }
+                    else
+                    {
+                        error_handler.flag(node, DIVISION_BY_ZERO, this);
+                        result_cell_value = new CellValue(0.0f);
+                    }
+
+                    break;
+                }
+
+                case NT_INTEGER_DIVIDE:
+                {
+                    // Check for division by zero.
+                    if (value2 != 0)
+                    {
+                        result_cell_value = new CellValue(value1/value2);
+                    }
+                    else
+                    {
+                        error_handler.flag(node, DIVISION_BY_ZERO, this);
+                        result_cell_value = new CellValue(0);
+                    }
+
+                    break;
+                }
+
+                case NT_MOD:
+                {
+                    // Check for division by zero.
+                    if (value2 != 0)
+                    {
+                        result_cell_value = new CellValue(value1%value2);
+                    }
+                    else
+                    {
+                        error_handler.flag(node, DIVISION_BY_ZERO, this);
+                        result_cell_value = new CellValue(0);
+                    }
+
+                    break;
+                }
+
+                default: result_cell_value = nullptr;  // shouldn't get here
+            }
+        }
+        else if (integer_mode)
         {
             int value1 = operand1->i;
             int value2 = operand2->i;

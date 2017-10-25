@@ -98,7 +98,7 @@ DEPENDENCY_FILE = makefile_dependencies.txt
 all: $(TARGET)
 
 clean:
-	rm $(OBJS) $(TARGET) $(RAW_DEPENDENCY_FILE)
+	rm $(OBJS) $(TARGET)
 
 $(TARGET) : $(OBJS)
 	$(CC) -o $(TARGET) $(OBJS)
