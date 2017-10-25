@@ -29,6 +29,7 @@ public:
     static TypeSpec *boolean_type;
     static TypeSpec *char_type;
     static TypeSpec *complex_type;
+    static TypeSpec *complex_field_type[2];
     static TypeSpec *undefined_type;
 
     // Predefined identifiers.
@@ -37,6 +38,7 @@ public:
     static SymTabEntry *boolean_id;
     static SymTabEntry *char_id;
     static SymTabEntry *complex_id;
+    static SymTabEntry *complex_field_id[2];
     static SymTabEntry *false_id;
     static SymTabEntry *true_id;
     static SymTabEntry *read_id;
@@ -80,6 +82,11 @@ private:
      */
     static void initialize_constants(SymTabStack *symtab_stack);
 
+    /**
+     * Initialize the predefined field.
+     * @param symtab_stack the symbol table stack to initialize.
+     */
+    static void initialize_fields(SymTabStack *symtab_stack);
 
     /**
      * Initialize the standard procedures and functions.
