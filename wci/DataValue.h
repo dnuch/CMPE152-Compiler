@@ -45,7 +45,7 @@ public:
         char c;
         bool b;
         string s;
-        _Complex double z;
+        double complex[2];
     };
 
     DataValue()              : type((ValueType) -1) {};
@@ -53,11 +53,15 @@ public:
     DataValue(const float f) : type(ValueType::FLOAT),   f(f) {}
     DataValue(const char c)  : type(ValueType::CHAR),    c(c) {}
     DataValue(const bool b)  : type(ValueType::BOOLEAN), b(b) {}
-    DataValue(const _Complex double z)   : type(ValueType::COMPLEX), z(z) {}
 
     DataValue(const string s) : type(ValueType::STRING)
     {
         new (&this->s) string(s);
+    }
+
+    DataValue(const double cmplx[2]) : type(ValueType::COMPLEX) {
+        complex[0] = cmplx[0];
+        complex[1] = cmplx[1];
     }
 
     DataValue(const DataValue& orig)
@@ -70,8 +74,11 @@ public:
             case ValueType::FLOAT:   this->f = orig.f; break;
             case ValueType::CHAR:    this->c = orig.c; break;
             case ValueType::BOOLEAN: this->b = orig.b; break;
-            case ValueType::COMPLEX: this->z = orig.z; break;
             case ValueType::STRING:  new (&this->s) string(orig.s); break;
+            case ValueType::COMPLEX:
+                this->complex[0] = orig.complex[0];
+                this->complex[1] = orig.complex[1];
+                break;
         }
 	}
 
@@ -86,8 +93,8 @@ public:
             case ValueType::CHAR:    return string(1, this->c);
             case ValueType::BOOLEAN: return to_string(this->b);
             case ValueType::STRING:  return this->s;
-            //case ValueType::COMPLEX:  return ;
-
+            case ValueType::COMPLEX: return
+                        to_string(this->complex[0]),to_string(this->complex[1]);
             default: return "";
         }
     }

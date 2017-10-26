@@ -13,6 +13,7 @@
 #include "../TypeSpec.h"
 #include "../TypeFactory.h"
 #include "../SymTabEntry.h"
+#include "../SymTabFactory.h"
 #include "../SymTabStack.h"
 #include "../typeimpl/TypeSpecImpl.h"
 #include "../../DataValue.h"
@@ -31,7 +32,6 @@ TypeSpec *Predefined::real_type;
 TypeSpec *Predefined::boolean_type;
 TypeSpec *Predefined::char_type;
 TypeSpec *Predefined::complex_type;
-TypeSpec *Predefined::complex_field_type[2];
 TypeSpec *Predefined::undefined_type;
 
 // Predefined identifiers.
@@ -40,7 +40,6 @@ SymTabEntry *Predefined::real_id;
 SymTabEntry *Predefined::boolean_id;
 SymTabEntry *Predefined::char_id;
 SymTabEntry *Predefined::complex_id;
-SymTabEntry *Predefined::complex_field_id[2];
 SymTabEntry *Predefined::false_id;
 SymTabEntry *Predefined::true_id;
 SymTabEntry *Predefined::read_id;
@@ -69,7 +68,6 @@ void Predefined::initialize(SymTabStack *symtab_stack)
 {
     initialize_types(symtab_stack);
     initialize_constants(symtab_stack);
-    initialize_fields(symtab_stack);
     initialize_standard_routines(symtab_stack);
 }
 
@@ -113,6 +111,10 @@ void Predefined::initialize_types(SymTabStack *symtab_stack)
     complex_type->set_identifier(complex_id);
     complex_id->set_definition((Definition) DF_TYPE);
     complex_id->set_typespec(complex_type);
+    SymTab *table = SymTabFactory::create_symtab(0);
+    table->enter("re")->set_typespec(real_type);
+    table->enter("im")->set_typespec(real_type);
+    complex_type->set_attribute((TypeKey) RECORD_SYMTAB, new TypeValue(table));
 
     // Undefined type.
     undefined_type = TypeFactory::create_type((TypeForm) TF_SCALAR);
@@ -140,28 +142,6 @@ void Predefined::initialize_constants(SymTabStack *symtab_stack)
     type_value->v.push_back(true_id);
     boolean_type->set_attribute((TypeKey) ENUMERATION_CONSTANTS,
                                 type_value);
-}
-
-void Predefined::initialize_fields(SymTabStack *symtab_stack)
-{
-    complex_type->set_attribute((TypeKey) RECORD_SYMTAB,
-                                new TypeValue(symtab_stack->push()));
-
-    // Real record field
-    complex_field_id[0] = symtab_stack->enter_local("re");
-    complex_field_type[0] = TypeFactory::create_type((TypeForm) TF_SCALAR);
-    complex_field_type[0]->set_identifier(complex_field_id[0]);
-    complex_field_id[0]->set_definition((Definition) DF_FIELD);
-    complex_field_id[0]->set_typespec(real_type);
-
-    // Imaginary record field
-    complex_field_id[1] = symtab_stack->enter_local("im");
-    complex_field_type[1] = TypeFactory::create_type((TypeForm) TF_SCALAR);
-    complex_field_type[1]->set_identifier(complex_field_id[1]);
-    complex_field_id[1]->set_definition((Definition) DF_FIELD);
-    complex_field_id[1]->set_typespec(real_type);
-
-    symtab_stack->pop();
 }
 
 void Predefined::initialize_standard_routines(SymTabStack *symtab_stack)

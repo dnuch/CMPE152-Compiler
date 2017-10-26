@@ -49,6 +49,9 @@ struct CellValue
     CellValue(string s)
         : value(new DataValue(s)), cell(nullptr), cell_array(nullptr),
           memory_map(nullptr) {}
+    CellValue(double complex[2])
+        : value(new DataValue(complex)), cell(nullptr), cell_array(nullptr),
+          memory_map(nullptr) {}
     CellValue(Cell *cell)
         : value(nullptr), cell(cell), cell_array(nullptr),
           memory_map(nullptr) {}

@@ -45,10 +45,6 @@ CellValue *BackendFactory::default_value(TypeSpec *typespec)
     {
         return new CellValue(0.0f);
     }
-    else if (typespec == Predefined::complex_type)
-    {
-        return new CellValue(0.0i);
-    }
     else if (typespec == Predefined::boolean_type)
     {
         return new CellValue(false);
@@ -56,6 +52,13 @@ CellValue *BackendFactory::default_value(TypeSpec *typespec)
     else if (typespec == Predefined::char_type)
     {
         return new CellValue('#');
+    }
+    else if (typespec == Predefined::complex_type)
+    {
+        double complex[2];
+        complex[0] = 0.0f;
+        complex[1] = 0.0f;
+        return new CellValue(complex);
     }
     else // string
     {
