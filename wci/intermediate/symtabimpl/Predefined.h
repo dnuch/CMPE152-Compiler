@@ -43,6 +43,8 @@ public:
     static SymTabEntry *readln_id;
     static SymTabEntry *write_id;
     static SymTabEntry *writeln_id;
+    static SymTabEntry *print_id;
+    static SymTabEntry *println_id;
     static SymTabEntry *abs_id;
     static SymTabEntry *arctan_id;
     static SymTabEntry *chr_id;

@@ -46,6 +46,8 @@ SymTabEntry *Predefined::read_id;
 SymTabEntry *Predefined::readln_id;
 SymTabEntry *Predefined::write_id;
 SymTabEntry *Predefined::writeln_id;
+SymTabEntry *Predefined::print_id;
+SymTabEntry *Predefined::println_id;
 SymTabEntry *Predefined::abs_id;
 SymTabEntry *Predefined::arctan_id;
 SymTabEntry *Predefined::chr_id;
@@ -163,6 +165,14 @@ void Predefined::initialize_standard_routines(SymTabStack *symtab_stack)
                                 "writeln",
                                 (RoutineCode) RoutineCodeImpl::WRITELN);
 
+    print_id   = enter_standard(symtab_stack,
+                                    (Definition) DF_PROCEDURE,
+                                    "print",
+                                    (RoutineCode) RoutineCodeImpl::PRINT);
+   println_id = enter_standard(symtab_stack,
+                                    (Definition) DF_PROCEDURE,
+                                    "println",
+                                    (RoutineCode) RoutineCodeImpl::PRINTLN);
     abs_id    = enter_standard(symtab_stack,
                                (Definition) DF_FUNCTION,
                                "abs",
